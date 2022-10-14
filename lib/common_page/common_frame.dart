@@ -2,9 +2,11 @@ import 'package:adaptive_navigation/adaptive_navigation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:japanese_practise_n5/common/player/sample/player_page.dart';
 import 'package:japanese_practise_n5/hive_db/provider/n5_box_provider.dart';
-import 'package:japanese_practise_n5/pages/listening/listening_page.dart';
+import 'package:japanese_practise_n5/pages/kanji/detail/kanji_detail.dart';
+import 'package:japanese_practise_n5/pages/kanji/list/kanji_list.dart';
+import 'package:japanese_practise_n5/pages/reading/detail/reading_detail.dart';
+import 'package:japanese_practise_n5/pages/reading/list/reading_list.dart';
 
 import 'common_page_controller.dart';
 
@@ -32,24 +34,10 @@ class CommonPage2 extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = ref.watch(commonPageProvider.notifier);
     lstN5 = ref.read(n5BoxDataProvider);
-    // var lstWord = lstN5.box.values.toList();
-
-    // useEffect(() {
-    //   for (var level in [5, 4, 3, 2, 1]) {
-    //     listLevel.add(JLPTLevel(level, "N$level"));
-    //   }
-    // }, const []);
     controller.setModelListenable(ref);
-
-    // if (controller.state.selectedIndex == 1) {
-    //   var selectedMaster = lstMasterMenu
-    //       .where((element) =>
-    //           element.destination == controller.state.masterDataDestination)
-    //       .first;
-    //   bodyPage = !controller.state.isGameMode
-    //       ? selectedMaster.mainPage
-    //       : selectedMaster.gamePage;
-    // }
+    var bodyPage = !controller.state.isGameMode
+        ? lstMenu[controller.state.selectedIndex].listPage
+        : lstMenu[controller.state.selectedIndex].entryPage;
     return AdaptiveNavigationScaffold(
       appBar: AdaptiveAppBar(
         title: Text(lstMenu[controller.state.selectedIndex].name),
@@ -60,55 +48,19 @@ class CommonPage2 extends HookConsumerWidget {
                   onPressed: () {
                     controller.setGameMode(!controller.state.isGameMode);
                   },
-                  icon: const Icon(Icons.flip)),
-              // IconButton(
-              //     onPressed: () {
-              //       readExcelFile("");
-              //     },
-              //     icon: const Icon(Icons.download))
+                  icon: const Icon(Icons.add)),
             ],
           ),
-          // Visibility(
-          //     visible: controller.state.selectedIndex == 1,
-          //     child: Padding(
-          //         padding: const EdgeInsets.all(10),
-          //         child: DropdownButton(
-          //           value: controller.state.masterDataDestination,
-          //           style: const TextStyle(
-          //             fontSize: 14,
-          //             color: Colors.black,
-          //           ),
-          //           items: lstMasterMenu
-          //               .map((e) => DropdownMenuItem(
-          //                     value: e.destination,
-          //                     child: Text(e.name),
-          //                   ))
-          //               .toList(),
-          //           onChanged: (lvl) async {
-          //             controller.setMasterDataDestination(lvl as String);
-          //           },
-          //         )))
         ],
       ),
-      // navigationTypeResolver: (context) {
-      //   if (MediaQuery.of(context).size.width > 1000) {
-      //     return NavigationType.permanentDrawer;
-      //   } else {
-      //     return NavigationType.drawer;
-      //   }
-      // },
-
-      // appBar: commonAppBar(context, ref, destination),
       body: Scaffold(
           body: Row(
         children: [
           Expanded(
-            child:
-                Center(child: lstMenu[controller.state.selectedIndex].mainPage),
+            child: Center(child: bodyPage),
           ),
         ],
       )),
-
       selectedIndex: controller.state.selectedIndex,
       onDestinationSelected: (value) {
         if (value == (lstMenu.length - 1)) {
@@ -175,8 +127,9 @@ class Menu {
   late String name;
   late String destination;
   late IconData icon;
-  late Widget mainPage;
-  Menu(this.name, this.destination, this.icon, this.mainPage);
+  late Widget listPage;
+  late Widget entryPage;
+  Menu(this.name, this.destination, this.icon, this.listPage, this.entryPage);
 }
 
 late final lstMenu = <Menu>[
@@ -184,27 +137,19 @@ late final lstMenu = <Menu>[
     "Шинэ үг",
     "vocabulary",
     Icons.format_list_numbered,
-    Text("shine uug"),
+    const Text("shine uug"),
+    const Text("shine uug"),
   ),
   Menu(
     "Дүрэм",
     "grammar",
     Icons.rule,
-    Text("durem"),
+    const Text("durem"),
+    const Text("durem"),
   ),
-  Menu("Сонсгол", "verbForm", CupertinoIcons.ear, PlayerPage()
-      // ListeningPage(),
-      ),
-  Menu(
-    "Уншлага",
-    "verbForm",
-    Icons.menu_book,
-    Text("unshlaga"),
-  ),
-  Menu(
-    "Ханз",
-    "verbForm",
-    CupertinoIcons.pencil_outline,
-    Text("hanz"),
-  ),
+  Menu("Сонсгол", "verbForm", CupertinoIcons.ear, ReadingDetail(),
+      ReadingDetail()),
+  Menu("Уншлага", "verbForm", Icons.menu_book, ReadingList(), ReadingDetail()),
+  Menu("Ханз", "verbForm", CupertinoIcons.pencil_outline, KanjiList(),
+      KanjiDetail()),
 ];

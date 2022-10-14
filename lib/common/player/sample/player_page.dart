@@ -1,5 +1,4 @@
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:japanese_practise_n5/common/player/notifiers/play_button_notifier.dart';
 import 'package:japanese_practise_n5/common/player/notifiers/progress_notifier.dart';
