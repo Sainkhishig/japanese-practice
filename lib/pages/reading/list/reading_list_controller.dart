@@ -26,6 +26,10 @@ class ReadingListController extends StateNotifier<ReadingState> {
     state = state.copyWith(selectedCardIndex: index + 1);
   }
 
+  setDetailData(dynamic currentExercise) async {
+    state = state.copyWith(selectedExerciseData: currentExercise);
+  }
+
   Future<void> setMasterData() async {
     // final api = ref.read(facilityApiProvider);
     // masterSite = await api.getSiteMaster("");

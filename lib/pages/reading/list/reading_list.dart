@@ -79,7 +79,8 @@ class ReadingList extends HookConsumerWidget {
                         ],
                       ),
                       onTap: () {
-                        controller.update(keyUser);
+                        // controller.update(keyUser);
+                        controller.setDetailData(value);
                       },
                     ),
                   );

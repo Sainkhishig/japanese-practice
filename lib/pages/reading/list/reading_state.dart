@@ -8,6 +8,7 @@ abstract class ReadingState with _$ReadingState {
   const factory ReadingState({
     @Default([]) List<dynamic> lstTableServingProgress,
     @Default(1) int selectedCardIndex,
+    @Default(null) dynamic selectedExerciseData,
     @Default(1) int jlptLevel,
   }) = _ReadingState;
   factory ReadingState.fromJson(Map<String, dynamic> json) =>

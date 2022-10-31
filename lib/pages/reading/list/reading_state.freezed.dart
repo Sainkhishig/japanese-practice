@@ -24,10 +24,12 @@ class _$ReadingStateTearOff {
   _ReadingState call(
       {List<dynamic> lstTableServingProgress = const [],
       int selectedCardIndex = 1,
+      dynamic selectedExerciseData = null,
       int jlptLevel = 1}) {
     return _ReadingState(
       lstTableServingProgress: lstTableServingProgress,
       selectedCardIndex: selectedCardIndex,
+      selectedExerciseData: selectedExerciseData,
       jlptLevel: jlptLevel,
     );
   }
@@ -45,6 +47,7 @@ mixin _$ReadingState {
   List<dynamic> get lstTableServingProgress =>
       throw _privateConstructorUsedError;
   int get selectedCardIndex => throw _privateConstructorUsedError;
+  dynamic get selectedExerciseData => throw _privateConstructorUsedError;
   int get jlptLevel => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -61,6 +64,7 @@ abstract class $ReadingStateCopyWith<$Res> {
   $Res call(
       {List<dynamic> lstTableServingProgress,
       int selectedCardIndex,
+      dynamic selectedExerciseData,
       int jlptLevel});
 }
 
@@ -76,6 +80,7 @@ class _$ReadingStateCopyWithImpl<$Res> implements $ReadingStateCopyWith<$Res> {
   $Res call({
     Object? lstTableServingProgress = freezed,
     Object? selectedCardIndex = freezed,
+    Object? selectedExerciseData = freezed,
     Object? jlptLevel = freezed,
   }) {
     return _then(_value.copyWith(
@@ -87,6 +92,10 @@ class _$ReadingStateCopyWithImpl<$Res> implements $ReadingStateCopyWith<$Res> {
           ? _value.selectedCardIndex
           : selectedCardIndex // ignore: cast_nullable_to_non_nullable
               as int,
+      selectedExerciseData: selectedExerciseData == freezed
+          ? _value.selectedExerciseData
+          : selectedExerciseData // ignore: cast_nullable_to_non_nullable
+              as dynamic,
       jlptLevel: jlptLevel == freezed
           ? _value.jlptLevel
           : jlptLevel // ignore: cast_nullable_to_non_nullable
@@ -105,6 +114,7 @@ abstract class _$ReadingStateCopyWith<$Res>
   $Res call(
       {List<dynamic> lstTableServingProgress,
       int selectedCardIndex,
+      dynamic selectedExerciseData,
       int jlptLevel});
 }
 
@@ -122,6 +132,7 @@ class __$ReadingStateCopyWithImpl<$Res> extends _$ReadingStateCopyWithImpl<$Res>
   $Res call({
     Object? lstTableServingProgress = freezed,
     Object? selectedCardIndex = freezed,
+    Object? selectedExerciseData = freezed,
     Object? jlptLevel = freezed,
   }) {
     return _then(_ReadingState(
@@ -133,6 +144,10 @@ class __$ReadingStateCopyWithImpl<$Res> extends _$ReadingStateCopyWithImpl<$Res>
           ? _value.selectedCardIndex
           : selectedCardIndex // ignore: cast_nullable_to_non_nullable
               as int,
+      selectedExerciseData: selectedExerciseData == freezed
+          ? _value.selectedExerciseData
+          : selectedExerciseData // ignore: cast_nullable_to_non_nullable
+              as dynamic,
       jlptLevel: jlptLevel == freezed
           ? _value.jlptLevel
           : jlptLevel // ignore: cast_nullable_to_non_nullable
@@ -147,6 +162,7 @@ class _$_ReadingState implements _ReadingState {
   const _$_ReadingState(
       {this.lstTableServingProgress = const [],
       this.selectedCardIndex = 1,
+      this.selectedExerciseData = null,
       this.jlptLevel = 1});
 
   factory _$_ReadingState.fromJson(Map<String, dynamic> json) =>
@@ -158,13 +174,16 @@ class _$_ReadingState implements _ReadingState {
   @JsonKey(defaultValue: 1)
   @override
   final int selectedCardIndex;
+  @JsonKey(defaultValue: null)
+  @override
+  final dynamic selectedExerciseData;
   @JsonKey(defaultValue: 1)
   @override
   final int jlptLevel;
 
   @override
   String toString() {
-    return 'ReadingState(lstTableServingProgress: $lstTableServingProgress, selectedCardIndex: $selectedCardIndex, jlptLevel: $jlptLevel)';
+    return 'ReadingState(lstTableServingProgress: $lstTableServingProgress, selectedCardIndex: $selectedCardIndex, selectedExerciseData: $selectedExerciseData, jlptLevel: $jlptLevel)';
   }
 
   @override
@@ -178,6 +197,9 @@ class _$_ReadingState implements _ReadingState {
             (identical(other.selectedCardIndex, selectedCardIndex) ||
                 const DeepCollectionEquality()
                     .equals(other.selectedCardIndex, selectedCardIndex)) &&
+            (identical(other.selectedExerciseData, selectedExerciseData) ||
+                const DeepCollectionEquality().equals(
+                    other.selectedExerciseData, selectedExerciseData)) &&
             (identical(other.jlptLevel, jlptLevel) ||
                 const DeepCollectionEquality()
                     .equals(other.jlptLevel, jlptLevel)));
@@ -188,6 +210,7 @@ class _$_ReadingState implements _ReadingState {
       runtimeType.hashCode ^
       const DeepCollectionEquality().hash(lstTableServingProgress) ^
       const DeepCollectionEquality().hash(selectedCardIndex) ^
+      const DeepCollectionEquality().hash(selectedExerciseData) ^
       const DeepCollectionEquality().hash(jlptLevel);
 
   @JsonKey(ignore: true)
@@ -205,6 +228,7 @@ abstract class _ReadingState implements ReadingState {
   const factory _ReadingState(
       {List<dynamic> lstTableServingProgress,
       int selectedCardIndex,
+      dynamic selectedExerciseData,
       int jlptLevel}) = _$_ReadingState;
 
   factory _ReadingState.fromJson(Map<String, dynamic> json) =
@@ -215,6 +239,8 @@ abstract class _ReadingState implements ReadingState {
       throw _privateConstructorUsedError;
   @override
   int get selectedCardIndex => throw _privateConstructorUsedError;
+  @override
+  dynamic get selectedExerciseData => throw _privateConstructorUsedError;
   @override
   int get jlptLevel => throw _privateConstructorUsedError;
   @override

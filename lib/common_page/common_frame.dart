@@ -7,6 +7,7 @@ import 'package:japanese_practise_n5/pages/kanji/detail/kanji_detail.dart';
 import 'package:japanese_practise_n5/pages/kanji/list/kanji_list.dart';
 import 'package:japanese_practise_n5/pages/reading/detail/reading_detail.dart';
 import 'package:japanese_practise_n5/pages/reading/list/reading_list.dart';
+import 'package:japanese_practise_n5/pages/reading/reading_n5.dart';
 
 import 'common_page_controller.dart';
 
@@ -149,7 +150,7 @@ late final lstMenu = <Menu>[
   ),
   Menu("Сонсгол", "verbForm", CupertinoIcons.ear, ReadingDetail(),
       ReadingDetail()),
-  Menu("Уншлага", "verbForm", Icons.menu_book, ReadingList(), ReadingDetail()),
+  Menu("Уншлага", "verbForm", Icons.menu_book, ReadingN5(), ReadingDetail()),
   Menu("Ханз", "verbForm", CupertinoIcons.pencil_outline, KanjiList(),
       KanjiDetail()),
 ];
