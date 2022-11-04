@@ -108,9 +108,9 @@ class ReadingList extends HookConsumerWidget {
               border:
                   Border(bottom: BorderSide(width: 1.0, color: Colors.grey))),
           child: ListTile(
-            leading: Icon(Icons.verified_user),
+            leading: const Icon(Icons.verified_user),
             title: Text(nextUser.exerciseName),
-            subtitle: Column(children: [
+            subtitle: Column(children: const [
               // Text(nextUser.answer),
               // Text(nextUser.writeDate.toString())
             ]),

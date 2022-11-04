@@ -17,9 +17,9 @@ class ReadingDetail extends HookConsumerWidget {
 
   TextAddList vocabularyController = TextAddList(
       onClickAdd: () {
-        return AsnwerFieldItem(AfenTextField("Шинэ үг"), Key("1"));
+        return AsnwerFieldItem(AfenTextField("Шинэ үг"), const Key("1"));
       },
-      lstAnswer: [AsnwerFieldItem(AfenTextField("Шинэ үг"), Key("2"))]);
+      lstAnswer: [AsnwerFieldItem(AfenTextField("Шинэ үг"), const Key("2"))]);
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = ref.watch(readingDetailController.notifier);
@@ -30,8 +30,9 @@ class ReadingDetail extends HookConsumerWidget {
         for (var exercise in lstExercises) {
           listReadingWidget.add(getReadingTemplate(exercise));
         }
-      } else
+      } else {
         listReadingWidget.add(getReadingTemplate());
+      }
     }
 
     listReadingExercise = WidgetAddList(
@@ -43,14 +44,15 @@ class ReadingDetail extends HookConsumerWidget {
     if (selectedExerciseData != null) {
       txtExerciseName.controller.text = selectedExerciseData["name"];
     }
+
     return Scaffold(
       body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             txtExerciseName,
-            listReadingExercise,
             vocabularyController,
+            listReadingExercise,
             SaveButton(
               onSave: () {
                 save(controller);
@@ -93,7 +95,6 @@ class ReadingDetail extends HookConsumerWidget {
         answerWidget.field.controller.text = answer["name"];
         lstAnswerNew.add(answerWidget);
       }
-      // txtAnswer.controller.text = exercise["answer"];
       answerController = TextAddList(
           onClickAdd: () {
             return AsnwerFieldItem(AfenTextField("Хариулт"), Key("1"));
@@ -114,7 +115,7 @@ class ReadingDetail extends HookConsumerWidget {
           txtAnswer,
           answerController,
         ),
-        ValueKey("fee.id"));
+        const ValueKey("fee.id"));
   }
 }
 
