@@ -1,0 +1,38 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:japanese_practise_n5/pages/grammar/detail/grammar_detail.dart';
+import 'package:japanese_practise_n5/pages/grammar/list/grammar_list.dart';
+import 'package:japanese_practise_n5/pages/grammar/list/grammar_list_controller.dart';
+
+// pyafm100: 部屋タイプ RoomType
+class Grammar extends HookConsumerWidget {
+  const Grammar({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final controller = ref.read(grammarListController.notifier);
+    ref.watch(grammarListController);
+
+    final future = useMemoized(() => controller.setMasterData());
+    final snapshot = useFuture(future, initialData: null);
+
+    if (snapshot.hasError) return ErrorWidget(snapshot.error!);
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    return Row(
+      children: [
+        Flexible(
+          child: GrammarList(),
+        ),
+        // const VerticalDivider(thickness: 1.0, color: Colors.black12),
+        Flexible(
+          child: GrammarDetail(
+            selectedExerciseData: controller.state.selectedExerciseData,
+          ),
+        )
+      ],
+    );
+  }
+}
