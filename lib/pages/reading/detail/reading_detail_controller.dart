@@ -83,15 +83,15 @@ class ReadingDetailController extends StateNotifier<ReadingState> {
     for (var readingEx in lstExercises) {
       var name = readingEx.txtName.controller.text;
       var content = readingEx.txtContent.controller.text;
-      var question = readingEx.txtQuestion.controller.text;
-      var answer = readingEx.txtAnswer.controller.text;
-      List<String> answers = readingEx.lstAnswerChoiceWidget.lstAnswer
-          .map((e) => e.field.controller.text)
-          .toList();
+      // var question = readingEx.txtQuestion.controller.text;
+      // var answer = readingEx.txtAnswer.controller.text;
+      // List<String> answers = readingEx.lstAnswerChoiceWidget.lstAnswer
+      //     .map((e) => e.field.controller.text)
+      //     .toList();
 
-      ReadingModel reading = ReadingModel(
-          name, content, question, answers, answer, DateTime.now());
-      lstReadingExercises.add(reading);
+      // ReadingModel reading = ReadingModel(
+      //     name, content, question, answers, answer, DateTime.now());
+      // lstReadingExercises.add(reading);
     }
 
     List<Map<String, dynamic>> lstSendItem = [];

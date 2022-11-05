@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:japanese_practise_n5/common/widget/afen_rich_text_field.dart';
 import 'package:japanese_practise_n5/common/widget/afen_text_field.dart';
+import 'package:japanese_practise_n5/common/widget/question_add_list.dart';
 import 'package:japanese_practise_n5/common/widget/save_button.dart';
-import 'package:japanese_practise_n5/common/widget/text_add_list.dart';
 import 'package:japanese_practise_n5/common/widget/widget_add_list.dart';
 import 'package:japanese_practise_n5/pages/reading/detail/reading_detail_controller.dart';
 
@@ -13,13 +13,9 @@ class ReadingDetail extends HookConsumerWidget {
   late dynamic selectedExerciseData;
   List<WidgetGroupItem> listReadingWidget = [];
   AfenTextField txtExerciseName = AfenTextField("Дасгалын дугаар");
+  AfenRichTextField txtVocabularies = AfenRichTextField("Шинэ үг");
   late WidgetAddList listReadingExercise;
 
-  TextAddList vocabularyController = TextAddList(
-      onClickAdd: () {
-        return AsnwerFieldItem(AfenTextField("Шинэ үг"), const Key("1"));
-      },
-      lstAnswer: [AsnwerFieldItem(AfenTextField("Шинэ үг"), const Key("2"))]);
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = ref.watch(readingDetailController.notifier);
@@ -51,8 +47,8 @@ class ReadingDetail extends HookConsumerWidget {
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             txtExerciseName,
-            vocabularyController,
-            listReadingExercise,
+            txtVocabularies,
+            Expanded(child: listReadingExercise),
             SaveButton(
               onSave: () {
                 save(controller);
@@ -67,9 +63,7 @@ class ReadingDetail extends HookConsumerWidget {
         .map((e) => e.widget as ReadingDetailItem)
         .toList();
 
-    var vocabularies = vocabularyController.lstAnswer
-        .map((e) => e.field.controller.text)
-        .toList();
+    var vocabularies = txtVocabularies.controller.text.split("\n");
     controller.writeNew(
         txtExerciseName.controller.text.trim(), items, vocabularies);
   }
@@ -77,44 +71,36 @@ class ReadingDetail extends HookConsumerWidget {
   WidgetGroupItem getReadingTemplate([exercise]) {
     AfenTextField txtName = AfenTextField("Дасгал");
     AfenRichTextField txtContent = AfenRichTextField("эх");
-    AfenTextField txtQuestion = AfenTextField("асуулт");
-    AfenTextField txtAnswer = AfenTextField("хариу");
-    TextAddList answerController = TextAddList(
+    QuestionAddList questionWidget = QuestionAddList(
         onClickAdd: () {
-          return AsnwerFieldItem(AfenTextField("Хариулт"), Key("1"));
+          return QuestionItem(const Key("1"));
         },
-        lstAnswer: [AsnwerFieldItem(AfenTextField("Хариулт"), Key("2"))]);
+        lstQuestion: [QuestionItem(const Key("2"))]);
 
     if (exercise != null) {
-      txtContent.controller.text = exercise["content"];
-      txtQuestion.controller.text = exercise["question"];
-      txtAnswer.controller.text = exercise["answer"];
-      var lstAnswerNew = [];
-      for (var answer in exercise["answers"]) {
-        var answerWidget = AsnwerFieldItem(AfenTextField("Хариулт"), Key("2"));
-        answerWidget.field.controller.text = answer["name"];
-        lstAnswerNew.add(answerWidget);
-      }
-      answerController = TextAddList(
-          onClickAdd: () {
-            return AsnwerFieldItem(AfenTextField("Хариулт"), Key("1"));
-          },
-          lstAnswer: [...lstAnswerNew]);
+      // txtContent.controller.text = exercise["content"];
+      // txtQuestion.controller.text = exercise["question"];
+      // txtAnswer.controller.text = exercise["answer"];
+      // var lstAnswerNew = [];
+      // for (var answer in exercise["answers"]) {
+      //   var answerWidget = AsnwerFieldItem(AfenTextField("Хариулт"), Key("2"));
+      //   answerWidget.field.controller.text = answer["name"];
+      //   lstAnswerNew.add(answerWidget);
+      // }
+      // answerController = TextAddList(
+      //     onClickAdd: () {
+      //       return AsnwerFieldItem(AfenTextField("Хариулт"), Key("1"));
+      //     },
+      //     lstAnswer: [...lstAnswerNew]);
     } else {
-      answerController = TextAddList(
-          onClickAdd: () {
-            return AsnwerFieldItem(AfenTextField("Хариулт"), Key("1"));
-          },
-          lstAnswer: [AsnwerFieldItem(AfenTextField("Хариулт"), Key("2"))]);
+      // questionWidget = TextAddList(
+      //     onClickAdd: () {
+      //       return AsnwerFieldItem(AfenTextField("Хариулт"), Key("1"));
+      //     },
+      //     lstAnswer: [AsnwerFieldItem(AfenTextField("Хариулт"), Key("2"))]);
     }
     return WidgetGroupItem(
-        ReadingDetailItem(
-          txtName,
-          txtContent,
-          txtQuestion,
-          txtAnswer,
-          answerController,
-        ),
+        ReadingDetailItem(txtName, txtContent, questionWidget),
         const ValueKey("fee.id"));
   }
 }
@@ -123,16 +109,17 @@ class ReadingDetailItem extends HookConsumerWidget {
   ReadingDetailItem(
     this.txtName,
     this.txtContent,
-    this.txtQuestion,
-    this.txtAnswer,
-    this.lstAnswerChoiceWidget, {
+    // this.txtQuestion,
+    // this.txtAnswer,
+    this.lstQuestionWidgets, {
     Key? key,
   }) : super(key: key);
   final AfenTextField txtName;
   final AfenRichTextField txtContent;
-  final AfenTextField txtQuestion;
-  final AfenTextField txtAnswer;
-  final TextAddList lstAnswerChoiceWidget;
+  // final AfenTextField txtQuestion;
+  // final AfenTextField txtAnswer;
+
+  final QuestionAddList lstQuestionWidgets;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -150,13 +137,7 @@ class ReadingDetailItem extends HookConsumerWidget {
           children: [
             txtName,
             txtContent,
-            txtQuestion,
-            txtAnswer,
-            SizedBox(
-              height: 330,
-              width: 500,
-              child: lstAnswerChoiceWidget,
-            )
+            lstQuestionWidgets,
           ],
         ));
   }
