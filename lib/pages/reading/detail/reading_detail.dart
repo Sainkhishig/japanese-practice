@@ -4,8 +4,10 @@ import 'package:japanese_practise_n5/common/widget/afen_rich_text_field.dart';
 import 'package:japanese_practise_n5/common/widget/afen_text_field.dart';
 import 'package:japanese_practise_n5/common/widget/question_add_list.dart';
 import 'package:japanese_practise_n5/common/widget/save_button.dart';
+import 'package:japanese_practise_n5/common/widget/text_add_list.dart';
 import 'package:japanese_practise_n5/common/widget/widget_add_list.dart';
 import 'package:japanese_practise_n5/pages/reading/detail/reading_detail_controller.dart';
+import 'package:japanese_practise_n5/pages/reading/model/reading_model.dart';
 
 // pyfm061 : キャンセル規定編集
 class ReadingDetail extends HookConsumerWidget {
@@ -20,10 +22,12 @@ class ReadingDetail extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = ref.watch(readingDetailController.notifier);
     controller.setModelListenable(ref);
+    ReadingExercise? reading;
     if (listReadingWidget.isEmpty) {
       if (selectedExerciseData != null) {
-        var lstExercises = selectedExerciseData["exercises"] as List;
-        for (var exercise in lstExercises) {
+        reading = ReadingExercise.fromRTDB(selectedExerciseData);
+        print("model");
+        for (var exercise in reading.exercises) {
           listReadingWidget.add(getReadingTemplate(exercise));
         }
       } else {
@@ -39,6 +43,7 @@ class ReadingDetail extends HookConsumerWidget {
 
     if (selectedExerciseData != null) {
       txtExerciseName.controller.text = selectedExerciseData["name"];
+      txtVocabularies.controller.text = reading!.vocabularies.join("/n");
     }
 
     return Scaffold(
@@ -67,37 +72,44 @@ class ReadingDetail extends HookConsumerWidget {
         txtExerciseName.controller.text.trim(), items, vocabularies);
   }
 
-  WidgetGroupItem getReadingTemplate([exercise]) {
+  WidgetGroupItem getReadingTemplate([Reading? exercise]) {
     AfenTextField txtName = AfenTextField("Дасгал");
     AfenRichTextField txtContent = AfenRichTextField("эх");
-    QuestionAddList questionWidgetController = QuestionAddList(
+    QuestionAddList questionWidgetController;
+    List<QuestionItem> lstQuestion = [];
+    if (exercise != null) {
+      txtName.controller.text = exercise.section;
+      txtContent.controller.text = exercise.content;
+      lstQuestion = [];
+
+      for (var question in exercise.questions) {
+        var answerWidget = QuestionItem(Key("2"));
+
+        answerWidget.question.controller.text = question.question;
+        answerWidget.answer.controller.text = question.answer;
+        answerWidget.answers = TextAddList(
+            onClickAdd: () {
+              return AsnwerFieldItem(AfenTextField("Хариулт"), Key("1"));
+            },
+            lstAnswer: [
+              ...question.answers.map((e) {
+                print("answerrr:${e}");
+                var answerWidget = AfenTextField("Хариулт");
+
+                answerWidget.controller.text = "$e";
+                return AsnwerFieldItem(answerWidget, Key("1"));
+              })
+            ]);
+        lstQuestion.add(answerWidget);
+      }
+    } else {
+      lstQuestion = [QuestionItem(const Key("2"))];
+    }
+    questionWidgetController = QuestionAddList(
         onClickAdd: () {
           return QuestionItem(const Key("1"));
         },
-        lstQuestion: [QuestionItem(const Key("2"))]);
-
-    if (exercise != null) {
-      // txtContent.controller.text = exercise["content"];
-      // txtQuestion.controller.text = exercise["question"];
-      // txtAnswer.controller.text = exercise["answer"];
-      // var lstAnswerNew = [];
-      // for (var answer in exercise["answers"]) {
-      //   var answerWidget = AsnwerFieldItem(AfenTextField("Хариулт"), Key("2"));
-      //   answerWidget.field.controller.text = answer["name"];
-      //   lstAnswerNew.add(answerWidget);
-      // }
-      // answerController = TextAddList(
-      //     onClickAdd: () {
-      //       return AsnwerFieldItem(AfenTextField("Хариулт"), Key("1"));
-      //     },
-      //     lstAnswer: [...lstAnswerNew]);
-    } else {
-      // questionWidget = TextAddList(
-      //     onClickAdd: () {
-      //       return AsnwerFieldItem(AfenTextField("Хариулт"), Key("1"));
-      //     },
-      //     lstAnswer: [AsnwerFieldItem(AfenTextField("Хариулт"), Key("2"))]);
-    }
+        lstQuestion: lstQuestion);
     return WidgetGroupItem(
         ReadingDetailItem(txtName, txtContent, questionWidgetController),
         const ValueKey("fee.id"));

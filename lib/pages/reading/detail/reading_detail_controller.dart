@@ -41,7 +41,7 @@ class ReadingDetailController extends StateNotifier<ReadingState> {
 
   //#endregion ---------- facility ----------
   //#region ---------- save ----------
-  Future<bool> save(ReadingModel detail) async {
+  Future<bool> save(Reading detail) async {
     try {
       String query = r'''
          mutation saveFacilityPlan($facilityId:ID!,$input: FacilityPlanInput) {
@@ -79,9 +79,9 @@ class ReadingDetailController extends StateNotifier<ReadingState> {
 
   void writeNew(String exerciseName, List<ReadingDetailItem> lstExercises,
       List<String> vocabularies) {
-    List<ReadingModel> lstReadingExercises = [];
+    List<Reading> lstReadingExercises = [];
     for (var readingEx in lstExercises) {
-      var name = readingEx.txtName.controller.text;
+      var section = readingEx.txtName.controller.text;
       var content = readingEx.txtContent.controller.text;
       var questions = readingEx.lstQuestionWidgets.lstQuestion
           .map((question) => Question(
@@ -92,24 +92,20 @@ class ReadingDetailController extends StateNotifier<ReadingState> {
                     .toList(),
               ))
           .toList();
-      // var answer = readingEx.txtAnswer.controller.text;
-      // List<String> answers = readingEx.lstAnswerChoiceWidget.lstAnswer
-      //     .map((e) => e.field.controller.text)
-      //     .toList();
 
-      ReadingModel reading =
-          ReadingModel(name, content, questions, DateTime.now());
+      Reading reading = Reading(section, content, questions);
       lstReadingExercises.add(reading);
     }
 
     List<Map<String, dynamic>> lstSendItem = [];
     lstReadingExercises.map((e) {
       lstSendItem.add({
+        'section': e.section,
         'content': e.content,
         'questions': e.questions.map((quest) => {
               'question': quest.question,
               'answer': quest.answer,
-              'answers': quest.answers.map((e) => {"answer": e}),
+              'answers': quest.answers,
             }),
       });
     }).toList();
@@ -117,7 +113,7 @@ class ReadingDetailController extends StateNotifier<ReadingState> {
     final newData = <String, dynamic>{
       'name': exerciseName,
       'exercises': lstSendItem,
-      'vocabularies': vocabularies.map((e) => {"word": e}).toList(),
+      'vocabularies': vocabularies,
       'time': DateTime.now().microsecondsSinceEpoch
     };
     _database

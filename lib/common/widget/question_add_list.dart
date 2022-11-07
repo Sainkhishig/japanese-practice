@@ -140,7 +140,7 @@ class QuestionItem {
   );
   final AfenTextField answer = AfenTextField("хариу");
 
-  final TextAddList answers = TextAddList(
+  TextAddList answers = TextAddList(
       onClickAdd: () {
         return AsnwerFieldItem(AfenTextField("Хариултууд"), Key("1"));
       },

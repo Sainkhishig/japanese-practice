@@ -1,18 +1,34 @@
-class ReadingModel {
+class ReadingExercise {
   late String name;
+  late List<String> vocabularies;
+  late List<Reading> exercises;
+  late DateTime writeDate;
+
+  ReadingExercise(this.name, this.vocabularies, this.exercises, this.writeDate);
+  factory ReadingExercise.fromRTDB(Map<String, dynamic> data) {
+    return ReadingExercise(
+        data['name'],
+        data['vocabularies'],
+        (data['exercises'] as List).map((e) => Reading.fromRTDB(e)).toList(),
+        data['time'] != null
+            ? DateTime.fromMicrosecondsSinceEpoch(data['time'])
+            : DateTime.now());
+  }
+}
+
+class Reading {
+  late String section;
   late String content;
   late List<Question> questions;
 
   late DateTime writeDate;
-  ReadingModel(this.name, this.content, this.questions, this.writeDate);
-  factory ReadingModel.fromRTDB(Map<String, dynamic> data) {
-    return ReadingModel(
-        data['name'],
-        data['content'],
-        data['questions'],
-        data['writeDate'] != null
-            ? DateTime.fromMicrosecondsSinceEpoch(data['writeDate'])
-            : DateTime.now());
+  Reading(this.section, this.content, this.questions);
+  factory Reading.fromRTDB(Map<String, dynamic> data) {
+    return Reading(
+      data['name'],
+      data['content'],
+      (data['questions'] as List).map((e) => Question.fromRTDB(e)).toList(),
+    );
   }
 }
 

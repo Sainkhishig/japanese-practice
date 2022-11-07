@@ -2,7 +2,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:http/http.dart' as http;
 import 'package:japanese_practise_n5/pages/grammar/detail/grammar_detail.dart';
-import 'package:japanese_practise_n5/pages/reading/detail/reading_detail.dart';
 import 'package:japanese_practise_n5/pages/reading/list/reading_state.dart';
 import 'package:japanese_practise_n5/pages/reading/model/reading_model.dart';
 
@@ -42,7 +41,7 @@ class GrammarDetailController extends StateNotifier<ReadingState> {
 
   //#endregion ---------- facility ----------
   //#region ---------- save ----------
-  Future<bool> save(ReadingModel detail) async {
+  Future<bool> save(Reading detail) async {
     try {
       String query = r'''
          mutation saveFacilityPlan($facilityId:ID!,$input: FacilityPlanInput) {
@@ -80,7 +79,7 @@ class GrammarDetailController extends StateNotifier<ReadingState> {
 
   void writeNew(String exerciseName, List<GrammarDetailItem> lstExercises,
       List<String> vocabularies) {
-    List<ReadingModel> lstReadingExercises = [];
+    List<Reading> lstReadingExercises = [];
     for (var readingEx in lstExercises) {
       var name = readingEx.txtName.controller.text;
       var content = readingEx.txtContent.controller.text;
