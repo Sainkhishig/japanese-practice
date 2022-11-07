@@ -40,8 +40,8 @@ class QuestionAddList extends HookConsumerWidget {
     return StatefulBuilder(builder: (context, setState) {
       return ListView.builder(
           itemCount: lstQuestion.length,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
+          // shrinkWrap: true,
+          // physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (BuildContext context, int index) {
             return Container(
                 decoration: BoxDecoration(
@@ -68,68 +68,65 @@ class QuestionAddList extends HookConsumerWidget {
   }
 
   Widget _buildRowItem(StateSetter setState, QuestionItem rowItem) {
-    Widget content = Expanded(
-      flex: 5,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Visibility(
-                visible: lstQuestion.length != 1 && isRemovable,
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.indeterminate_check_box,
-                    color: Colors.green,
-                    size: 30,
-                  ),
-                  tooltip: 'remove action',
-                  onPressed: () {
-                    setState(
-                      () {
-                        lstQuestion.remove(rowItem);
-                        // onItemRemoved!.call(rowItem);
-                      },
-                    );
-                  },
+    Widget content = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Visibility(
+              visible: lstQuestion.length != 1 && isRemovable,
+              child: IconButton(
+                icon: const Icon(
+                  Icons.indeterminate_check_box,
+                  color: Colors.green,
+                  size: 30,
                 ),
+                tooltip: 'remove action',
+                onPressed: () {
+                  setState(
+                    () {
+                      lstQuestion.remove(rowItem);
+                      // onItemRemoved!.call(rowItem);
+                    },
+                  );
+                },
               ),
-              const SizedBox(
-                width: 10,
-                height: 50,
-              ),
-              Visibility(
-                visible: isCreatable,
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.add_box,
-                    color: Colors.green,
-                    size: 30,
-                  ),
-                  tooltip: 'add action',
-                  onPressed: () {
-                    var newItem = onClickAdd.call();
+            ),
+            const SizedBox(
+              width: 10,
+              height: 50,
+            ),
+            Visibility(
+              visible: isCreatable,
+              child: IconButton(
+                icon: const Icon(
+                  Icons.add_box,
+                  color: Colors.green,
+                  size: 30,
+                ),
+                tooltip: 'add action',
+                onPressed: () {
+                  var newItem = onClickAdd.call();
 
-                    setState(
-                      () {
-                        lstQuestion.add(newItem);
-                      },
-                    );
-                  },
-                ),
+                  setState(
+                    () {
+                      lstQuestion.add(newItem);
+                    },
+                  );
+                },
               ),
-            ],
-          ),
-          rowItem.question,
-          rowItem.answer,
-          SizedBox(
-            height: 330,
-            width: 500,
-            child: rowItem.answers,
-          )
-        ],
-      ),
+            ),
+          ],
+        ),
+        rowItem.question,
+        rowItem.answer,
+        SizedBox(
+          height: 330,
+          width: 500,
+          child: rowItem.answers,
+        )
+      ],
     );
 
     return content;

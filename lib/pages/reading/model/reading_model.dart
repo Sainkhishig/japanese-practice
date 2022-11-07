@@ -1,23 +1,33 @@
 class ReadingModel {
   late String name;
   late String content;
-  late String question;
-  late List<String> answers;
-  late String answer;
+  late List<Question> questions;
+
   late DateTime writeDate;
-  ReadingModel(this.name, this.content, this.question, this.answers,
-      this.answer, this.writeDate);
+  ReadingModel(this.name, this.content, this.questions, this.writeDate);
   factory ReadingModel.fromRTDB(Map<String, dynamic> data) {
-    // print("datakey");
-    // print((data as DataSnapshot).key);
     return ReadingModel(
         data['name'],
         data['content'],
-        data['question'],
-        data['answers'],
-        data['answer'],
+        data['questions'],
         data['writeDate'] != null
             ? DateTime.fromMicrosecondsSinceEpoch(data['writeDate'])
             : DateTime.now());
+  }
+}
+
+class Question {
+  late String question;
+  late String answer;
+  late List<String> answers;
+  Question(this.question, this.answer, this.answers);
+  factory Question.fromRTDB(Map<String, dynamic> data) {
+    // print("datakey");
+    // print((data as DataSnapshot).key);
+    return Question(
+      data['question'],
+      data['answer'],
+      data['answers'],
+    );
   }
 }

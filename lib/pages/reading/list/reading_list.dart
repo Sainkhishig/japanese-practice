@@ -43,7 +43,8 @@ class ReadingList extends HookConsumerWidget {
             builder: (context, snapshot) {
               final tilesList = <Widget>[];
 
-              if (snapshot.hasData) {
+              if ((snapshot.data! as Event).snapshot.value != null &&
+                  snapshot.hasData) {
                 // final datas = (snapshot.data! as Event).snapshot;
                 // print("myUserKeydatas:$datas");
                 final myUsers = Map<String, dynamic>.from(

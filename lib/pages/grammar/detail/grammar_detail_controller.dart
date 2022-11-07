@@ -90,20 +90,20 @@ class GrammarDetailController extends StateNotifier<ReadingState> {
           .map((e) => e.field.controller.text)
           .toList();
 
-      ReadingModel reading = ReadingModel(
-          name, content, question, answers, answer, DateTime.now());
-      lstReadingExercises.add(reading);
+      // ReadingModel reading = ReadingModel(
+      //     name, content, question, answers, answer, DateTime.now());
+      // lstReadingExercises.add(reading);
     }
 
     List<Map<String, dynamic>> lstSendItem = [];
-    lstReadingExercises.map((e) {
-      lstSendItem.add({
-        'content': e.content,
-        'question': e.question,
-        'answer': e.answer,
-        'answers': e.answers.map((e) => {"name": e}).toList(),
-      });
-    }).toList();
+    // lstReadingExercises.map((e) {
+    //   lstSendItem.add({
+    //     'content': e.content,
+    //     'question': e.question,
+    //     'answer': e.answer,
+    //     'answers': e.answers.map((e) => {"name": e}).toList(),
+    //   });
+    // }).toList();
 
     final newData = <String, dynamic>{
       'name': exerciseName,
@@ -121,29 +121,6 @@ class GrammarDetailController extends StateNotifier<ReadingState> {
         .catchError((onError) {
       print('could not saved data');
     });
-  }
-
-  void write(ReadingModel detail) {
-    // var _todoQuery = _database.child("/rReading");
-    List<Map<String, dynamic>> lstExample = [];
-    // bool responseSuccess = false;
-    detail.answers.map((e) => lstExample.add({"name": e})).toList();
-
-    final newData = <String, dynamic>{
-      'content': detail.content,
-      'question': detail.question,
-      'answer': detail.answer,
-      'answers': lstExample,
-      'time': DateTime.now().microsecondsSinceEpoch
-    };
-    _database
-        .child('rReading')
-        .push()
-        .set(newData)
-        .then((value) => {
-              print('new data written'),
-            })
-        .catchError((onError) => print('could not saved data'));
   }
 
   // void write(ReadingModel detail) {

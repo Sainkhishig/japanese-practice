@@ -40,8 +40,8 @@ class ContentWithTitleAddList extends HookConsumerWidget {
     return StatefulBuilder(builder: (context, setState) {
       return ListView.builder(
           itemCount: lstContents.length,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
+          // shrinkWrap: true,
+          // physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (BuildContext context, int index) {
             return Row(children: [
               Visibility(

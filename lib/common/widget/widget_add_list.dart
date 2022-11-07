@@ -38,7 +38,7 @@ class WidgetAddList extends HookConsumerWidget {
       return ListView.builder(
           itemCount: widgetItems.length,
           shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
+          // physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (BuildContext context, int index) {
             return //
                 Card(

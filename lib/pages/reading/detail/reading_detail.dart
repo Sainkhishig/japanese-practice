@@ -42,20 +42,34 @@ class ReadingDetail extends HookConsumerWidget {
     }
 
     return Scaffold(
-      body: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            txtExerciseName,
-            txtVocabularies,
-            Expanded(child: listReadingExercise),
-            SaveButton(
-              onSave: () {
-                save(controller);
-              },
-            )
-          ])),
-    );
+        body: ListView(
+            // crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+          txtExerciseName,
+          txtVocabularies,
+          listReadingExercise,
+          // Expanded(child: listReadingExercise),
+          SaveButton(
+            onSave: () {
+              save(controller);
+            },
+          )
+        ])
+        // SingleChildScrollView(
+        //     scrollDirection: Axis.vertical,
+        //     child:
+        //         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        //       txtExerciseName,
+        //       txtVocabularies,
+        //       listReadingExercise,
+        //       // Expanded(child: listReadingExercise),
+        //       SaveButton(
+        //         onSave: () {
+        //           save(controller);
+        //         },
+        //       )
+        //     ])),
+        );
   }
 
   save(ReadingDetailController controller) {
@@ -71,7 +85,7 @@ class ReadingDetail extends HookConsumerWidget {
   WidgetGroupItem getReadingTemplate([exercise]) {
     AfenTextField txtName = AfenTextField("Дасгал");
     AfenRichTextField txtContent = AfenRichTextField("эх");
-    QuestionAddList questionWidget = QuestionAddList(
+    QuestionAddList questionWidgetController = QuestionAddList(
         onClickAdd: () {
           return QuestionItem(const Key("1"));
         },
@@ -100,7 +114,7 @@ class ReadingDetail extends HookConsumerWidget {
       //     lstAnswer: [AsnwerFieldItem(AfenTextField("Хариулт"), Key("2"))]);
     }
     return WidgetGroupItem(
-        ReadingDetailItem(txtName, txtContent, questionWidget),
+        ReadingDetailItem(txtName, txtContent, questionWidgetController),
         const ValueKey("fee.id"));
   }
 }
@@ -109,15 +123,11 @@ class ReadingDetailItem extends HookConsumerWidget {
   ReadingDetailItem(
     this.txtName,
     this.txtContent,
-    // this.txtQuestion,
-    // this.txtAnswer,
     this.lstQuestionWidgets, {
     Key? key,
   }) : super(key: key);
   final AfenTextField txtName;
   final AfenRichTextField txtContent;
-  // final AfenTextField txtQuestion;
-  // final AfenTextField txtAnswer;
 
   final QuestionAddList lstQuestionWidgets;
 
@@ -137,7 +147,11 @@ class ReadingDetailItem extends HookConsumerWidget {
           children: [
             txtName,
             txtContent,
-            lstQuestionWidgets,
+            SizedBox(
+              height: 600,
+              width: 500,
+              child: lstQuestionWidgets,
+            )
           ],
         ));
   }

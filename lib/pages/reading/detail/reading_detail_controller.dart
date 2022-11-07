@@ -1,6 +1,6 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:http/http.dart' as http;
+
 import 'package:japanese_practise_n5/pages/reading/detail/reading_detail.dart';
 import 'package:japanese_practise_n5/pages/reading/list/reading_state.dart';
 import 'package:japanese_practise_n5/pages/reading/model/reading_model.dart';
@@ -83,24 +83,34 @@ class ReadingDetailController extends StateNotifier<ReadingState> {
     for (var readingEx in lstExercises) {
       var name = readingEx.txtName.controller.text;
       var content = readingEx.txtContent.controller.text;
-      // var question = readingEx.txtQuestion.controller.text;
+      var questions = readingEx.lstQuestionWidgets.lstQuestion
+          .map((question) => Question(
+                question.question.controller.text,
+                question.answer.controller.text,
+                question.answers.lstAnswer
+                    .map((e) => e.field.controller.text)
+                    .toList(),
+              ))
+          .toList();
       // var answer = readingEx.txtAnswer.controller.text;
       // List<String> answers = readingEx.lstAnswerChoiceWidget.lstAnswer
       //     .map((e) => e.field.controller.text)
       //     .toList();
 
-      // ReadingModel reading = ReadingModel(
-      //     name, content, question, answers, answer, DateTime.now());
-      // lstReadingExercises.add(reading);
+      ReadingModel reading =
+          ReadingModel(name, content, questions, DateTime.now());
+      lstReadingExercises.add(reading);
     }
 
     List<Map<String, dynamic>> lstSendItem = [];
     lstReadingExercises.map((e) {
       lstSendItem.add({
         'content': e.content,
-        'question': e.question,
-        'answer': e.answer,
-        'answers': e.answers.map((e) => {"name": e}).toList(),
+        'questions': e.questions.map((quest) => {
+              'question': quest.question,
+              'answer': quest.answer,
+              'answers': quest.answers.map((e) => {"answer": e}),
+            }),
       });
     }).toList();
 
@@ -122,28 +132,28 @@ class ReadingDetailController extends StateNotifier<ReadingState> {
     });
   }
 
-  void write(ReadingModel detail) {
-    // var _todoQuery = _database.child("/rReading");
-    List<Map<String, dynamic>> lstExample = [];
-    // bool responseSuccess = false;
-    detail.answers.map((e) => lstExample.add({"name": e})).toList();
+  // void write(ReadingModel detail) {
+  //   // var _todoQuery = _database.child("/rReading");
+  //   List<Map<String, dynamic>> lstExample = [];
+  //   // bool responseSuccess = false;
+  //   detail.answers.map((e) => lstExample.add({"name": e})).toList();
 
-    final newData = <String, dynamic>{
-      'content': detail.content,
-      'question': detail.question,
-      'answer': detail.answer,
-      'answers': lstExample,
-      'time': DateTime.now().microsecondsSinceEpoch
-    };
-    _database
-        .child('rReading')
-        .push()
-        .set(newData)
-        .then((value) => {
-              print('new data written'),
-            })
-        .catchError((onError) => print('could not saved data'));
-  }
+  //   final newData = <String, dynamic>{
+  //     'content': detail.content,
+  //     'question': detail.question,
+  //     'answer': detail.answer,
+  //     'answers': lstExample,
+  //     'time': DateTime.now().microsecondsSinceEpoch
+  //   };
+  //   _database
+  //       .child('rReading')
+  //       .push()
+  //       .set(newData)
+  //       .then((value) => {
+  //             print('new data written'),
+  //           })
+  //       .catchError((onError) => print('could not saved data'));
+  // }
 
   // void write(ReadingModel detail) {
   //   // var _todoQuery = _database.child("/rReading");
