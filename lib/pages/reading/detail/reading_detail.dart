@@ -54,22 +54,7 @@ class ReadingDetail extends HookConsumerWidget {
               save(controller);
             },
           )
-        ])
-        // SingleChildScrollView(
-        //     scrollDirection: Axis.vertical,
-        //     child:
-        //         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        //       txtExerciseName,
-        //       txtVocabularies,
-        //       listReadingExercise,
-        //       // Expanded(child: listReadingExercise),
-        //       SaveButton(
-        //         onSave: () {
-        //           save(controller);
-        //         },
-        //       )
-        //     ])),
-        );
+        ]));
   }
 
   save(ReadingDetailController controller) {

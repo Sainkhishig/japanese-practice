@@ -30,4 +30,11 @@ class Question {
       data['answers'],
     );
   }
+  toJson() {
+    return {
+      "question": question,
+      "answer": answer,
+      "answers": answers,
+    };
+  }
 }
