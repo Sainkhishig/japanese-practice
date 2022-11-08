@@ -24,11 +24,13 @@ class _$KanjiStateTearOff {
   _KanjiState call(
       {List<dynamic> lstTableServingProgress = const [],
       int selectedCardIndex = 1,
-      int jlptLevel = 1}) {
+      int jlptLevel = 1,
+      dynamic selectedExerciseData = null}) {
     return _KanjiState(
       lstTableServingProgress: lstTableServingProgress,
       selectedCardIndex: selectedCardIndex,
       jlptLevel: jlptLevel,
+      selectedExerciseData: selectedExerciseData,
     );
   }
 
@@ -46,6 +48,7 @@ mixin _$KanjiState {
       throw _privateConstructorUsedError;
   int get selectedCardIndex => throw _privateConstructorUsedError;
   int get jlptLevel => throw _privateConstructorUsedError;
+  dynamic get selectedExerciseData => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -61,7 +64,8 @@ abstract class $KanjiStateCopyWith<$Res> {
   $Res call(
       {List<dynamic> lstTableServingProgress,
       int selectedCardIndex,
-      int jlptLevel});
+      int jlptLevel,
+      dynamic selectedExerciseData});
 }
 
 /// @nodoc
@@ -77,6 +81,7 @@ class _$KanjiStateCopyWithImpl<$Res> implements $KanjiStateCopyWith<$Res> {
     Object? lstTableServingProgress = freezed,
     Object? selectedCardIndex = freezed,
     Object? jlptLevel = freezed,
+    Object? selectedExerciseData = freezed,
   }) {
     return _then(_value.copyWith(
       lstTableServingProgress: lstTableServingProgress == freezed
@@ -91,6 +96,10 @@ class _$KanjiStateCopyWithImpl<$Res> implements $KanjiStateCopyWith<$Res> {
           ? _value.jlptLevel
           : jlptLevel // ignore: cast_nullable_to_non_nullable
               as int,
+      selectedExerciseData: selectedExerciseData == freezed
+          ? _value.selectedExerciseData
+          : selectedExerciseData // ignore: cast_nullable_to_non_nullable
+              as dynamic,
     ));
   }
 }
@@ -104,7 +113,8 @@ abstract class _$KanjiStateCopyWith<$Res> implements $KanjiStateCopyWith<$Res> {
   $Res call(
       {List<dynamic> lstTableServingProgress,
       int selectedCardIndex,
-      int jlptLevel});
+      int jlptLevel,
+      dynamic selectedExerciseData});
 }
 
 /// @nodoc
@@ -122,6 +132,7 @@ class __$KanjiStateCopyWithImpl<$Res> extends _$KanjiStateCopyWithImpl<$Res>
     Object? lstTableServingProgress = freezed,
     Object? selectedCardIndex = freezed,
     Object? jlptLevel = freezed,
+    Object? selectedExerciseData = freezed,
   }) {
     return _then(_KanjiState(
       lstTableServingProgress: lstTableServingProgress == freezed
@@ -136,6 +147,10 @@ class __$KanjiStateCopyWithImpl<$Res> extends _$KanjiStateCopyWithImpl<$Res>
           ? _value.jlptLevel
           : jlptLevel // ignore: cast_nullable_to_non_nullable
               as int,
+      selectedExerciseData: selectedExerciseData == freezed
+          ? _value.selectedExerciseData
+          : selectedExerciseData // ignore: cast_nullable_to_non_nullable
+              as dynamic,
     ));
   }
 }
@@ -146,7 +161,8 @@ class _$_KanjiState implements _KanjiState {
   const _$_KanjiState(
       {this.lstTableServingProgress = const [],
       this.selectedCardIndex = 1,
-      this.jlptLevel = 1});
+      this.jlptLevel = 1,
+      this.selectedExerciseData = null});
 
   factory _$_KanjiState.fromJson(Map<String, dynamic> json) =>
       _$$_KanjiStateFromJson(json);
@@ -160,10 +176,13 @@ class _$_KanjiState implements _KanjiState {
   @JsonKey(defaultValue: 1)
   @override
   final int jlptLevel;
+  @JsonKey(defaultValue: null)
+  @override
+  final dynamic selectedExerciseData;
 
   @override
   String toString() {
-    return 'KanjiState(lstTableServingProgress: $lstTableServingProgress, selectedCardIndex: $selectedCardIndex, jlptLevel: $jlptLevel)';
+    return 'KanjiState(lstTableServingProgress: $lstTableServingProgress, selectedCardIndex: $selectedCardIndex, jlptLevel: $jlptLevel, selectedExerciseData: $selectedExerciseData)';
   }
 
   @override
@@ -179,7 +198,10 @@ class _$_KanjiState implements _KanjiState {
                     .equals(other.selectedCardIndex, selectedCardIndex)) &&
             (identical(other.jlptLevel, jlptLevel) ||
                 const DeepCollectionEquality()
-                    .equals(other.jlptLevel, jlptLevel)));
+                    .equals(other.jlptLevel, jlptLevel)) &&
+            (identical(other.selectedExerciseData, selectedExerciseData) ||
+                const DeepCollectionEquality()
+                    .equals(other.selectedExerciseData, selectedExerciseData)));
   }
 
   @override
@@ -187,7 +209,8 @@ class _$_KanjiState implements _KanjiState {
       runtimeType.hashCode ^
       const DeepCollectionEquality().hash(lstTableServingProgress) ^
       const DeepCollectionEquality().hash(selectedCardIndex) ^
-      const DeepCollectionEquality().hash(jlptLevel);
+      const DeepCollectionEquality().hash(jlptLevel) ^
+      const DeepCollectionEquality().hash(selectedExerciseData);
 
   @JsonKey(ignore: true)
   @override
@@ -204,7 +227,8 @@ abstract class _KanjiState implements KanjiState {
   const factory _KanjiState(
       {List<dynamic> lstTableServingProgress,
       int selectedCardIndex,
-      int jlptLevel}) = _$_KanjiState;
+      int jlptLevel,
+      dynamic selectedExerciseData}) = _$_KanjiState;
 
   factory _KanjiState.fromJson(Map<String, dynamic> json) =
       _$_KanjiState.fromJson;
@@ -216,6 +240,8 @@ abstract class _KanjiState implements KanjiState {
   int get selectedCardIndex => throw _privateConstructorUsedError;
   @override
   int get jlptLevel => throw _privateConstructorUsedError;
+  @override
+  dynamic get selectedExerciseData => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
   _$KanjiStateCopyWith<_KanjiState> get copyWith =>

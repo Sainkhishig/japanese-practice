@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:japanese_practise_n5/hive_db/provider/n5_box_provider.dart';
 import 'package:japanese_practise_n5/pages/kanji/detail/kanji_detail.dart';
+import 'package:japanese_practise_n5/pages/kanji/kanji.dart';
 import 'package:japanese_practise_n5/pages/kanji/list/kanji_list.dart';
 import 'package:japanese_practise_n5/pages/reading/detail/reading_detail.dart';
 import 'package:japanese_practise_n5/pages/reading/list/reading_list.dart';
@@ -151,6 +152,6 @@ late final lstMenu = <Menu>[
   Menu("Сонсгол", "verbForm", CupertinoIcons.ear, ReadingDetail(),
       ReadingDetail()),
   Menu("Уншлага", "verbForm", Icons.menu_book, ReadingN5(), ReadingDetail()),
-  Menu("Ханз", "verbForm", CupertinoIcons.pencil_outline, KanjiList(),
+  Menu("Ханз", "verbForm", CupertinoIcons.pencil_outline, KanjiPage(),
       KanjiDetail()),
 ];
