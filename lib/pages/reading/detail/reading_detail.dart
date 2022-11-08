@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:japanese_practise_n5/common/widget/afen_checkbox.dart';
 import 'package:japanese_practise_n5/common/widget/afen_rich_text_field.dart';
 import 'package:japanese_practise_n5/common/widget/afen_text_field.dart';
+import 'package:japanese_practise_n5/common/widget/answer_option_list%20copy.dart';
 import 'package:japanese_practise_n5/common/widget/question_add_list.dart';
 import 'package:japanese_practise_n5/common/widget/save_button.dart';
-import 'package:japanese_practise_n5/common/widget/text_add_list.dart';
+
 import 'package:japanese_practise_n5/common/widget/widget_add_list.dart';
 import 'package:japanese_practise_n5/pages/reading/detail/reading_detail_controller.dart';
 import 'package:japanese_practise_n5/pages/reading/model/reading_model.dart';
@@ -12,7 +14,7 @@ import 'package:japanese_practise_n5/pages/reading/model/reading_model.dart';
 // pyfm061 : キャンセル規定編集
 class ReadingDetail extends HookConsumerWidget {
   ReadingDetail({Key? key, this.selectedExerciseData}) : super(key: key);
-  late dynamic selectedExerciseData;
+  late ReadingExercise? selectedExerciseData;
   List<WidgetGroupItem> listReadingWidget = [];
   AfenTextField txtExerciseName = AfenTextField("Дасгалын дугаар");
   AfenRichTextField txtVocabularies = AfenRichTextField("Шинэ үг");
@@ -22,12 +24,12 @@ class ReadingDetail extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = ref.watch(readingDetailController.notifier);
     controller.setModelListenable(ref);
-    ReadingExercise? reading;
+    // ReadingExercise? reading;
     if (listReadingWidget.isEmpty) {
       if (selectedExerciseData != null) {
-        reading = ReadingExercise.fromRTDB(selectedExerciseData);
+        // reading = ReadingExercise.fromRTDB(selectedExerciseData);
         print("model");
-        for (var exercise in reading.exercises) {
+        for (var exercise in selectedExerciseData!.exercises) {
           listReadingWidget.add(getReadingTemplate(exercise));
         }
       } else {
@@ -42,8 +44,9 @@ class ReadingDetail extends HookConsumerWidget {
         widgetItems: listReadingWidget);
 
     if (selectedExerciseData != null) {
-      txtExerciseName.controller.text = selectedExerciseData["name"];
-      txtVocabularies.controller.text = reading!.vocabularies.join("/n");
+      txtExerciseName.controller.text = selectedExerciseData!.name;
+      txtVocabularies.controller.text =
+          selectedExerciseData!.vocabularies.join("/n");
     }
 
     return Scaffold(
@@ -86,18 +89,17 @@ class ReadingDetail extends HookConsumerWidget {
         var answerWidget = QuestionItem(Key("2"));
 
         answerWidget.question.controller.text = question.question;
-        answerWidget.answer.controller.text = question.answer;
-        answerWidget.answers = TextAddList(
+        answerWidget.answers = AnswerOptionList(
             onClickAdd: () {
-              return AsnwerFieldItem(AfenTextField("Хариулт"), Key("1"));
+              return AsnwerOptionFieldItem(
+                  AfenTextField("Хариулт"), AfenCheckbox(false), Key("1"));
             },
             lstAnswer: [
               ...question.answers.map((e) {
-                print("answerrr:${e}");
                 var answerWidget = AfenTextField("Хариулт");
-
-                answerWidget.controller.text = "$e";
-                return AsnwerFieldItem(answerWidget, Key("1"));
+                answerWidget.controller.text = e.answer;
+                return AsnwerOptionFieldItem(
+                    answerWidget, AfenCheckbox(e.isTrue), Key("1"));
               })
             ]);
         lstQuestion.add(answerWidget);

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 // import 'package:flutter_reorderable_list/flutter_reorderable_list.dart' as lib;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:japanese_practise_n5/common/widget/afen_checkbox.dart';
 import 'package:japanese_practise_n5/common/widget/afen_text_field.dart';
-import 'package:japanese_practise_n5/common/widget/text_add_list.dart';
+import 'package:japanese_practise_n5/common/widget/answer_option_list%20copy.dart';
 
 enum DraggingMode {
   iOS,
@@ -120,7 +121,6 @@ class QuestionAddList extends HookConsumerWidget {
           ],
         ),
         rowItem.question,
-        rowItem.answer,
         SizedBox(
           height: 330,
           width: 500,
@@ -138,13 +138,16 @@ class QuestionItem {
   final AfenTextField question = AfenTextField(
     "асуулт",
   );
-  final AfenTextField answer = AfenTextField("хариу");
 
-  TextAddList answers = TextAddList(
+  AnswerOptionList answers = AnswerOptionList(
       onClickAdd: () {
-        return AsnwerFieldItem(AfenTextField("Хариултууд"), Key("1"));
+        return AsnwerOptionFieldItem(
+            AfenTextField("Хариултууд"), AfenCheckbox(false), Key("1"));
       },
-      lstAnswer: [AsnwerFieldItem(AfenTextField("Хариултууд"), Key("2"))]);
+      lstAnswer: [
+        AsnwerOptionFieldItem(
+            AfenTextField("Хариултууд"), AfenCheckbox(false), Key("2"))
+      ]);
   final Key key;
 
   QuestionItem.clone(QuestionItem randomObject) : this(randomObject.key);

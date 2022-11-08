@@ -49,9 +49,9 @@ class ReadingDetailController extends StateNotifier<ReadingState> {
       var questions = readingEx.lstQuestionWidgets.lstQuestion
           .map((question) => Question(
                 question.question.controller.text,
-                question.answer.controller.text,
                 question.answers.lstAnswer
-                    .map((e) => e.field.controller.text)
+                    .map((e) => AnswerOption(
+                        e.field.controller.text, e.checkField.isChecked))
                     .toList(),
               ))
           .toList();
@@ -67,8 +67,10 @@ class ReadingDetailController extends StateNotifier<ReadingState> {
         'content': e.content,
         'questions': e.questions.map((quest) => {
               'question': quest.question,
-              'answer': quest.answer,
-              'answers': quest.answers,
+              'answers': quest.answers.map((quest) => {
+                    'answer': quest.answer,
+                    'isTrue': quest.isTrue,
+                  }),
             }),
       });
     }).toList();

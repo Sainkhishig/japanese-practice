@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:japanese_practise_n5/pages/reading/list/reading_list_controller.dart';
+import 'package:japanese_practise_n5/pages/reading/model/reading_model.dart';
 
 // pyfm060 : キャンセル規定一覧 ReadingList
 class ReadingList extends HookConsumerWidget {
@@ -80,8 +81,8 @@ class ReadingList extends HookConsumerWidget {
                         ],
                       ),
                       onTap: () {
-                        // controller.update(keyUser);
-                        controller.setDetailData(value);
+                        var exercise = ReadingExercise.fromRTDB(value);
+                        controller.setDetailData(exercise);
                       },
                     ),
                   );

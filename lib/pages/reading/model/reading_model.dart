@@ -1,6 +1,6 @@
 class ReadingExercise {
   late String name;
-  late List<String> vocabularies;
+  late List vocabularies;
   late List<Reading> exercises;
   late DateTime writeDate;
 
@@ -25,7 +25,7 @@ class Reading {
   Reading(this.section, this.content, this.questions);
   factory Reading.fromRTDB(Map<String, dynamic> data) {
     return Reading(
-      data['name'],
+      data['section'],
       data['content'],
       (data['questions'] as List).map((e) => Question.fromRTDB(e)).toList(),
     );
@@ -34,23 +34,32 @@ class Reading {
 
 class Question {
   late String question;
-  late String answer;
-  late List<String> answers;
-  Question(this.question, this.answer, this.answers);
+  late List<AnswerOption> answers;
+
+  Question(this.question, this.answers);
   factory Question.fromRTDB(Map<String, dynamic> data) {
-    // print("datakey");
-    // print((data as DataSnapshot).key);
     return Question(
       data['question'],
-      data['answer'],
-      data['answers'],
+      (data['answers'] as List).map((e) => AnswerOption.fromRTDB(e)).toList(),
     );
   }
-  toJson() {
-    return {
-      "question": question,
-      "answer": answer,
-      "answers": answers,
-    };
+  // toJson() {
+  //   return {
+  //     "question": question,
+  //     "answers": answers,
+  //   };
+  // }
+}
+
+class AnswerOption {
+  late String answer;
+  late bool isTrue;
+
+  AnswerOption(this.answer, this.isTrue);
+  factory AnswerOption.fromRTDB(Map<String, dynamic> data) {
+    return AnswerOption(
+      data['answer'],
+      data['isTrue'],
+    );
   }
 }
