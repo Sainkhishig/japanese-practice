@@ -18,7 +18,7 @@ class AnswerOptionList extends HookConsumerWidget {
     this.isCreatable = true,
     this.onItemRemoved,
   }) : super(key: key);
-  final List<AsnwerOptionFieldItem> lstAnswer;
+  List<AsnwerOptionFieldItem> lstAnswer;
   final String title;
   final bool isRemovable;
   final bool isCreatable;

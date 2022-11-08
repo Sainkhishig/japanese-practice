@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:japanese_practise_n5/common/widget/afen_checkbox.dart';
 import 'package:japanese_practise_n5/common/widget/afen_text_field.dart';
-import 'package:japanese_practise_n5/common/widget/answer_option_list%20copy.dart';
+import 'package:japanese_practise_n5/common/widget/answer_option_list.dart';
 
 enum DraggingMode {
   iOS,

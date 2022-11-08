@@ -3,7 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:japanese_practise_n5/common/widget/afen_checkbox.dart';
 import 'package:japanese_practise_n5/common/widget/afen_rich_text_field.dart';
 import 'package:japanese_practise_n5/common/widget/afen_text_field.dart';
-import 'package:japanese_practise_n5/common/widget/answer_option_list%20copy.dart';
+import 'package:japanese_practise_n5/common/widget/answer_option_list.dart';
 import 'package:japanese_practise_n5/common/widget/question_add_list.dart';
 import 'package:japanese_practise_n5/common/widget/save_button.dart';
 
@@ -92,19 +92,14 @@ class ReadingDetail extends HookConsumerWidget {
         var answerWidget = QuestionItem(Key("2"));
 
         answerWidget.question.controller.text = question.question;
-        answerWidget.answers = AnswerOptionList(
-            onClickAdd: () {
-              return AsnwerOptionFieldItem(
-                  AfenTextField("Хариулт"), AfenCheckbox(false), Key("1"));
-            },
-            lstAnswer: [
-              ...question.answers.map((e) {
-                var answerWidget = AfenTextField("Хариулт");
-                answerWidget.controller.text = e.answer;
-                return AsnwerOptionFieldItem(
-                    answerWidget, AfenCheckbox(e.isTrue), Key("1"));
-              })
-            ]);
+        answerWidget.answers.lstAnswer = [
+          ...question.answers.map((e) {
+            var answerWidget = AfenTextField("Хариулт");
+            answerWidget.controller.text = e.answer;
+            return AsnwerOptionFieldItem(
+                answerWidget, AfenCheckbox(e.isTrue), Key("1"));
+          })
+        ];
         lstQuestion.add(answerWidget);
       }
     } else {
