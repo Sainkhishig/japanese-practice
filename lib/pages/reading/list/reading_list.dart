@@ -82,6 +82,7 @@ class ReadingList extends HookConsumerWidget {
                       ),
                       onTap: () {
                         var exercise = ReadingExercise.fromRTDB(value);
+                        exercise.key = keyUser;
                         controller.setDetailData(exercise);
                       },
                     ),

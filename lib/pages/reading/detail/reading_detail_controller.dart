@@ -40,8 +40,8 @@ class ReadingDetailController extends StateNotifier<ReadingState> {
     });
   }
 
-  void writeNew(String exerciseName, List<ReadingDetailItem> lstExercises,
-      List<String> vocabularies) {
+  void writeNew(String key, String exerciseName,
+      List<ReadingDetailItem> lstExercises, List<String> vocabularies) {
     List<Reading> lstReadingExercises = [];
     for (var readingEx in lstExercises) {
       var section = readingEx.txtName.controller.text;
@@ -81,15 +81,28 @@ class ReadingDetailController extends StateNotifier<ReadingState> {
       'vocabularies': vocabularies,
       'time': DateTime.now().microsecondsSinceEpoch
     };
-    _database
-        .child('ReadingExercises')
-        .push()
-        .set(newData)
-        .then((value) => {
-              print('new data written'),
-            })
-        .catchError((onError) {
-      print('could not saved data');
-    });
+    if (key.isEmpty) {
+      _database
+          .child('ReadingExercises')
+          .push()
+          .set(newData)
+          .then((value) => {
+                print('new data written'),
+              })
+          .catchError((onError) {
+        print('could not saved data');
+      });
+    } else {
+      var _todoQuery = _database.child("/ReadingExercises");
+      _todoQuery
+          .child("/$key")
+          .set(newData)
+          .then((value) => {
+                print(' data updated'),
+              })
+          .catchError((onError) {
+        print('could not update data');
+      });
+    }
   }
 }

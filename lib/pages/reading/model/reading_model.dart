@@ -1,4 +1,5 @@
 class ReadingExercise {
+  late String key;
   late String name;
   late List vocabularies;
   late List<Reading> exercises;

@@ -72,7 +72,10 @@ class ReadingDetail extends HookConsumerWidget {
 
     var vocabularies = txtVocabularies.controller.text.split("\n");
     controller.writeNew(
-        txtExerciseName.controller.text.trim(), items, vocabularies);
+        selectedExerciseData == null ? "" : selectedExerciseData!.key,
+        txtExerciseName.controller.text.trim(),
+        items,
+        vocabularies);
   }
 
   WidgetGroupItem getReadingTemplate([Reading? exercise]) {

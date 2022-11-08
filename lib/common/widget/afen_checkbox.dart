@@ -22,7 +22,7 @@ class AfenCheckbox extends HookConsumerWidget {
         onChanged: (bool? value) {
           setState(() {
             isChecked = value!;
-            onValueChanged!.call();
+            // onValueChanged!.call();
           });
         },
       );
