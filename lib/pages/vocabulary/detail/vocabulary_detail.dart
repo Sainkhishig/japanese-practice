@@ -8,21 +8,21 @@ import 'package:japanese_practise_n5/common/widget/question_add_list.dart';
 import 'package:japanese_practise_n5/common/widget/save_button.dart';
 import 'package:japanese_practise_n5/common/widget/text_add_list.dart';
 import 'package:japanese_practise_n5/common/widget/widget_add_list.dart';
-import 'package:japanese_practise_n5/pages/kanji/detail/kanji_detail_controller.dart';
-import 'package:japanese_practise_n5/pages/kanji/model/kanji_model.dart';
+import 'package:japanese_practise_n5/pages/vocabulary/detail/vocabulary_detail_controller.dart';
+import 'package:japanese_practise_n5/pages/vocabulary/model/vocabulary_model.dart';
 
 // pyfm061 : キャンセル規定編集
-class KanjiDetail extends HookConsumerWidget {
-  KanjiDetail({Key? key, this.selectedExerciseData}) : super(key: key);
-  late KanjiExercise? selectedExerciseData;
+class VocabularyDetail extends HookConsumerWidget {
+  VocabularyDetail({Key? key, this.selectedExerciseData}) : super(key: key);
+  late VocabularyExercise? selectedExerciseData;
   List<WidgetGroupItem> listReadingWidget = [];
   AfenTextField txtExerciseName = AfenTextField("Дасгалын дугаар");
   AfenRichTextField txtVocabularies = AfenRichTextField("Шинэ үг");
-  late QuestionAddList listKanjiExercise;
+  late QuestionAddList listVocabularyExercise;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final controller = ref.watch(kanjiDetailController.notifier);
+    final controller = ref.watch(vocabularyDetailController.notifier);
     controller.setModelListenable(ref);
     List<QuestionItem> lstQuestion = [];
     if (selectedExerciseData != null) {
@@ -45,7 +45,7 @@ class KanjiDetail extends HookConsumerWidget {
     } else {
       lstQuestion = [QuestionItem(const Key("2"))];
     }
-    listKanjiExercise = QuestionAddList(
+    listVocabularyExercise = QuestionAddList(
         onClickAdd: () {
           return QuestionItem(const Key("1"));
         },
@@ -61,7 +61,7 @@ class KanjiDetail extends HookConsumerWidget {
         body: ListView(children: [
       txtExerciseName,
       txtVocabularies,
-      SizedBox(height: 600, width: 500, child: listKanjiExercise),
+      SizedBox(height: 600, width: 500, child: listVocabularyExercise),
       SaveButton(
         onSave: () {
           save(controller);
@@ -70,18 +70,18 @@ class KanjiDetail extends HookConsumerWidget {
     ]));
   }
 
-  save(KanjiDetailController controller) {
+  save(VocabularyDetailController controller) {
     var vocabularies = txtVocabularies.controller.text.split("\n");
     controller.writeNew(
         selectedExerciseData == null ? "" : selectedExerciseData!.key,
         txtExerciseName.controller.text.trim(),
-        listKanjiExercise.lstQuestion,
+        listVocabularyExercise.lstQuestion,
         vocabularies);
   }
 }
 
-class KanjiDetailItem extends HookConsumerWidget {
-  KanjiDetailItem(
+class VocabularyDetailItem extends HookConsumerWidget {
+  VocabularyDetailItem(
     this.txtName,
     this.txtContent,
     this.txtQuestion,

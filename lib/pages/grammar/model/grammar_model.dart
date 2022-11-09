@@ -1,23 +1,20 @@
-class GrammarModel {
+import 'package:japanese_practise_n5/pages/reading/model/reading_model.dart';
+
+class GrammarExercise {
+  late String key;
   late String name;
-  late String content;
-  late String question;
-  late List<String> answers;
-  late String answer;
+  late List vocabularies;
+  late List<Question> exercises;
   late DateTime writeDate;
-  GrammarModel(this.name, this.content, this.question, this.answers,
-      this.answer, this.writeDate);
-  factory GrammarModel.fromRTDB(Map<String, dynamic> data) {
-    // print("datakey");
-    // print((data as DataSnapshot).key);
-    return GrammarModel(
+
+  GrammarExercise(this.name, this.vocabularies, this.exercises, this.writeDate);
+  factory GrammarExercise.fromRTDB(Map<String, dynamic> data) {
+    return GrammarExercise(
         data['name'],
-        data['content'],
-        data['question'],
-        data['answers'],
-        data['answer'],
-        data['writeDate'] != null
-            ? DateTime.fromMicrosecondsSinceEpoch(data['writeDate'])
+        data['vocabularies'],
+        (data['exercises'] as List).map((e) => Question.fromRTDB(e)).toList(),
+        data['time'] != null
+            ? DateTime.fromMicrosecondsSinceEpoch(data['time'])
             : DateTime.now());
   }
 }

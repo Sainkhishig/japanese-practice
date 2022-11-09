@@ -1,15 +1,16 @@
 import 'package:japanese_practise_n5/pages/reading/model/reading_model.dart';
 
-class KanjiExercise {
+class VocabularyExercise {
   late String key;
   late String name;
   late List vocabularies;
   late List<Question> exercises;
   late DateTime writeDate;
 
-  KanjiExercise(this.name, this.vocabularies, this.exercises, this.writeDate);
-  factory KanjiExercise.fromRTDB(Map<String, dynamic> data) {
-    return KanjiExercise(
+  VocabularyExercise(
+      this.name, this.vocabularies, this.exercises, this.writeDate);
+  factory VocabularyExercise.fromRTDB(Map<String, dynamic> data) {
+    return VocabularyExercise(
         data['name'],
         data['vocabularies'],
         (data['exercises'] as List).map((e) => Question.fromRTDB(e)).toList(),

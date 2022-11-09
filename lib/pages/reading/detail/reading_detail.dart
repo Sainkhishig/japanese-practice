@@ -91,8 +91,8 @@ class ReadingDetail extends HookConsumerWidget {
       for (var question in exercise.questions) {
         var answerWidget = QuestionItem(Key("2"));
 
-        answerWidget.question.controller.text = question.question;
-        answerWidget.answers.lstAnswer = [
+        answerWidget.questionWidget.controller.text = question.question;
+        answerWidget.answerWidget.lstAnswer = [
           ...question.answers.map((e) {
             var answerWidget = AfenTextField("Хариулт");
             answerWidget.controller.text = e.answer;

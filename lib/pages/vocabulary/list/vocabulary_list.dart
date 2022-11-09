@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:japanese_practise_n5/pages/reading/list/reading_list_controller.dart';
-import 'package:japanese_practise_n5/pages/reading/model/reading_model.dart';
+import 'package:japanese_practise_n5/pages/vocabulary/list/vocabulary_list_controller.dart';
+import 'package:japanese_practise_n5/pages/vocabulary/model/vocabulary_model.dart';
 
-// pyfm060 : キャンセル規定一覧 ReadingList
-class ReadingList extends HookConsumerWidget {
-  ReadingList({Key? key}) : super(key: key);
+// pyfm060 : キャンセル規定一覧 VocabularyList
+class VocabularyList extends HookConsumerWidget {
+  VocabularyList({Key? key}) : super(key: key);
   final _database = FirebaseDatabase.instance.reference();
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -14,40 +14,17 @@ class ReadingList extends HookConsumerWidget {
       initialPage: 0,
       keepPage: true,
     );
-    final controller = ref.watch(readingListController.notifier);
-    // controller.setModelListenable(ref);
-    // List<Widget> lsttableServings = [];
-    // for (var element in lstLetters) {
-    //   lsttableServings.add(tabCardBody(element, context, controller));
-    // }
+    final controller = ref.watch(vocabularyListController.notifier);
     return Scaffold(
-      // body: Scaffold(
-      //   body: lsttableServings.isEmpty
-      //       ? showEmptyDataWidget()
-      //       : //Expanded(child: FlashCardListItem(flashcards: flashCard)),
-
-      //       PageView(
-      //           controller: pageController,
-      //           children: lsttableServings,
-      //           onPageChanged: (value) {
-      //             controller.setSelectedIndex(value);
-      //           },
-      //         ),
-      // ),
-      body:
-          //Expanded(child: FlashCardListItem(flashcards: flashCard)),
-          Column(
+      body: Column(
         children: [
-          Text("this is list"),
           StreamBuilder(
-            stream: _database.child('ReadingExercises').orderByKey().onValue,
+            stream: _database.child('VocabularyExercises').orderByKey().onValue,
             builder: (context, snapshot) {
               final tilesList = <Widget>[];
 
               if ((snapshot.data! as Event).snapshot.value != null &&
                   snapshot.hasData) {
-                // final datas = (snapshot.data! as Event).snapshot;
-                // print("myUserKeydatas:$datas");
                 final myUsers = Map<String, dynamic>.from(
                     (snapshot.data! as Event).snapshot.value);
 
@@ -74,7 +51,7 @@ class ReadingList extends HookConsumerWidget {
                         ],
                       ),
                       onTap: () {
-                        var exercise = ReadingExercise.fromRTDB(value);
+                        var exercise = VocabularyExercise.fromRTDB(value);
                         exercise.key = keyUser;
                         controller.setDetailData(exercise);
                       },

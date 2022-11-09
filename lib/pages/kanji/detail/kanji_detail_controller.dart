@@ -43,14 +43,13 @@ class KanjiDetailController extends StateNotifier<KanjiState> {
       List<QuestionItem> lstExercises, List<String> vocabularies) {
     final newData = <String, dynamic>{
       'name': exerciseName,
-      'exercises': lstExercises
-        ..map((quest) => {
-              'question': quest.question,
-              'answers': quest.answers.lstAnswer.map((quest) => {
-                    'answer': quest.field.controller.text,
-                    'isTrue': quest.checkField.isChecked,
-                  }),
-            }),
+      'exercises': lstExercises.map((quest) => {
+            'question': quest.questionWidget.controller.text,
+            'answers': quest.answerWidget.lstAnswer.map((quest) => {
+                  'answer': quest.field.controller.text,
+                  'isTrue': quest.checkField.isChecked,
+                }),
+          }),
       'vocabularies': vocabularies,
       'time': DateTime.now().microsecondsSinceEpoch
     };

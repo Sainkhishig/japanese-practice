@@ -45,6 +45,7 @@ class QuestionAddList extends HookConsumerWidget {
           // physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (BuildContext context, int index) {
             return Container(
+                padding: EdgeInsets.all(5),
                 decoration: BoxDecoration(
                   // borderRadius: BorderRadius.circular(5),
                   border: Border.all(
@@ -52,18 +53,93 @@ class QuestionAddList extends HookConsumerWidget {
                     width: 1,
                   ),
                 ),
-                child: Row(children: [
-                  Visibility(
-                    visible: title.isNotEmpty,
-                    child: Text(title),
+                child: ListTile(
+                  title: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Visibility(
+                        visible: lstQuestion.length != 1 && isRemovable,
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.indeterminate_check_box,
+                            color: Colors.green,
+                            size: 30,
+                          ),
+                          tooltip: 'remove action',
+                          onPressed: () {
+                            setState(
+                              () {
+                                lstQuestion.remove(lstQuestion[index]);
+                                // onItemRemoved!.call(rowItem);
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                        height: 50,
+                      ),
+                      Visibility(
+                        visible: isCreatable,
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.add_box,
+                            color: Colors.green,
+                            size: 30,
+                          ),
+                          tooltip: 'add action',
+                          onPressed: () {
+                            var newItem = onClickAdd.call();
+
+                            setState(
+                              () {
+                                lstQuestion.add(newItem);
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                  Expanded(
-                      flex: 5,
-                      child: _buildRowItem(
-                        setState,
-                        lstQuestion[index],
-                      )),
-                ]));
+                  subtitle: Row(children: [
+                    Expanded(
+                        flex: 5,
+                        child: ListTile(
+                            contentPadding: const EdgeInsets.all(0),
+                            title: const Padding(
+                              padding: EdgeInsets.only(bottom: 8.0),
+                              child: Text(
+                                "Асуулт",
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                lstQuestion[index].questionWidget,
+                                SizedBox(
+                                  height: 300,
+                                  width: 500,
+                                  child: lstQuestion[index].answerWidget,
+                                )
+                              ],
+                            ))),
+                  ]),
+                )
+                // Row(children: [
+                //   Visibility(
+                //     visible: title.isNotEmpty,
+                //     child: Text(title),
+                //   ),
+                //   Expanded(
+                //       flex: 5,
+                //       child: _buildRowItem(
+                //         setState,
+                //         lstQuestion[index],
+                //       )),
+                // ]),
+                );
           });
     });
   }
@@ -120,11 +196,11 @@ class QuestionAddList extends HookConsumerWidget {
             ),
           ],
         ),
-        rowItem.question,
+        rowItem.questionWidget,
         SizedBox(
           height: 330,
           width: 500,
-          child: rowItem.answers,
+          child: rowItem.answerWidget,
         )
       ],
     );
@@ -135,11 +211,11 @@ class QuestionAddList extends HookConsumerWidget {
 
 class QuestionItem {
   QuestionItem(this.key);
-  final AfenTextField question = AfenTextField(
+  final AfenTextField questionWidget = AfenTextField(
     "асуулт",
   );
 
-  AnswerOptionList answers = AnswerOptionList(
+  AnswerOptionList answerWidget = AnswerOptionList(
       onClickAdd: () {
         return AsnwerOptionFieldItem(
             AfenTextField("Хариултууд"), AfenCheckbox(false), Key("1"));

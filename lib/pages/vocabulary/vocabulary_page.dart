@@ -6,8 +6,8 @@ import 'package:japanese_practise_n5/pages/kanji/list/kanji_list.dart';
 import 'package:japanese_practise_n5/pages/kanji/list/kanji_list_controller.dart';
 
 // pyafm100: 部屋タイプ RoomType
-class KanjiPage extends HookConsumerWidget {
-  const KanjiPage({Key? key}) : super(key: key);
+class VocabularyPage extends HookConsumerWidget {
+  const VocabularyPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

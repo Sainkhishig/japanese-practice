@@ -48,8 +48,8 @@ class ReadingDetailController extends StateNotifier<ReadingState> {
       var content = readingEx.txtContent.controller.text;
       var questions = readingEx.lstQuestionWidgets.lstQuestion
           .map((question) => Question(
-                question.question.controller.text,
-                question.answers.lstAnswer
+                question.questionWidget.controller.text,
+                question.answerWidget.lstAnswer
                     .map((e) => AnswerOption(
                         e.field.controller.text, e.checkField.isChecked))
                     .toList(),

@@ -1,32 +1,33 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:japanese_practise_n5/common/widget/question_add_list.dart';
-import 'package:japanese_practise_n5/pages/grammar/list/grammar_state.dart';
+import 'package:japanese_practise_n5/pages/vocabulary/list/vocabulary_state.dart';
 
-final grammarDetailController =
-    StateNotifierProvider<GrammarDetailController, GrammarState>(
-        (ref) => GrammarDetailController(ref: ref));
+final vocabularyDetailController =
+    StateNotifierProvider<VocabularyDetailController, VocabularyState>(
+        (ref) => VocabularyDetailController(ref: ref));
 final _database = FirebaseDatabase.instance.reference();
 
-class GrammarDetailController extends StateNotifier<GrammarState> {
+class VocabularyDetailController extends StateNotifier<VocabularyState> {
   //#region ==================== local variable ====================
   final StateNotifierProviderRef ref;
   //#endregion ==================== local variable ====================
   void setModelListenable(WidgetRef ref) {}
 
   //#region ==================== constructor ====================
-  GrammarDetailController({required this.ref}) : super(const GrammarState());
+  VocabularyDetailController({required this.ref})
+      : super(const VocabularyState());
   //#endregion ==================== constructor ====================
 
   //#region ==================== accessor ====================
-  GrammarState? get facility => state;
+  VocabularyState? get facility => state;
 
   //#endregion ==================== accessor ====================
 
   //#region ==================== method ====================
-  clearState() => state = const GrammarState();
+  clearState() => state = const VocabularyState();
 
-  Future<GrammarState?> getCancellationPolicyDetail(String uniqueId) async {
+  Future<VocabularyState?> getCancellationPolicyDetail(String uniqueId) async {
     // final response = await ref
     //     .read(facilityApiProvider)
     //     .gqlGetCancellationPolicyDetail(uniqueId);
@@ -55,7 +56,7 @@ class GrammarDetailController extends StateNotifier<GrammarState> {
     };
     if (key.isEmpty) {
       _database
-          .child('GrammarExercises')
+          .child('VocabularyExercises')
           .push()
           .set(newData)
           .then((value) => {
@@ -65,7 +66,7 @@ class GrammarDetailController extends StateNotifier<GrammarState> {
         print('could not saved data');
       });
     } else {
-      var _todoQuery = _database.child("/GrammarExercises");
+      var _todoQuery = _database.child("/VocabularyExercises");
       _todoQuery
           .child("/$key")
           .set(newData)

@@ -2,7 +2,7 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
 
-part of 'grammar_state.dart';
+part of 'vocabulary_state.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -13,20 +13,20 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
-GrammarState _$GrammarStateFromJson(Map<String, dynamic> json) {
-  return _GrammarState.fromJson(json);
+VocabularyState _$VocabularyStateFromJson(Map<String, dynamic> json) {
+  return _VocabularyState.fromJson(json);
 }
 
 /// @nodoc
-class _$GrammarStateTearOff {
-  const _$GrammarStateTearOff();
+class _$VocabularyStateTearOff {
+  const _$VocabularyStateTearOff();
 
-  _GrammarState call(
+  _VocabularyState call(
       {List<dynamic> lstTableServingProgress = const [],
       int selectedCardIndex = 1,
       int jlptLevel = 1,
       dynamic selectedExerciseData = null}) {
-    return _GrammarState(
+    return _VocabularyState(
       lstTableServingProgress: lstTableServingProgress,
       selectedCardIndex: selectedCardIndex,
       jlptLevel: jlptLevel,
@@ -34,16 +34,16 @@ class _$GrammarStateTearOff {
     );
   }
 
-  GrammarState fromJson(Map<String, Object> json) {
-    return GrammarState.fromJson(json);
+  VocabularyState fromJson(Map<String, Object> json) {
+    return VocabularyState.fromJson(json);
   }
 }
 
 /// @nodoc
-const $GrammarState = _$GrammarStateTearOff();
+const $VocabularyState = _$VocabularyStateTearOff();
 
 /// @nodoc
-mixin _$GrammarState {
+mixin _$VocabularyState {
   List<dynamic> get lstTableServingProgress =>
       throw _privateConstructorUsedError;
   int get selectedCardIndex => throw _privateConstructorUsedError;
@@ -52,15 +52,15 @@ mixin _$GrammarState {
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $GrammarStateCopyWith<GrammarState> get copyWith =>
+  $VocabularyStateCopyWith<VocabularyState> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $GrammarStateCopyWith<$Res> {
-  factory $GrammarStateCopyWith(
-          GrammarState value, $Res Function(GrammarState) then) =
-      _$GrammarStateCopyWithImpl<$Res>;
+abstract class $VocabularyStateCopyWith<$Res> {
+  factory $VocabularyStateCopyWith(
+          VocabularyState value, $Res Function(VocabularyState) then) =
+      _$VocabularyStateCopyWithImpl<$Res>;
   $Res call(
       {List<dynamic> lstTableServingProgress,
       int selectedCardIndex,
@@ -69,12 +69,13 @@ abstract class $GrammarStateCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$GrammarStateCopyWithImpl<$Res> implements $GrammarStateCopyWith<$Res> {
-  _$GrammarStateCopyWithImpl(this._value, this._then);
+class _$VocabularyStateCopyWithImpl<$Res>
+    implements $VocabularyStateCopyWith<$Res> {
+  _$VocabularyStateCopyWithImpl(this._value, this._then);
 
-  final GrammarState _value;
+  final VocabularyState _value;
   // ignore: unused_field
-  final $Res Function(GrammarState) _then;
+  final $Res Function(VocabularyState) _then;
 
   @override
   $Res call({
@@ -105,11 +106,11 @@ class _$GrammarStateCopyWithImpl<$Res> implements $GrammarStateCopyWith<$Res> {
 }
 
 /// @nodoc
-abstract class _$GrammarStateCopyWith<$Res>
-    implements $GrammarStateCopyWith<$Res> {
-  factory _$GrammarStateCopyWith(
-          _GrammarState value, $Res Function(_GrammarState) then) =
-      __$GrammarStateCopyWithImpl<$Res>;
+abstract class _$VocabularyStateCopyWith<$Res>
+    implements $VocabularyStateCopyWith<$Res> {
+  factory _$VocabularyStateCopyWith(
+          _VocabularyState value, $Res Function(_VocabularyState) then) =
+      __$VocabularyStateCopyWithImpl<$Res>;
   @override
   $Res call(
       {List<dynamic> lstTableServingProgress,
@@ -119,14 +120,15 @@ abstract class _$GrammarStateCopyWith<$Res>
 }
 
 /// @nodoc
-class __$GrammarStateCopyWithImpl<$Res> extends _$GrammarStateCopyWithImpl<$Res>
-    implements _$GrammarStateCopyWith<$Res> {
-  __$GrammarStateCopyWithImpl(
-      _GrammarState _value, $Res Function(_GrammarState) _then)
-      : super(_value, (v) => _then(v as _GrammarState));
+class __$VocabularyStateCopyWithImpl<$Res>
+    extends _$VocabularyStateCopyWithImpl<$Res>
+    implements _$VocabularyStateCopyWith<$Res> {
+  __$VocabularyStateCopyWithImpl(
+      _VocabularyState _value, $Res Function(_VocabularyState) _then)
+      : super(_value, (v) => _then(v as _VocabularyState));
 
   @override
-  _GrammarState get _value => super._value as _GrammarState;
+  _VocabularyState get _value => super._value as _VocabularyState;
 
   @override
   $Res call({
@@ -135,7 +137,7 @@ class __$GrammarStateCopyWithImpl<$Res> extends _$GrammarStateCopyWithImpl<$Res>
     Object? jlptLevel = freezed,
     Object? selectedExerciseData = freezed,
   }) {
-    return _then(_GrammarState(
+    return _then(_VocabularyState(
       lstTableServingProgress: lstTableServingProgress == freezed
           ? _value.lstTableServingProgress
           : lstTableServingProgress // ignore: cast_nullable_to_non_nullable
@@ -158,15 +160,15 @@ class __$GrammarStateCopyWithImpl<$Res> extends _$GrammarStateCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_GrammarState implements _GrammarState {
-  const _$_GrammarState(
+class _$_VocabularyState implements _VocabularyState {
+  const _$_VocabularyState(
       {this.lstTableServingProgress = const [],
       this.selectedCardIndex = 1,
       this.jlptLevel = 1,
       this.selectedExerciseData = null});
 
-  factory _$_GrammarState.fromJson(Map<String, dynamic> json) =>
-      _$$_GrammarStateFromJson(json);
+  factory _$_VocabularyState.fromJson(Map<String, dynamic> json) =>
+      _$$_VocabularyStateFromJson(json);
 
   @JsonKey(defaultValue: const [])
   @override
@@ -183,13 +185,13 @@ class _$_GrammarState implements _GrammarState {
 
   @override
   String toString() {
-    return 'GrammarState(lstTableServingProgress: $lstTableServingProgress, selectedCardIndex: $selectedCardIndex, jlptLevel: $jlptLevel, selectedExerciseData: $selectedExerciseData)';
+    return 'VocabularyState(lstTableServingProgress: $lstTableServingProgress, selectedCardIndex: $selectedCardIndex, jlptLevel: $jlptLevel, selectedExerciseData: $selectedExerciseData)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is _GrammarState &&
+        (other is _VocabularyState &&
             (identical(
                     other.lstTableServingProgress, lstTableServingProgress) ||
                 const DeepCollectionEquality().equals(
@@ -215,24 +217,24 @@ class _$_GrammarState implements _GrammarState {
 
   @JsonKey(ignore: true)
   @override
-  _$GrammarStateCopyWith<_GrammarState> get copyWith =>
-      __$GrammarStateCopyWithImpl<_GrammarState>(this, _$identity);
+  _$VocabularyStateCopyWith<_VocabularyState> get copyWith =>
+      __$VocabularyStateCopyWithImpl<_VocabularyState>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_GrammarStateToJson(this);
+    return _$$_VocabularyStateToJson(this);
   }
 }
 
-abstract class _GrammarState implements GrammarState {
-  const factory _GrammarState(
+abstract class _VocabularyState implements VocabularyState {
+  const factory _VocabularyState(
       {List<dynamic> lstTableServingProgress,
       int selectedCardIndex,
       int jlptLevel,
-      dynamic selectedExerciseData}) = _$_GrammarState;
+      dynamic selectedExerciseData}) = _$_VocabularyState;
 
-  factory _GrammarState.fromJson(Map<String, dynamic> json) =
-      _$_GrammarState.fromJson;
+  factory _VocabularyState.fromJson(Map<String, dynamic> json) =
+      _$_VocabularyState.fromJson;
 
   @override
   List<dynamic> get lstTableServingProgress =>
@@ -245,6 +247,6 @@ abstract class _GrammarState implements GrammarState {
   dynamic get selectedExerciseData => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$GrammarStateCopyWith<_GrammarState> get copyWith =>
+  _$VocabularyStateCopyWith<_VocabularyState> get copyWith =>
       throw _privateConstructorUsedError;
 }

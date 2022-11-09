@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'grammar_state.dart';
+part of 'vocabulary_state.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_GrammarState _$$_GrammarStateFromJson(Map<String, dynamic> json) =>
-    _$_GrammarState(
+_$_VocabularyState _$$_VocabularyStateFromJson(Map<String, dynamic> json) =>
+    _$_VocabularyState(
       lstTableServingProgress:
           json['lstTableServingProgress'] as List<dynamic>? ?? [],
       selectedCardIndex: json['selectedCardIndex'] as int? ?? 1,
@@ -15,7 +15,7 @@ _$_GrammarState _$$_GrammarStateFromJson(Map<String, dynamic> json) =>
       selectedExerciseData: json['selectedExerciseData'] ?? null,
     );
 
-Map<String, dynamic> _$$_GrammarStateToJson(_$_GrammarState instance) =>
+Map<String, dynamic> _$$_VocabularyStateToJson(_$_VocabularyState instance) =>
     <String, dynamic>{
       'lstTableServingProgress': instance.lstTableServingProgress,
       'selectedCardIndex': instance.selectedCardIndex,

@@ -1,18 +1,19 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'grammar_state.dart';
+import 'vocabulary_state.dart';
 
-final grammarListController =
-    StateNotifierProvider<GrammarListController, GrammarState>(
-        (ref) => GrammarListController(ref: ref));
+final vocabularyListController =
+    StateNotifierProvider<VocabularyListController, VocabularyState>(
+        (ref) => VocabularyListController(ref: ref));
 
-class GrammarListController extends StateNotifier<GrammarState> {
+class VocabularyListController extends StateNotifier<VocabularyState> {
   //#region ==================== local variable ====================
   final StateNotifierProviderRef ref;
   //#endregion ==================== local variable ====================
 
   //#region ==================== constructor ====================
-  GrammarListController({required this.ref}) : super(const GrammarState());
+  VocabularyListController({required this.ref})
+      : super(const VocabularyState());
   //#endregion ==================== constructor ====================
 
   //#region ==================== accessor ====================

@@ -153,5 +153,5 @@ late final lstMenu = <Menu>[
       ReadingDetail()),
   Menu("Уншлага", "verbForm", Icons.menu_book, ReadingN5(), ReadingDetail()),
   Menu("Ханз", "verbForm", CupertinoIcons.pencil_outline, KanjiPage(),
-      KanjiDetail()),
+      KanjiPage()),
 ];

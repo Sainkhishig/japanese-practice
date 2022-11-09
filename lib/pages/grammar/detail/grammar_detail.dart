@@ -1,122 +1,82 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:japanese_practise_n5/common/widget/afen_checkbox.dart';
 import 'package:japanese_practise_n5/common/widget/afen_rich_text_field.dart';
 import 'package:japanese_practise_n5/common/widget/afen_text_field.dart';
+import 'package:japanese_practise_n5/common/widget/answer_option_list.dart';
+import 'package:japanese_practise_n5/common/widget/question_add_list.dart';
 import 'package:japanese_practise_n5/common/widget/save_button.dart';
 import 'package:japanese_practise_n5/common/widget/text_add_list.dart';
 import 'package:japanese_practise_n5/common/widget/widget_add_list.dart';
-
-import 'grammar_detail_controller.dart';
+import 'package:japanese_practise_n5/pages/grammar/detail/grammar_detail_controller.dart';
+import 'package:japanese_practise_n5/pages/grammar/model/grammar_model.dart';
 
 // pyfm061 : キャンセル規定編集
 class GrammarDetail extends HookConsumerWidget {
   GrammarDetail({Key? key, this.selectedExerciseData}) : super(key: key);
-  late dynamic selectedExerciseData;
+  late GrammarExercise? selectedExerciseData;
   List<WidgetGroupItem> listReadingWidget = [];
   AfenTextField txtExerciseName = AfenTextField("Дасгалын дугаар");
-  late WidgetAddList listReadingExercise;
+  AfenRichTextField txtVocabularies = AfenRichTextField("Шинэ үг");
+  late QuestionAddList listGrammarExercise;
 
-  TextAddList vocabularyController = TextAddList(
-      onClickAdd: () {
-        return AsnwerFieldItem(AfenTextField("Шинэ үг"), const Key("1"));
-      },
-      lstAnswer: [AsnwerFieldItem(AfenTextField("Шинэ үг"), const Key("2"))]);
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = ref.watch(grammarDetailController.notifier);
     controller.setModelListenable(ref);
-    if (listReadingWidget.isEmpty) {
-      if (selectedExerciseData != null) {
-        var lstExercises = selectedExerciseData["exercises"] as List;
-        for (var exercise in lstExercises) {
-          listReadingWidget.add(getReadingTemplate(exercise));
-        }
-      } else {
-        listReadingWidget.add(getReadingTemplate());
-      }
-    }
+    List<QuestionItem> lstQuestion = [];
+    if (selectedExerciseData != null) {
+      lstQuestion = [];
 
-    listReadingExercise = WidgetAddList(
+      for (var question in selectedExerciseData!.exercises) {
+        var answerWidget = QuestionItem(Key("2"));
+
+        answerWidget.questionWidget.controller.text = question.question;
+        answerWidget.answerWidget.lstAnswer = [
+          ...question.answers.map((e) {
+            var answerWidget = AfenTextField("Хариулт");
+            answerWidget.controller.text = e.answer;
+            return AsnwerOptionFieldItem(
+                answerWidget, AfenCheckbox(e.isTrue), Key("1"));
+          })
+        ];
+        lstQuestion.add(answerWidget);
+      }
+    } else {
+      lstQuestion = [QuestionItem(const Key("2"))];
+    }
+    listGrammarExercise = QuestionAddList(
         onClickAdd: () {
-          return getReadingTemplate();
+          return QuestionItem(const Key("1"));
         },
-        widgetItems: listReadingWidget);
+        lstQuestion: lstQuestion);
 
     if (selectedExerciseData != null) {
-      txtExerciseName.controller.text = selectedExerciseData["name"];
+      txtExerciseName.controller.text = selectedExerciseData!.name;
+      txtVocabularies.controller.text =
+          selectedExerciseData!.vocabularies.join("/n");
     }
 
     return Scaffold(
-      body: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            txtExerciseName,
-            vocabularyController,
-            listReadingExercise,
-            SaveButton(
-              onSave: () {
-                save(controller);
-              },
-            )
-          ])),
-    );
+        body: ListView(children: [
+      txtExerciseName,
+      txtVocabularies,
+      SizedBox(height: 600, width: 500, child: listGrammarExercise),
+      SaveButton(
+        onSave: () {
+          save(controller);
+        },
+      )
+    ]));
   }
 
   save(GrammarDetailController controller) {
-    var items = listReadingExercise.widgetItems
-        .map((e) => e.widget as GrammarDetailItem)
-        .toList();
-
-    var vocabularies = vocabularyController.lstAnswer
-        .map((e) => e.field.controller.text)
-        .toList();
+    var vocabularies = txtVocabularies.controller.text.split("\n");
     controller.writeNew(
-        txtExerciseName.controller.text.trim(), items, vocabularies);
-  }
-
-  WidgetGroupItem getReadingTemplate([exercise]) {
-    AfenTextField txtName = AfenTextField("Дасгал");
-    AfenRichTextField txtContent = AfenRichTextField("эх");
-    AfenTextField txtQuestion = AfenTextField("асуулт");
-    AfenTextField txtAnswer = AfenTextField("хариу");
-    TextAddList answerController = TextAddList(
-        onClickAdd: () {
-          return AsnwerFieldItem(AfenTextField("Хариулт"), Key("1"));
-        },
-        lstAnswer: [AsnwerFieldItem(AfenTextField("Хариулт"), Key("2"))]);
-
-    if (exercise != null) {
-      txtContent.controller.text = exercise["content"];
-      txtQuestion.controller.text = exercise["question"];
-      txtAnswer.controller.text = exercise["answer"];
-      var lstAnswerNew = [];
-      for (var answer in exercise["answers"]) {
-        var answerWidget = AsnwerFieldItem(AfenTextField("Хариулт"), Key("2"));
-        answerWidget.field.controller.text = answer["name"];
-        lstAnswerNew.add(answerWidget);
-      }
-      answerController = TextAddList(
-          onClickAdd: () {
-            return AsnwerFieldItem(AfenTextField("Хариулт"), Key("1"));
-          },
-          lstAnswer: [...lstAnswerNew]);
-    } else {
-      answerController = TextAddList(
-          onClickAdd: () {
-            return AsnwerFieldItem(AfenTextField("Хариулт"), Key("1"));
-          },
-          lstAnswer: [AsnwerFieldItem(AfenTextField("Хариулт"), Key("2"))]);
-    }
-    return WidgetGroupItem(
-        GrammarDetailItem(
-          txtName,
-          txtContent,
-          txtQuestion,
-          txtAnswer,
-          answerController,
-        ),
-        const ValueKey("fee.id"));
+        selectedExerciseData == null ? "" : selectedExerciseData!.key,
+        txtExerciseName.controller.text.trim(),
+        listGrammarExercise.lstQuestion,
+        vocabularies);
   }
 }
 
@@ -142,7 +102,7 @@ class GrammarDetailItem extends HookConsumerWidget {
         title: const Padding(
           padding: EdgeInsets.only(bottom: 8.0),
           child: Text(
-            "Уншлага",
+            "Ханз",
             style: TextStyle(fontSize: 12),
           ),
         ),

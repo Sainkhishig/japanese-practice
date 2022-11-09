@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:japanese_practise_n5/pages/kanji/list/kanji_list_controller.dart';
+import 'package:japanese_practise_n5/pages/kanji/model/kanji_model.dart';
 
 // pyfm060 : キャンセル規定一覧 KanjiList
 class KanjiList extends HookConsumerWidget {
@@ -14,30 +15,9 @@ class KanjiList extends HookConsumerWidget {
       keepPage: true,
     );
     final controller = ref.watch(kanjiListController.notifier);
-    // controller.setModelListenable(ref);
-    // List<Widget> lsttableServings = [];
-    // for (var element in lstLetters) {
-    //   lsttableServings.add(tabCardBody(element, context, controller));
-    // }
     return Scaffold(
-      // body: Scaffold(
-      //   body: lsttableServings.isEmpty
-      //       ? showEmptyDataWidget()
-      //       : //Expanded(child: FlashCardListItem(flashcards: flashCard)),
-
-      //       PageView(
-      //           controller: pageController,
-      //           children: lsttableServings,
-      //           onPageChanged: (value) {
-      //             controller.setSelectedIndex(value);
-      //           },
-      //         ),
-      // ),
-      body:
-          //Expanded(child: FlashCardListItem(flashcards: flashCard)),
-          Column(
+      body: Column(
         children: [
-          Text("this is list"),
           StreamBuilder(
             stream: _database.child('KanjiExercises').orderByKey().onValue,
             builder: (context, snapshot) {
@@ -45,21 +25,12 @@ class KanjiList extends HookConsumerWidget {
 
               if ((snapshot.data! as Event).snapshot.value != null &&
                   snapshot.hasData) {
-                // final datas = (snapshot.data! as Event).snapshot;
-                // print("myUserKeydatas:$datas");
                 final myUsers = Map<String, dynamic>.from(
                     (snapshot.data! as Event).snapshot.value);
 
                 myUsers.forEach((keyUser, value) {
                   print("userkey$keyUser");
-                  KanjiHeader hdr = KanjiHeader();
 
-                  hdr.exerciseName = value["name"];
-                  // hdr.vocabularies = value["vocabularies"];
-                  // hdr.passages = value["exercises"];
-                  // final nextUser =
-                  //     CategoryModel.fromRTDB(Map<String, dynamic>.from(value));
-                  // print("gram*${nextUser.code}");
                   final userTile = Container(
                     decoration: const BoxDecoration(
                         border: Border(
@@ -74,13 +45,15 @@ class KanjiList extends HookConsumerWidget {
                               children: [
                                 Expanded(
                                   flex: 1,
-                                  child: Text(hdr.exerciseName),
+                                  child: Text(value["name"]),
                                 ),
                               ])
                         ],
                       ),
                       onTap: () {
-                        controller.update(keyUser);
+                        var exercise = KanjiExercise.fromRTDB(value);
+                        exercise.key = keyUser;
+                        controller.setDetailData(exercise);
                       },
                     ),
                   );
@@ -94,38 +67,4 @@ class KanjiList extends HookConsumerWidget {
       ),
     );
   }
-
-  Widget tabCardBody(KanjiHeader nextUser) {
-    return Card(
-        child: Column(
-      children: [
-        // Text(
-        //   currentLetter.name,
-        //   style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        // ),
-        Container(
-          decoration: const BoxDecoration(
-              border:
-                  Border(bottom: BorderSide(width: 1.0, color: Colors.grey))),
-          child: ListTile(
-            leading: Icon(Icons.verified_user),
-            title: Text(nextUser.exerciseName),
-            subtitle: Column(children: [
-              // Text(nextUser.answer),
-              // Text(nextUser.writeDate.toString())
-            ]),
-            onTap: () {
-              // controller.update(keyUser);
-            },
-          ),
-        )
-      ],
-    ));
-  }
-}
-
-class KanjiHeader {
-  late String exerciseName;
-  late List<String> vocabularies;
-  late List passages;
 }
