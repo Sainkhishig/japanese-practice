@@ -3,12 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:japanese_practise_n5/hive_db/provider/n5_box_provider.dart';
+import 'package:japanese_practise_n5/pages/grammar/grammar.dart';
 import 'package:japanese_practise_n5/pages/kanji/detail/kanji_detail.dart';
 import 'package:japanese_practise_n5/pages/kanji/kanji.dart';
 import 'package:japanese_practise_n5/pages/kanji/list/kanji_list.dart';
 import 'package:japanese_practise_n5/pages/reading/detail/reading_detail.dart';
 import 'package:japanese_practise_n5/pages/reading/list/reading_list.dart';
 import 'package:japanese_practise_n5/pages/reading/reading_n5.dart';
+import 'package:japanese_practise_n5/pages/vocabulary/vocabulary_page.dart';
 
 import 'common_page_controller.dart';
 
@@ -135,19 +137,14 @@ class Menu {
 }
 
 late final lstMenu = <Menu>[
-  Menu(
-    "Шинэ үг",
-    "vocabulary",
-    Icons.format_list_numbered,
-    const Text("shine uug"),
-    const Text("shine uug"),
-  ),
+  Menu("Шинэ үг", "vocabulary", Icons.format_list_numbered, VocabularyPage(),
+      VocabularyPage()),
   Menu(
     "Дүрэм",
     "grammar",
     Icons.rule,
-    const Text("durem"),
-    const Text("durem"),
+    GrammarPage(),
+    GrammarPage(),
   ),
   Menu("Сонсгол", "verbForm", CupertinoIcons.ear, ReadingDetail(),
       ReadingDetail()),
