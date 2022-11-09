@@ -17,13 +17,15 @@ class GrammarListController extends StateNotifier<GrammarState> {
 
   //#region ==================== accessor ====================
 
-  setSelectedIndex(int index) async {
-    state = state.copyWith(selectedCardIndex: index + 1);
-  }
-
   setDetailData(dynamic currentExercise) async {
     state = state.copyWith(selectedExerciseData: currentExercise);
   }
 
+  clearData() async {
+    state = GrammarState();
+  }
+
+  clearState() => state = const GrammarState();
+  // state = state.copyWith(selectedExerciseData: currentExercise);
   //#endregion ==================== method ====================
 }

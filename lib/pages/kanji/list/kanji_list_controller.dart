@@ -1,4 +1,5 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:japanese_practise_n5/pages/grammar/list/grammar_state.dart';
 
 import 'kanji_state.dart';
 
@@ -17,13 +18,12 @@ class KanjiListController extends StateNotifier<KanjiState> {
 
   //#region ==================== accessor ====================
 
-  setSelectedIndex(int index) async {
-    state = state.copyWith(selectedCardIndex: index + 1);
-  }
-
   setDetailData(dynamic currentExercise) async {
     state = state.copyWith(selectedExerciseData: currentExercise);
   }
 
+  clearData() async {
+    state = const KanjiState();
+  }
   //#endregion ==================== method ====================
 }

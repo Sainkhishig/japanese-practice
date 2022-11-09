@@ -18,13 +18,12 @@ class VocabularyListController extends StateNotifier<VocabularyState> {
 
   //#region ==================== accessor ====================
 
-  setSelectedIndex(int index) async {
-    state = state.copyWith(selectedCardIndex: index + 1);
-  }
-
   setDetailData(dynamic currentExercise) async {
     state = state.copyWith(selectedExerciseData: currentExercise);
   }
 
+  clearData() async {
+    state = const VocabularyState();
+  }
   //#endregion ==================== method ====================
 }

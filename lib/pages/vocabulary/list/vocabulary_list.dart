@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:japanese_practise_n5/common/widget/register_button.dart';
 import 'package:japanese_practise_n5/pages/vocabulary/list/vocabulary_list_controller.dart';
 import 'package:japanese_practise_n5/pages/vocabulary/model/vocabulary_model.dart';
 
@@ -16,6 +17,22 @@ class VocabularyList extends HookConsumerWidget {
     );
     final controller = ref.watch(vocabularyListController.notifier);
     return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        foregroundColor: Colors.blueGrey,
+        backgroundColor: Colors.grey.shade100,
+        automaticallyImplyLeading: false,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            RegisterButton(
+              onClick: () {
+                ref.read(vocabularyListController.notifier).clearData();
+              },
+            ),
+          ],
+        ),
+      ),
       body: Column(
         children: [
           StreamBuilder(
