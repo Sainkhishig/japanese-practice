@@ -26,6 +26,7 @@ class VocabularyDetail extends HookConsumerWidget {
     controller.setModelListenable(ref);
     List<QuestionItem> lstQuestion = [];
     if (selectedExerciseData != null) {
+      print("voca${selectedExerciseData!.name}");
       lstQuestion = [];
 
       for (var question in selectedExerciseData!.exercises) {
@@ -43,6 +44,7 @@ class VocabularyDetail extends HookConsumerWidget {
         lstQuestion.add(answerWidget);
       }
     } else {
+      print("vocnull{selectedExerciseData!.name}");
       lstQuestion = [QuestionItem(const Key("2"))];
     }
     listVocabularyExercise = QuestionAddList(

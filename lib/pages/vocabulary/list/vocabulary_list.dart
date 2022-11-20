@@ -68,6 +68,7 @@ class VocabularyList extends HookConsumerWidget {
                         ],
                       ),
                       onTap: () {
+                        print("vocselected");
                         var exercise = VocabularyExercise.fromRTDB(value);
                         exercise.key = keyUser;
                         controller.setDetailData(exercise);

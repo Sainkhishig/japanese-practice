@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:japanese_practise_n5/pages/kanji/list/kanji_list_controller.dart';
 import 'package:japanese_practise_n5/pages/vocabulary/detail/vocabulary_detail.dart';
 import 'package:japanese_practise_n5/pages/vocabulary/list/vocabulary_list.dart';
+import 'package:japanese_practise_n5/pages/vocabulary/list/vocabulary_list_controller.dart';
 
 // pyafm100: 部屋タイプ RoomType
 class VocabularyPage extends HookConsumerWidget {
@@ -11,8 +11,8 @@ class VocabularyPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final controller = ref.read(kanjiListController.notifier);
-    ref.watch(kanjiListController);
+    final controller = ref.read(vocabularyListController.notifier);
+    ref.watch(vocabularyListController);
     return Row(
       children: [
         Flexible(

@@ -26,6 +26,7 @@ class GrammarDetail extends HookConsumerWidget {
     controller.setModelListenable(ref);
     List<QuestionItem> lstQuestion = [];
     if (selectedExerciseData != null) {
+      print("gam${selectedExerciseData!.name}");
       lstQuestion = [];
 
       for (var question in selectedExerciseData!.exercises) {
@@ -43,6 +44,7 @@ class GrammarDetail extends HookConsumerWidget {
         lstQuestion.add(answerWidget);
       }
     } else {
+      print("gam{selectedExerciseData!.name}");
       lstQuestion = [QuestionItem(const Key("2"))];
     }
     listGrammarExercise = QuestionAddList(

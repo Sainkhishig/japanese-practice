@@ -54,7 +54,7 @@ class KanjiDetail extends HookConsumerWidget {
     if (selectedExerciseData != null) {
       txtExerciseName.controller.text = selectedExerciseData!.name;
       txtVocabularies.controller.text =
-          selectedExerciseData!.vocabularies.join("/n");
+          selectedExerciseData!.vocabularies.join("\n");
     }
 
     return Scaffold(
