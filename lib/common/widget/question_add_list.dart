@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 // import 'package:flutter_reorderable_list/flutter_reorderable_list.dart' as lib;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:japanese_practise_n5/common/widget/afen_checkbox.dart';
+import 'package:japanese_practise_n5/common/widget/afen_rich_text_field.dart';
 import 'package:japanese_practise_n5/common/widget/afen_text_field.dart';
 import 'package:japanese_practise_n5/common/widget/answer_option_list.dart';
 
@@ -32,6 +33,8 @@ class QuestionAddList extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    AfenRichTextField answerGenerateWidget =
+        AfenRichTextField("Хариулт үүсгэх");
     //  CustomDraggableCards(List<ImageItem> lstQuestion) {
     // Returns index of item with given key
     int _indexOfKey(Key key) {
@@ -118,6 +121,47 @@ class QuestionAddList extends HookConsumerWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 lstQuestion[index].questionWidget,
+                                Row(
+                                  children: [
+                                    answerGenerateWidget,
+                                    IconButton(
+                                        onPressed: () {
+                                          setState(
+                                            () {
+                                              var lstAnswers =
+                                                  answerGenerateWidget
+                                                      .controller.text
+                                                      .split("\n");
+
+                                              lstQuestion[index].answerWidget =
+                                                  AnswerOptionList(
+                                                      onClickAdd: () {
+                                                        return AsnwerOptionFieldItem(
+                                                            AfenTextField(
+                                                                "Хариултууд"),
+                                                            AfenCheckbox(false),
+                                                            Key("1"));
+                                                      },
+                                                      lstAnswer: [
+                                                    ...lstAnswers.map((e) {
+                                                      var answerWidget =
+                                                          AfenTextField(
+                                                              "Хариулт");
+                                                      answerWidget
+                                                          .controller.text = e;
+                                                      return AsnwerOptionFieldItem(
+                                                          answerWidget,
+                                                          AfenCheckbox(false),
+                                                          Key("1"));
+                                                    })
+                                                  ]);
+                                              [];
+                                            },
+                                          );
+                                        },
+                                        icon: Icon(Icons.create_outlined))
+                                  ],
+                                ),
                                 SizedBox(
                                   height: 300,
                                   width: 500,
