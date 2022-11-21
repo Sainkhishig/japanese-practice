@@ -57,6 +57,39 @@ class ListeningDetail extends HookConsumerWidget {
           txtVocabularies,
           listListeningExercise,
           // Expanded(child: listListeningExercise),
+          // Center(
+          //   child: LoadingButton(
+          //     widgetKey: "readListeningPath",
+          //     onPressed: () async {
+          //       final storageRef =
+          //           FirebaseStorage.instance.ref().child("bigquery");
+          //       final listResult = await storageRef.listAll();
+
+          //       for (var prefix in listResult.prefixes) {
+          //         print("prefix1::$prefix");
+          //         // The prefixes under storageRef.
+          //         // You can call listAll() recursively on them.
+          //       }
+          //       for (var item in listResult.items) {
+          //         print("prefix::${item.fullPath}");
+          //         print("prefix::${item.name}");
+
+          //         var url = await FirebaseStorage.instance
+          //             .ref()
+          //             .child("${item.fullPath}")
+          //             .getDownloadURL();
+          //         print("imageUR:$url");
+          //         // The items under storageRef.
+          //       }
+          //     },
+          //     textLabel: 'readListeningPath',
+          //   ),
+          // ),
+          // Image.network(
+          //   "https://firebasestorage.googleapis.com/v0/b/hishig-erdem.appspot.com/o/bigquery%2Fplanview.jpg?alt=media&token=ba24ff58-7802-4874-a030-c41979787474",
+          //   height: 300,
+          //   width: 300,
+          // ),
           SaveButton(
             onSave: () {
               save(controller);
