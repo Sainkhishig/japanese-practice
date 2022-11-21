@@ -1,14 +1,18 @@
 class ReadingExercise {
   late String key;
   late String name;
+  late int jlptLevel;
+
   late List vocabularies;
   late List<Reading> exercises;
   late DateTime writeDate;
 
-  ReadingExercise(this.name, this.vocabularies, this.exercises, this.writeDate);
+  ReadingExercise(this.name, this.jlptLevel, this.vocabularies, this.exercises,
+      this.writeDate);
   factory ReadingExercise.fromRTDB(Map<String, dynamic> data) {
     return ReadingExercise(
         data['name'],
+        data['jlptLevel'] ?? 5,
         data['vocabularies'],
         (data['exercises'] as List).map((e) => Reading.fromRTDB(e)).toList(),
         data['time'] != null

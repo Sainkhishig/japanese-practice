@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:japanese_practise_n5/common/widget/register_button.dart';
+import 'package:japanese_practise_n5/common_providers/shared_preferences_provider.dart';
 import 'package:japanese_practise_n5/pages/vocabulary/list/vocabulary_list_controller.dart';
 import 'package:japanese_practise_n5/pages/vocabulary/model/vocabulary_model.dart';
 
@@ -16,6 +17,7 @@ class VocabularyList extends HookConsumerWidget {
       keepPage: true,
     );
     final controller = ref.watch(vocabularyListController.notifier);
+    final prefs = ref.watch(sharedPreferencesProvider);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -36,7 +38,11 @@ class VocabularyList extends HookConsumerWidget {
       body: Column(
         children: [
           StreamBuilder(
-            stream: _database.child('VocabularyExercises').orderByKey().onValue,
+            stream: _database
+                .child('VocabularyExercises')
+                .orderByChild("jlptLevel")
+                .equalTo(prefs.getInt("jlptLevel") ?? 5)
+                .onValue,
             builder: (context, snapshot) {
               final tilesList = <Widget>[];
 

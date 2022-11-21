@@ -1,91 +1,57 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:firebase_database/firebase_database.dart';
-
-import 'package:japanese_practise_n5/pages/listening/detail/listening_detail.dart';
-import 'package:japanese_practise_n5/pages/listening/list/listening_state.dart';
-import 'package:japanese_practise_n5/pages/listening/model/listening_model.dart';
+import 'package:japanese_practise_n5/common/widget/question_add_list.dart';
+import 'package:japanese_practise_n5/common_providers/shared_preferences_provider.dart';
+import 'package:japanese_practise_n5/pages/grammar/list/grammar_state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final listeningDetailController =
-    StateNotifierProvider<ListeningDetailController, ListeningState>(
+    StateNotifierProvider<ListeningDetailController, GrammarState>(
         (ref) => ListeningDetailController(ref: ref));
 final _database = FirebaseDatabase.instance.reference();
 
-class ListeningDetailController extends StateNotifier<ListeningState> {
+class ListeningDetailController extends StateNotifier<GrammarState> {
   //#region ==================== local variable ====================
   final StateNotifierProviderRef ref;
+  late SharedPreferences prefs;
+  int get jlptLevel => prefs.getInt("jlptLevel") ?? 5;
   //#endregion ==================== local variable ====================
   void setModelListenable(WidgetRef ref) {}
 
   //#region ==================== constructor ====================
-  ListeningDetailController({required this.ref})
-      : super(const ListeningState());
+  ListeningDetailController({required this.ref}) : super(const GrammarState()) {
+    prefs = ref.read(sharedPreferencesProvider);
+  }
   //#endregion ==================== constructor ====================
 
   //#region ==================== accessor ====================
-  ListeningState? get facility => state;
+  GrammarState? get facility => state;
 
   //#endregion ==================== accessor ====================
 
   //#region ==================== method ====================
-  clearState() => state = const ListeningState();
+  clearState() => state = const GrammarState();
 
   //#endregion ---------- facility ----------
-  void update() {
-    var _todoQuery = _database.child("/rListening");
-    _todoQuery.child("/-MqqasF6kB1Bszz3TtvU").set({
-      'age': '29',
-      'email': 'updari.ariuka67@gmail.com',
-      'mobile': '07083539202',
-      'name': 'Sainkhishig Ariunaa',
-      'time': DateTime.now().microsecondsSinceEpoch
-    });
-  }
-
+  //#region ---------- save ----------
   void writeNew(String key, String exerciseName,
-      List<ListeningDetailItem> lstExercises, List<String> vocabularies) {
-    List<ListeningSection> lstListeningExercises = [];
-    for (var listeningEx in lstExercises) {
-      var section = listeningEx.txtName.controller.text;
-      var content = listeningEx.txtContent.controller.text;
-      var questions = listeningEx.lstQuestionWidgets.lstQuestion
-          .map((question) => ListeningQuestion(
-                question.questionWidget.controller.text,
-                question.answerWidget.lstAnswer
-                    .map((e) => ListeningAnswerOption(
-                        e.field.controller.text, e.checkField.isChecked))
-                    .toList(),
-              ))
-          .toList();
-
-      ListeningSection listening =
-          ListeningSection(section, content, questions);
-      lstListeningExercises.add(listening);
-    }
-
-    List<Map<String, dynamic>> lstSendItem = [];
-    lstListeningExercises.map((e) {
-      lstSendItem.add({
-        'section': e.section,
-        'content': e.content,
-        'questions': e.questions.map((quest) => {
-              'question': quest.question,
-              'answers': quest.answers.map((quest) => {
-                    'answer': quest.answer,
-                    'isTrue': quest.isTrue,
-                  }),
-            }),
-      });
-    }).toList();
-
+      List<QuestionItem> lstExercises, List<String> vocabularies) {
     final newData = <String, dynamic>{
+      'level': jlptLevel,
       'name': exerciseName,
-      'exercises': lstSendItem,
+      'exercises': lstExercises.map((quest) => {
+            'question': quest.questionWidget.controller.text,
+            'answers': quest.answerWidget.lstAnswer.map((quest) => {
+                  'answer': quest.field.controller.text,
+                  'isTrue': quest.checkField.isChecked,
+                }),
+          }),
       'vocabularies': vocabularies,
       'time': DateTime.now().microsecondsSinceEpoch
     };
     if (key.isEmpty) {
       _database
-          .child('ListeningExercises')
+          .child('ListeningTest')
           .push()
           .set(newData)
           .then((value) => {
@@ -95,7 +61,7 @@ class ListeningDetailController extends StateNotifier<ListeningState> {
         print('could not saved data');
       });
     } else {
-      var _todoQuery = _database.child("/ListeningExercises");
+      var _todoQuery = _database.child("/ListeningTest");
       _todoQuery
           .child("/$key")
           .set(newData)
@@ -107,4 +73,7 @@ class ListeningDetailController extends StateNotifier<ListeningState> {
       });
     }
   }
+
+  //#endregion ---------- save ----------
+  //#endregion ==================== method ====================
 }

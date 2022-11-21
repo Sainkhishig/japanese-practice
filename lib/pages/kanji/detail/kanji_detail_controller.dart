@@ -1,7 +1,9 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:japanese_practise_n5/common/widget/question_add_list.dart';
+import 'package:japanese_practise_n5/common_providers/shared_preferences_provider.dart';
 import 'package:japanese_practise_n5/pages/kanji/list/kanji_state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final kanjiDetailController =
     StateNotifierProvider<KanjiDetailController, KanjiState>(
@@ -11,11 +13,15 @@ final _database = FirebaseDatabase.instance.reference();
 class KanjiDetailController extends StateNotifier<KanjiState> {
   //#region ==================== local variable ====================
   final StateNotifierProviderRef ref;
+  late SharedPreferences prefs;
+  int get jlptLevel => prefs.getInt("jlptLevel") ?? 5;
   //#endregion ==================== local variable ====================
   void setModelListenable(WidgetRef ref) {}
 
   //#region ==================== constructor ====================
-  KanjiDetailController({required this.ref}) : super(const KanjiState());
+  KanjiDetailController({required this.ref}) : super(const KanjiState()) {
+    prefs = ref.read(sharedPreferencesProvider);
+  }
   //#endregion ==================== constructor ====================
 
   //#region ==================== accessor ====================
@@ -42,6 +48,7 @@ class KanjiDetailController extends StateNotifier<KanjiState> {
   void writeNew(String key, String exerciseName,
       List<QuestionItem> lstExercises, List<String> vocabularies) {
     final newData = <String, dynamic>{
+      'level': jlptLevel,
       'name': exerciseName,
       'exercises': lstExercises.map((quest) => {
             'question': quest.questionWidget.controller.text,

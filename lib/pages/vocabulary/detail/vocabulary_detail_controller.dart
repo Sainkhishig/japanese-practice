@@ -1,7 +1,9 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:japanese_practise_n5/common/widget/question_add_list.dart';
+import 'package:japanese_practise_n5/common_providers/shared_preferences_provider.dart';
 import 'package:japanese_practise_n5/pages/vocabulary/list/vocabulary_state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final vocabularyDetailController =
     StateNotifierProvider<VocabularyDetailController, VocabularyState>(
@@ -11,12 +13,16 @@ final _database = FirebaseDatabase.instance.reference();
 class VocabularyDetailController extends StateNotifier<VocabularyState> {
   //#region ==================== local variable ====================
   final StateNotifierProviderRef ref;
+  late SharedPreferences prefs;
+  int get jlptLevel => prefs.getInt("jlptLevel") ?? 5;
   //#endregion ==================== local variable ====================
   void setModelListenable(WidgetRef ref) {}
 
   //#region ==================== constructor ====================
   VocabularyDetailController({required this.ref})
-      : super(const VocabularyState());
+      : super(const VocabularyState()) {
+    prefs = ref.read(sharedPreferencesProvider);
+  }
   //#endregion ==================== constructor ====================
 
   //#region ==================== accessor ====================
@@ -52,6 +58,7 @@ class VocabularyDetailController extends StateNotifier<VocabularyState> {
                 }),
           }),
       'vocabularies': vocabularies,
+      'jlptLevel': jlptLevel,
       'time': DateTime.now().microsecondsSinceEpoch
     };
     if (key.isEmpty) {

@@ -4,12 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:japanese_practise_n5/hive_db/provider/n5_box_provider.dart';
 import 'package:japanese_practise_n5/pages/grammar/grammar.dart';
-import 'package:japanese_practise_n5/pages/kanji/detail/kanji_detail.dart';
 import 'package:japanese_practise_n5/pages/kanji/kanji.dart';
-import 'package:japanese_practise_n5/pages/kanji/list/kanji_list.dart';
 import 'package:japanese_practise_n5/pages/listening/lisyening_page.dart';
-import 'package:japanese_practise_n5/pages/reading/detail/reading_detail.dart';
-import 'package:japanese_practise_n5/pages/reading/list/reading_list.dart';
 import 'package:japanese_practise_n5/pages/reading/reading_n5.dart';
 import 'package:japanese_practise_n5/pages/vocabulary/vocabulary_page.dart';
 
@@ -98,23 +94,40 @@ class CommonPage2 extends HookConsumerWidget {
                 fit: BoxFit.fill,
               ),
             ),
-            // const Text("N5"),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   children: [
-            //     const Text(" Флип горим:"),
-            //     Switch(
-            //       value: controller.state.isGameMode,
-            //       onChanged: (value) {
-            //         controller.setGameMode(!controller.state.isGameMode);
-            //       },
-            //     ),
-            //   ],
-            // )
+            Container(
+              width: 250,
+              padding: const EdgeInsets.only(top: 20),
+              child: DropdownButtonHideUnderline(
+                  child: DropdownButtonFormField(
+                dropdownColor: Colors.white,
+                hint: const Text("түвшингээ сонго"),
+                isDense: true,
+                items: getDropItems(),
+                value: controller.jlptLevel,
+                onChanged: (value) {
+                  var selectedLevel = int.parse("$value");
+                  controller.setJlptLevel(selectedLevel);
+                },
+              )),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  List<DropdownMenuItem<int>> getDropItems() {
+    List<DropdownMenuItem<int>> lstDropItem = [];
+    for (var i = 1; i <= 5; i++) {
+      lstDropItem.add(DropdownMenuItem<int>(
+          alignment: AlignmentDirectional.center,
+          value: i,
+          child: Text(
+            "N$i түвшин",
+            textAlign: TextAlign.center,
+          )));
+    }
+    return lstDropItem;
   }
 
   List<AdaptiveScaffoldDestination> _buildDestinations2(

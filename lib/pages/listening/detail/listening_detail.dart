@@ -6,122 +6,31 @@ import 'package:japanese_practise_n5/common/widget/afen_text_field.dart';
 import 'package:japanese_practise_n5/common/widget/answer_option_list.dart';
 import 'package:japanese_practise_n5/common/widget/question_add_list.dart';
 import 'package:japanese_practise_n5/common/widget/save_button.dart';
-
+import 'package:japanese_practise_n5/common/widget/text_add_list.dart';
 import 'package:japanese_practise_n5/common/widget/widget_add_list.dart';
+
+import 'package:japanese_practise_n5/pages/grammar/model/grammar_model.dart';
 import 'package:japanese_practise_n5/pages/listening/detail/listening_detail_controller.dart';
-import 'package:japanese_practise_n5/pages/listening/model/listening_model.dart';
 
 // pyfm061 : キャンセル規定編集
 class ListeningDetail extends HookConsumerWidget {
   ListeningDetail({Key? key, this.selectedExerciseData}) : super(key: key);
-  late ListeningExercise? selectedExerciseData;
-  List<WidgetGroupItem> listListeningWidget = [];
+  late GrammarExercise? selectedExerciseData;
+  List<WidgetGroupItem> listReadingWidget = [];
   AfenTextField txtExerciseName = AfenTextField("Дасгалын дугаар");
   AfenRichTextField txtVocabularies = AfenRichTextField("Шинэ үг");
-  late WidgetAddList listListeningExercise;
+  late QuestionAddList listGrammarExercise;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = ref.watch(listeningDetailController.notifier);
     controller.setModelListenable(ref);
-    // ListeningExercise? listening;
-    if (listListeningWidget.isEmpty) {
-      if (selectedExerciseData != null) {
-        // listening = ListeningExercise.fromRTDB(selectedExerciseData);
-        print("model");
-        for (var exercise in selectedExerciseData!.exercises) {
-          listListeningWidget.add(getListeningTemplate(exercise));
-        }
-      } else {
-        listListeningWidget.add(getListeningTemplate());
-      }
-    }
-
-    listListeningExercise = WidgetAddList(
-        onClickAdd: () {
-          return getListeningTemplate();
-        },
-        widgetItems: listListeningWidget);
-
-    if (selectedExerciseData != null) {
-      txtExerciseName.controller.text = selectedExerciseData!.name;
-      txtVocabularies.controller.text =
-          selectedExerciseData!.vocabularies.join("\n");
-    }
-
-    return Scaffold(
-        body: ListView(
-            // crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-          txtExerciseName,
-          txtVocabularies,
-          listListeningExercise,
-          // Expanded(child: listListeningExercise),
-          // Center(
-          //   child: LoadingButton(
-          //     widgetKey: "readListeningPath",
-          //     onPressed: () async {
-          //       final storageRef =
-          //           FirebaseStorage.instance.ref().child("bigquery");
-          //       final listResult = await storageRef.listAll();
-
-          //       for (var prefix in listResult.prefixes) {
-          //         print("prefix1::$prefix");
-          //         // The prefixes under storageRef.
-          //         // You can call listAll() recursively on them.
-          //       }
-          //       for (var item in listResult.items) {
-          //         print("prefix::${item.fullPath}");
-          //         print("prefix::${item.name}");
-
-          //         var url = await FirebaseStorage.instance
-          //             .ref()
-          //             .child("${item.fullPath}")
-          //             .getDownloadURL();
-          //         print("imageUR:$url");
-          //         // The items under storageRef.
-          //       }
-          //     },
-          //     textLabel: 'readListeningPath',
-          //   ),
-          // ),
-          // Image.network(
-          //   "https://firebasestorage.googleapis.com/v0/b/hishig-erdem.appspot.com/o/bigquery%2Fplanview.jpg?alt=media&token=ba24ff58-7802-4874-a030-c41979787474",
-          //   height: 300,
-          //   width: 300,
-          // ),
-          SaveButton(
-            onSave: () {
-              save(controller);
-            },
-          )
-        ]));
-  }
-
-  save(ListeningDetailController controller) {
-    var items = listListeningExercise.widgetItems
-        .map((e) => e.widget as ListeningDetailItem)
-        .toList();
-
-    var vocabularies = txtVocabularies.controller.text.split("\n");
-    controller.writeNew(
-        selectedExerciseData == null ? "" : selectedExerciseData!.key,
-        txtExerciseName.controller.text.trim(),
-        items,
-        vocabularies);
-  }
-
-  WidgetGroupItem getListeningTemplate([ListeningSection? exercise]) {
-    AfenTextField txtName = AfenTextField("Дасгал");
-    AfenRichTextField txtContent = AfenRichTextField("эх");
-    QuestionAddList questionWidgetController;
     List<QuestionItem> lstQuestion = [];
-    if (exercise != null) {
-      txtName.controller.text = exercise.section;
-      txtContent.controller.text = exercise.content;
+    if (selectedExerciseData != null) {
+      print("gam${selectedExerciseData!.name}");
       lstQuestion = [];
 
-      for (var question in exercise.questions) {
+      for (var question in selectedExerciseData!.exercises) {
         var answerWidget = QuestionItem(Key("2"));
 
         answerWidget.questionWidget.controller.text = question.question;
@@ -136,53 +45,40 @@ class ListeningDetail extends HookConsumerWidget {
         lstQuestion.add(answerWidget);
       }
     } else {
+      print("gam{selectedExerciseData!.name}");
       lstQuestion = [QuestionItem(const Key("2"))];
     }
-    questionWidgetController = QuestionAddList(
+    listGrammarExercise = QuestionAddList(
         onClickAdd: () {
           return QuestionItem(const Key("1"));
         },
         lstQuestion: lstQuestion);
-    return WidgetGroupItem(
-        ListeningDetailItem(txtName, txtContent, questionWidgetController),
-        const ValueKey("fee.id"));
+
+    if (selectedExerciseData != null) {
+      txtExerciseName.controller.text = selectedExerciseData!.name;
+      txtVocabularies.controller.text =
+          selectedExerciseData!.vocabularies.join("/n");
+    }
+
+    return Scaffold(
+        body: ListView(children: [
+      txtExerciseName,
+      txtVocabularies,
+      SizedBox(height: 600, width: 500, child: listGrammarExercise),
+      SaveButton(
+        onSave: () {
+          save(controller);
+        },
+      )
+    ]));
   }
-}
 
-class ListeningDetailItem extends HookConsumerWidget {
-  ListeningDetailItem(
-    this.txtName,
-    this.txtContent,
-    this.lstQuestionWidgets, {
-    Key? key,
-  }) : super(key: key);
-  final AfenTextField txtName;
-  final AfenRichTextField txtContent;
-
-  final QuestionAddList lstQuestionWidgets;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return ListTile(
-        contentPadding: const EdgeInsets.all(0),
-        title: const Padding(
-          padding: EdgeInsets.only(bottom: 8.0),
-          child: Text(
-            "Уншлага",
-            style: TextStyle(fontSize: 12),
-          ),
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            txtName,
-            txtContent,
-            SizedBox(
-              height: 600,
-              width: 500,
-              child: lstQuestionWidgets,
-            )
-          ],
-        ));
+  save(ListeningDetailController controller) {
+    var vocabularies = txtVocabularies.controller.text.split("\n");
+    controller.writeNew(
+        selectedExerciseData == null ? "" : selectedExerciseData!.key,
+        txtExerciseName.controller.text.trim(),
+        listGrammarExercise.lstQuestion,
+        vocabularies);
   }
 }

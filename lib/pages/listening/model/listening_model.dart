@@ -1,15 +1,17 @@
 class ListeningExercise {
   late String key;
   late String name;
+  late int jlptLevel;
   late List vocabularies;
   late List<ListeningSection> exercises;
   late DateTime writeDate;
 
-  ListeningExercise(
-      this.name, this.vocabularies, this.exercises, this.writeDate);
+  ListeningExercise(this.name, this.jlptLevel, this.vocabularies,
+      this.exercises, this.writeDate);
   factory ListeningExercise.fromRTDB(Map<String, dynamic> data) {
     return ListeningExercise(
         data['name'],
+        data['jlptLevel'] ?? 5,
         data['vocabularies'],
         (data['exercises'] as List)
             .map((e) => ListeningSection.fromRTDB(e))
