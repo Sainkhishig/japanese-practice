@@ -8,40 +8,40 @@ import 'package:japanese_practise_n5/common/widget/question_add_list.dart';
 import 'package:japanese_practise_n5/common/widget/save_button.dart';
 
 import 'package:japanese_practise_n5/common/widget/widget_add_list.dart';
-import 'package:japanese_practise_n5/pages/reading/detail/reading_detail_controller.dart';
-import 'package:japanese_practise_n5/pages/reading/model/reading_model.dart';
+import 'package:japanese_practise_n5/pages/listening/detail/listening_detail_controller.dart';
+import 'package:japanese_practise_n5/pages/listening/model/listening_model.dart';
 
 // pyfm061 : キャンセル規定編集
-class ReadingDetail extends HookConsumerWidget {
-  ReadingDetail({Key? key, this.selectedExerciseData}) : super(key: key);
-  late ReadingExercise? selectedExerciseData;
-  List<WidgetGroupItem> listReadingWidget = [];
+class ListeningDetail extends HookConsumerWidget {
+  ListeningDetail({Key? key, this.selectedExerciseData}) : super(key: key);
+  late ListeningExercise? selectedExerciseData;
+  List<WidgetGroupItem> listListeningWidget = [];
   AfenTextField txtExerciseName = AfenTextField("Дасгалын дугаар");
   AfenRichTextField txtVocabularies = AfenRichTextField("Шинэ үг");
-  late WidgetAddList listReadingExercise;
+  late WidgetAddList listListeningExercise;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final controller = ref.watch(readingDetailController.notifier);
+    final controller = ref.watch(listeningDetailController.notifier);
     controller.setModelListenable(ref);
-    // ReadingExercise? reading;
-    if (listReadingWidget.isEmpty) {
+    // ListeningExercise? listening;
+    if (listListeningWidget.isEmpty) {
       if (selectedExerciseData != null) {
-        // reading = ReadingExercise.fromRTDB(selectedExerciseData);
+        // listening = ListeningExercise.fromRTDB(selectedExerciseData);
         print("model");
         for (var exercise in selectedExerciseData!.exercises) {
-          listReadingWidget.add(getReadingTemplate(exercise));
+          listListeningWidget.add(getListeningTemplate(exercise));
         }
       } else {
-        listReadingWidget.add(getReadingTemplate());
+        listListeningWidget.add(getListeningTemplate());
       }
     }
 
-    listReadingExercise = WidgetAddList(
+    listListeningExercise = WidgetAddList(
         onClickAdd: () {
-          return getReadingTemplate();
+          return getListeningTemplate();
         },
-        widgetItems: listReadingWidget);
+        widgetItems: listListeningWidget);
 
     if (selectedExerciseData != null) {
       txtExerciseName.controller.text = selectedExerciseData!.name;
@@ -55,8 +55,8 @@ class ReadingDetail extends HookConsumerWidget {
             children: [
           txtExerciseName,
           txtVocabularies,
-          listReadingExercise,
-          // Expanded(child: listReadingExercise),
+          listListeningExercise,
+          // Expanded(child: listListeningExercise),
           SaveButton(
             onSave: () {
               save(controller);
@@ -65,9 +65,9 @@ class ReadingDetail extends HookConsumerWidget {
         ]));
   }
 
-  save(ReadingDetailController controller) {
-    var items = listReadingExercise.widgetItems
-        .map((e) => e.widget as ReadingDetailItem)
+  save(ListeningDetailController controller) {
+    var items = listListeningExercise.widgetItems
+        .map((e) => e.widget as ListeningDetailItem)
         .toList();
 
     var vocabularies = txtVocabularies.controller.text.split("\n");
@@ -78,7 +78,7 @@ class ReadingDetail extends HookConsumerWidget {
         vocabularies);
   }
 
-  WidgetGroupItem getReadingTemplate([Reading? exercise]) {
+  WidgetGroupItem getListeningTemplate([ListeningSection? exercise]) {
     AfenTextField txtName = AfenTextField("Дасгал");
     AfenRichTextField txtContent = AfenRichTextField("эх");
     QuestionAddList questionWidgetController;
@@ -111,13 +111,13 @@ class ReadingDetail extends HookConsumerWidget {
         },
         lstQuestion: lstQuestion);
     return WidgetGroupItem(
-        ReadingDetailItem(txtName, txtContent, questionWidgetController),
+        ListeningDetailItem(txtName, txtContent, questionWidgetController),
         const ValueKey("fee.id"));
   }
 }
 
-class ReadingDetailItem extends HookConsumerWidget {
-  ReadingDetailItem(
+class ListeningDetailItem extends HookConsumerWidget {
+  ListeningDetailItem(
     this.txtName,
     this.txtContent,
     this.lstQuestionWidgets, {
