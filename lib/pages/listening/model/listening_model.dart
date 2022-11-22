@@ -1,20 +1,22 @@
 class ListeningExercise {
   late String key;
   late String name;
+  String storagePath = "";
+
   late int jlptLevel;
   late List vocabularies;
-  late List<ListeningSection> exercises;
+  late List<ListeningQuestion> exercises;
   late DateTime writeDate;
 
   ListeningExercise(this.name, this.jlptLevel, this.vocabularies,
       this.exercises, this.writeDate);
   factory ListeningExercise.fromRTDB(Map<String, dynamic> data) {
     return ListeningExercise(
-        data['name'],
+        data['name'] ?? "",
         data['jlptLevel'] ?? 5,
         data['vocabularies'],
         (data['exercises'] as List)
-            .map((e) => ListeningSection.fromRTDB(e))
+            .map((e) => ListeningQuestion.fromRTDB(e))
             .toList(),
         data['time'] != null
             ? DateTime.fromMicrosecondsSinceEpoch(data['time'])
@@ -22,43 +24,23 @@ class ListeningExercise {
   }
 }
 
-class ListeningSection {
-  late String section;
-  late String content;
-  late List<ListeningQuestion> questions;
-
-  late DateTime writeDate;
-  ListeningSection(this.section, this.content, this.questions);
-  factory ListeningSection.fromRTDB(Map<String, dynamic> data) {
-    return ListeningSection(
-      data['section'],
-      data['content'],
-      (data['questions'] as List)
-          .map((e) => ListeningQuestion.fromRTDB(e))
-          .toList(),
-    );
-  }
-}
-
 class ListeningQuestion {
   late String question;
+  late String audioUrl;
+  late String imageUrl;
   late List<ListeningAnswerOption> answers;
 
-  ListeningQuestion(this.question, this.answers);
+  ListeningQuestion(this.question, this.audioUrl, this.imageUrl, this.answers);
   factory ListeningQuestion.fromRTDB(Map<String, dynamic> data) {
     return ListeningQuestion(
       data['question'],
+      data['audioUrl'] ?? "",
+      data['imageUrl'] ?? "",
       (data['answers'] as List)
           .map((e) => ListeningAnswerOption.fromRTDB(e))
           .toList(),
     );
   }
-  // toJson() {
-  //   return {
-  //     "question": question,
-  //     "answers": answers,
-  //   };
-  // }
 }
 
 class ListeningAnswerOption {

@@ -1,6 +1,7 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:japanese_practise_n5/common/widget/question_add_list.dart';
+import 'package:japanese_practise_n5/common/widget/listening_question_add_list.dart';
+
 import 'package:japanese_practise_n5/common_providers/shared_preferences_provider.dart';
 import 'package:japanese_practise_n5/pages/grammar/list/grammar_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,13 +35,22 @@ class ListeningDetailController extends StateNotifier<GrammarState> {
 
   //#endregion ---------- facility ----------
   //#region ---------- save ----------
-  void writeNew(String key, String exerciseName,
-      List<QuestionItem> lstExercises, List<String> vocabularies) {
+  void writeNew(
+      String key,
+      String exerciseName,
+      List<ListeningQuestionItem> lstExercises,
+      List<String> vocabularies,
+      String storagePath) {
+    List<Map<String, dynamic>> lstSendItem = [];
+
     final newData = <String, dynamic>{
-      'level': jlptLevel,
+      'jlptLevel': jlptLevel,
       'name': exerciseName,
+      'storagePath': storagePath,
       'exercises': lstExercises.map((quest) => {
             'question': quest.questionWidget.controller.text,
+            'audioUrl': quest.audioUrl ?? "",
+            'imageUrl': quest.imageUrl ?? "",
             'answers': quest.answerWidget.lstAnswer.map((quest) => {
                   'answer': quest.field.controller.text,
                   'isTrue': quest.checkField.isChecked,

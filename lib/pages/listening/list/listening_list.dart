@@ -56,7 +56,10 @@ class ListeningList extends HookConsumerWidget {
                         ],
                       ),
                       onTap: () {
+                        print("value:");
+                        print("value:$value");
                         var exercise = ListeningExercise.fromRTDB(value);
+                        print("exercise:${exercise.name}");
                         exercise.key = keyUser;
                         controller.setDetailData(exercise);
                       },
