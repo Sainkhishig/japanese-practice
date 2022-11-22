@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:japanese_practise_n5/common/common_widget.dart';
 import 'package:japanese_practise_n5/common/widget/afen_checkbox.dart';
 import 'package:japanese_practise_n5/common/widget/afen_rich_text_field.dart';
 import 'package:japanese_practise_n5/common/widget/afen_text_field.dart';
@@ -65,16 +66,21 @@ class GrammarDetail extends HookConsumerWidget {
       txtVocabularies,
       SizedBox(height: 600, width: 500, child: listGrammarExercise),
       SaveButton(
-        onSave: () {
-          save(controller);
+        onSave: () async {
+          try {
+            await save(controller);
+            showSuccessToastMessage(context, "Амжилттай хадгаллаа");
+          } catch (ex) {
+            showErrorToastMessage(context, "Алдаа гарлаа");
+          }
         },
       )
     ]));
   }
 
-  save(GrammarDetailController controller) {
+  save(GrammarDetailController controller) async {
     var vocabularies = txtVocabularies.controller.text.split("\n");
-    controller.writeNew(
+    await controller.writeNew(
         selectedExerciseData == null ? "" : selectedExerciseData!.key,
         txtExerciseName.controller.text.trim(),
         listGrammarExercise.lstQuestion,

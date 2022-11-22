@@ -36,8 +36,8 @@ class ReadingDetailController extends StateNotifier<ReadingState> {
 
   //#endregion ---------- facility ----------
 
-  void writeNew(String key, String exerciseName,
-      List<ReadingDetailItem> lstExercises, List<String> vocabularies) {
+  Future<void> writeNew(String key, String exerciseName,
+      List<ReadingDetailItem> lstExercises, List<String> vocabularies) async {
     List<Reading> lstReadingExercises = [];
     for (var readingEx in lstExercises) {
       var section = readingEx.txtName.controller.text;
@@ -72,33 +72,26 @@ class ReadingDetailController extends StateNotifier<ReadingState> {
     }).toList();
 
     final newData = <String, dynamic>{
-      'level': jlptLevel,
+      'jlptLevel': jlptLevel,
       'name': exerciseName,
       'exercises': lstSendItem,
       'vocabularies': vocabularies,
       'time': DateTime.now().microsecondsSinceEpoch
     };
     if (key.isEmpty) {
-      _database
-          .child('ReadingExercises')
+      await _database
+          .child('ReadingTest')
           .push()
           .set(newData)
-          .then((value) => {
-                print('new data written'),
-              })
           .catchError((onError) {
         print('could not saved data');
+        throw ("aldaa garlaa");
       });
     } else {
-      var _todoQuery = _database.child("/ReadingExercises");
-      _todoQuery
-          .child("/$key")
-          .set(newData)
-          .then((value) => {
-                print(' data updated'),
-              })
-          .catchError((onError) {
+      var _todoQuery = _database.child("/ReadingTest");
+      await _todoQuery.child("/$key").set(newData).catchError((onError) {
         print('could not update data');
+        throw ("aldaa garlaa");
       });
     }
   }

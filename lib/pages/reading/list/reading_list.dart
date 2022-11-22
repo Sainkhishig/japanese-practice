@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:japanese_practise_n5/common/widget/register_button.dart';
 import 'package:japanese_practise_n5/pages/reading/list/reading_list_controller.dart';
 import 'package:japanese_practise_n5/pages/reading/model/reading_model.dart';
 
@@ -21,26 +22,29 @@ class ReadingList extends HookConsumerWidget {
     //   lsttableServings.add(tabCardBody(element, context, controller));
     // }
     return Scaffold(
-      // body: Scaffold(
-      //   body: lsttableServings.isEmpty
-      //       ? showEmptyDataWidget()
-      //       : //Expanded(child: FlashCardListItem(flashcards: flashCard)),
-
-      //       PageView(
-      //           controller: pageController,
-      //           children: lsttableServings,
-      //           onPageChanged: (value) {
-      //             controller.setSelectedIndex(value);
-      //           },
-      //         ),
-      // ),
+      appBar: AppBar(
+        centerTitle: true,
+        foregroundColor: Colors.blueGrey,
+        backgroundColor: Colors.grey.shade100,
+        automaticallyImplyLeading: false,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            RegisterButton(
+              onClick: () {
+                ref.read(readingListController.notifier).clearData();
+              },
+            ),
+          ],
+        ),
+      ),
       body:
           //Expanded(child: FlashCardListItem(flashcards: flashCard)),
           Column(
         children: [
           Text("this is list"),
           StreamBuilder(
-            stream: _database.child('ReadingExercises').orderByKey().onValue,
+            stream: _database.child('ReadingTest').orderByKey().onValue,
             builder: (context, snapshot) {
               final tilesList = <Widget>[];
 

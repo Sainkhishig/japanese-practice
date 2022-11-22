@@ -46,8 +46,8 @@ class VocabularyDetailController extends StateNotifier<VocabularyState> {
 
   //#endregion ---------- facility ----------
   //#region ---------- save ----------
-  void writeNew(String key, String exerciseName,
-      List<QuestionItem> lstExercises, List<String> vocabularies) {
+  Future<void> writeNew(String key, String exerciseName,
+      List<QuestionItem> lstExercises, List<String> vocabularies) async {
     final newData = <String, dynamic>{
       'name': exerciseName,
       'exercises': lstExercises.map((quest) => {
@@ -62,26 +62,19 @@ class VocabularyDetailController extends StateNotifier<VocabularyState> {
       'time': DateTime.now().microsecondsSinceEpoch
     };
     if (key.isEmpty) {
-      _database
-          .child('VocabularyExercises')
+      await _database
+          .child('VocabularyTest')
           .push()
           .set(newData)
-          .then((value) => {
-                print('new data written'),
-              })
           .catchError((onError) {
         print('could not saved data');
+        throw ("aldaa garlaa");
       });
     } else {
-      var _todoQuery = _database.child("/VocabularyExercises");
-      _todoQuery
-          .child("/$key")
-          .set(newData)
-          .then((value) => {
-                print(' data updated'),
-              })
-          .catchError((onError) {
+      var _todoQuery = _database.child("/VocabularyTest");
+      await _todoQuery.child("/$key").set(newData).catchError((onError) {
         print('could not update data');
+        throw ("aldaa garlaa");
       });
     }
   }

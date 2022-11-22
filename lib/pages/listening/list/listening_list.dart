@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:japanese_practise_n5/common/widget/register_button.dart';
 import 'package:japanese_practise_n5/pages/listening/list/listening_list_controller.dart';
 import 'package:japanese_practise_n5/pages/listening/model/listening_model.dart';
 
@@ -16,6 +17,22 @@ class ListeningList extends HookConsumerWidget {
     );
     final controller = ref.watch(listeningListController.notifier);
     return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        foregroundColor: Colors.blueGrey,
+        backgroundColor: Colors.grey.shade100,
+        automaticallyImplyLeading: false,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            RegisterButton(
+              onClick: () {
+                ref.read(listeningListController.notifier).clearData();
+              },
+            ),
+          ],
+        ),
+      ),
       body:
           //Expanded(child: FlashCardListItem(flashcards: flashCard)),
           Column(

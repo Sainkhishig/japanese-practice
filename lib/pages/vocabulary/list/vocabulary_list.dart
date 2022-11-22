@@ -39,7 +39,7 @@ class VocabularyList extends HookConsumerWidget {
         children: [
           StreamBuilder(
             stream: _database
-                .child('VocabularyExercises')
+                .child('VocabularyTest')
                 .orderByChild("jlptLevel")
                 .equalTo(prefs.getInt("jlptLevel") ?? 5)
                 .onValue,

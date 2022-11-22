@@ -36,7 +36,7 @@ class GrammarList extends HookConsumerWidget {
       body: Column(
         children: [
           StreamBuilder(
-            stream: _database.child('GrammarExercises').orderByKey().onValue,
+            stream: _database.child('GrammarTest').orderByKey().onValue,
             builder: (context, snapshot) {
               final tilesList = <Widget>[];
 

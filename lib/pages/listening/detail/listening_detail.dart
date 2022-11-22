@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:japanese_practise_n5/common/common_widget.dart';
 import 'package:japanese_practise_n5/common/widget/afen_checkbox.dart';
 import 'package:japanese_practise_n5/common/widget/afen_rich_text_field.dart';
 import 'package:japanese_practise_n5/common/widget/afen_text_field.dart';
@@ -29,11 +30,12 @@ class ListeningDetail extends HookConsumerWidget {
       lstQuestion = [];
 
       for (var question in selectedExerciseData!.exercises) {
-        var questItem = ListeningQuestionItem(Key("2"));
+        var questItem = ListeningQuestionItem(
+            Key("2"), question.audioUrl, question.imageUrl);
         // answerWidget.audioUrl = selectedExerciseData
         questItem.questionWidget.controller.text = question.question;
-        questItem.audioUrl == question.audioUrl;
-        questItem.imageUrl == question.imageUrl;
+        print("${question.audioUrl}");
+        print("${question.imageUrl}");
         questItem.answerWidget.lstAnswer = [
           ...question.answers.map((e) {
             var answerWidget = AfenTextField("Хариулт");
@@ -46,11 +48,11 @@ class ListeningDetail extends HookConsumerWidget {
       }
     } else {
       print("gam{selectedExerciseData!.name}");
-      lstQuestion = [ListeningQuestionItem(const Key("2"))];
+      lstQuestion = [ListeningQuestionItem(const Key("2"), "", "")];
     }
     listListeningExercise = ListeningQuestionAddList(
         onClickAdd: () {
-          return ListeningQuestionItem(const Key("1"));
+          return ListeningQuestionItem(const Key("1"), "", "");
         },
         lstQuestion: lstQuestion);
 
@@ -59,7 +61,7 @@ class ListeningDetail extends HookConsumerWidget {
           selectedExerciseData!.storagePath;
       txtExerciseName.controller.text = selectedExerciseData!.name;
       txtVocabularies.controller.text =
-          selectedExerciseData!.vocabularies.join("/n");
+          selectedExerciseData!.vocabularies.join("\n");
     }
 
     return Scaffold(
@@ -68,8 +70,13 @@ class ListeningDetail extends HookConsumerWidget {
       txtVocabularies,
       SizedBox(height: 600, width: 500, child: listListeningExercise),
       SaveButton(
-        onSave: () {
-          save(controller);
+        onSave: () async {
+          try {
+            await save(controller);
+            showSuccessToastMessage(context, "Амжилттай хадгаллаа");
+          } catch (ex) {
+            showErrorToastMessage(context, "Алдаа гарлаа");
+          }
         },
       )
     ]));

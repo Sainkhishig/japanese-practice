@@ -16,6 +16,10 @@ class ListeningListController extends StateNotifier<ListeningState> {
 
   //#region ==================== accessor ====================
 
+  clearData() async {
+    state = const ListeningState();
+  }
+
   setSelectedIndex(int index) async {
     state = state.copyWith(selectedCardIndex: index + 1);
   }

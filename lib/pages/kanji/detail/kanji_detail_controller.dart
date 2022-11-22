@@ -45,10 +45,10 @@ class KanjiDetailController extends StateNotifier<KanjiState> {
 
   //#endregion ---------- facility ----------
   //#region ---------- save ----------
-  void writeNew(String key, String exerciseName,
-      List<QuestionItem> lstExercises, List<String> vocabularies) {
+  Future<void> writeNew(String key, String exerciseName,
+      List<QuestionItem> lstExercises, List<String> vocabularies) async {
     final newData = <String, dynamic>{
-      'level': jlptLevel,
+      'jlptLevel': jlptLevel,
       'name': exerciseName,
       'exercises': lstExercises.map((quest) => {
             'question': quest.questionWidget.controller.text,
@@ -61,26 +61,19 @@ class KanjiDetailController extends StateNotifier<KanjiState> {
       'time': DateTime.now().microsecondsSinceEpoch
     };
     if (key.isEmpty) {
-      _database
-          .child('KanjiExercises')
+      await _database
+          .child('KanjiTest')
           .push()
           .set(newData)
-          .then((value) => {
-                print('new data written'),
-              })
           .catchError((onError) {
         print('could not saved data');
+        throw ("aldaa garlaa");
       });
     } else {
-      var _todoQuery = _database.child("/KanjiExercises");
-      _todoQuery
-          .child("/$key")
-          .set(newData)
-          .then((value) => {
-                print(' data updated'),
-              })
-          .catchError((onError) {
+      var _todoQuery = _database.child("/KanjiTest");
+      await _todoQuery.child("/$key").set(newData).catchError((onError) {
         print('could not update data');
+        throw ("aldaa garlaa");
       });
     }
   }

@@ -15,7 +15,7 @@ abstract class ListeningState with _$ListeningState {
       _$ListeningStateFromJson(json);
 }
 // {
-//       'level': 5,
+//       'jlptLevel': 5,
 //       'word': "ほん",
 //       'kanji': "本",
 //       'translation': "ном",

@@ -36,7 +36,7 @@ class KanjiList extends HookConsumerWidget {
       body: Column(
         children: [
           StreamBuilder(
-            stream: _database.child('KanjiExercises').orderByKey().onValue,
+            stream: _database.child('KanjiTest').orderByKey().onValue,
             builder: (context, snapshot) {
               final tilesList = <Widget>[];
 

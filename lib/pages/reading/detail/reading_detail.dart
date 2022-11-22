@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:japanese_practise_n5/common/common_widget.dart';
 import 'package:japanese_practise_n5/common/widget/afen_checkbox.dart';
 import 'package:japanese_practise_n5/common/widget/afen_rich_text_field.dart';
 import 'package:japanese_practise_n5/common/widget/afen_text_field.dart';
@@ -58,8 +59,13 @@ class ReadingDetail extends HookConsumerWidget {
           listReadingExercise,
           // Expanded(child: listReadingExercise),
           SaveButton(
-            onSave: () {
-              save(controller);
+            onSave: () async {
+              try {
+                await save(controller);
+                showSuccessToastMessage(context, "Амжилттай хадгаллаа");
+              } catch (ex) {
+                showErrorToastMessage(context, "Алдаа гарлаа");
+              }
             },
           )
         ]));

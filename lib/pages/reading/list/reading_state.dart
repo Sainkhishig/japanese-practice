@@ -15,7 +15,7 @@ abstract class ReadingState with _$ReadingState {
       _$ReadingStateFromJson(json);
 }
 // {
-//       'level': 5,
+//       'jlptLevel': 5,
 //       'word': "ほん",
 //       'kanji': "本",
 //       'translation': "ном",

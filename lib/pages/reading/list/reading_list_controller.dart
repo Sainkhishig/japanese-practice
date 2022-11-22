@@ -20,6 +20,10 @@ class ReadingListController extends StateNotifier<ReadingState> {
     state = state.copyWith(selectedCardIndex: index + 1);
   }
 
+  clearData() async {
+    state = const ReadingState();
+  }
+
   setDetailData(dynamic currentExercise) async {
     state = state.copyWith(selectedExerciseData: currentExercise);
   }

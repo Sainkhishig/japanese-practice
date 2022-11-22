@@ -35,12 +35,12 @@ class ListeningDetailController extends StateNotifier<GrammarState> {
 
   //#endregion ---------- facility ----------
   //#region ---------- save ----------
-  void writeNew(
+  Future<void> writeNew(
       String key,
       String exerciseName,
       List<ListeningQuestionItem> lstExercises,
       List<String> vocabularies,
-      String storagePath) {
+      String storagePath) async {
     List<Map<String, dynamic>> lstSendItem = [];
 
     final newData = <String, dynamic>{
@@ -60,26 +60,19 @@ class ListeningDetailController extends StateNotifier<GrammarState> {
       'time': DateTime.now().microsecondsSinceEpoch
     };
     if (key.isEmpty) {
-      _database
+      await _database
           .child('ListeningTest')
           .push()
           .set(newData)
-          .then((value) => {
-                print('new data written'),
-              })
           .catchError((onError) {
         print('could not saved data');
+        throw ("aldaa garlaa");
       });
     } else {
       var _todoQuery = _database.child("/ListeningTest");
-      _todoQuery
-          .child("/$key")
-          .set(newData)
-          .then((value) => {
-                print(' data updated'),
-              })
-          .catchError((onError) {
+      await _todoQuery.child("/$key").set(newData).catchError((onError) {
         print('could not update data');
+        throw ("aldaa garlaa");
       });
     }
   }

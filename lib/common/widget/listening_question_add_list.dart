@@ -166,7 +166,8 @@ class ListeningQuestionAddList extends HookConsumerWidget {
                                       child: DropdownButtonHideUnderline(
                                           child: DropdownButtonFormField(
                                         dropdownColor: Colors.white,
-                                        hint: const Text("audio"),
+                                        hint: Text(
+                                            "${lstQuestion[index].audioUrl}"),
                                         isDense: true,
                                         items: getDropItems(lstAudioSource),
                                         value: lstQuestion[index].audioUrl,
@@ -183,13 +184,14 @@ class ListeningQuestionAddList extends HookConsumerWidget {
                                       child: DropdownButtonHideUnderline(
                                           child: DropdownButtonFormField(
                                         dropdownColor: Colors.white,
-                                        hint: const Text("image"),
+                                        hint: Text(
+                                            "${lstQuestion[index].imageUrl}"),
                                         isDense: true,
                                         items: getDropItems(lstImageSource),
                                         value: lstQuestion[index].imageUrl,
                                         onChanged: (value) {
                                           var selectedLevel = "$value";
-                                          lstQuestion[index].audioUrl =
+                                          lstQuestion[index].imageUrl =
                                               selectedLevel;
                                         },
                                       )),
@@ -356,7 +358,7 @@ class ListeningQuestionAddList extends HookConsumerWidget {
 }
 
 class ListeningQuestionItem {
-  ListeningQuestionItem(this.key);
+  ListeningQuestionItem(this.key, this.audioUrl, this.imageUrl);
   String? audioUrl;
   String? imageUrl;
   AfenRichTextField answerGenerateWidget = AfenRichTextField("Хариулт үүсгэх");
@@ -376,7 +378,7 @@ class ListeningQuestionItem {
   final Key key;
 
   ListeningQuestionItem.clone(ListeningQuestionItem randomObject)
-      : this(randomObject.key);
+      : this(randomObject.key, randomObject.audioUrl, randomObject.imageUrl);
 }
 
 class FileSource {
