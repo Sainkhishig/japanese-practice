@@ -19,6 +19,7 @@ class GrammarDetail extends HookConsumerWidget {
   List<WidgetGroupItem> listReadingWidget = [];
   AfenTextField txtExerciseName = AfenTextField("Дасгалын дугаар");
   AfenRichTextField txtVocabularies = AfenRichTextField("Шинэ үг");
+
   late QuestionAddList listGrammarExercise;
 
   @override
@@ -69,7 +70,7 @@ class GrammarDetail extends HookConsumerWidget {
         onSave: () async {
           try {
             await save(controller);
-            showSuccessToastMessage(context, "Амжилттай хадгаллаа");
+            showSuccessToastMessage(context, "хадгаллаа");
           } catch (ex) {
             showErrorToastMessage(context, "Алдаа гарлаа");
           }

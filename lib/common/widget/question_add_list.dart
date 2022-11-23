@@ -25,12 +25,13 @@ class QuestionAddList extends HookConsumerWidget {
   final String title;
   final bool isRemovable;
   final bool isCreatable;
+  List<int> lstTrueAnswers = [];
 
   /// 検索機能
 
   final QuestionItem Function() onClickAdd;
   late Function(QuestionItem removedItem)? onItemRemoved;
-
+  AfenRichTextField anserFillWidget = AfenRichTextField("Хариулт бөглөх");
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     AfenRichTextField answerGenerateWidget =
@@ -42,149 +43,197 @@ class QuestionAddList extends HookConsumerWidget {
     }
 
     return StatefulBuilder(builder: (context, setState) {
-      return ListView.builder(
-          itemCount: lstQuestion.length,
-          // shrinkWrap: true,
-          // physics: const NeverScrollableScrollPhysics(),
-          itemBuilder: (BuildContext context, int index) {
-            return Container(
-                padding: EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  // borderRadius: BorderRadius.circular(5),
-                  border: Border.all(
-                    color: Colors.black,
-                    width: 1,
-                  ),
-                ),
-                child: ListTile(
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Visibility(
-                        visible: lstQuestion.length != 1 && isRemovable,
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.indeterminate_check_box,
-                            color: Colors.green,
-                            size: 30,
-                          ),
-                          tooltip: 'remove action',
-                          onPressed: () {
-                            setState(
-                              () {
-                                lstQuestion.remove(lstQuestion[index]);
-                                // onItemRemoved!.call(rowItem);
-                              },
-                            );
-                          },
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                        height: 50,
-                      ),
-                      Visibility(
-                        visible: isCreatable,
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.add_box,
-                            color: Colors.green,
-                            size: 30,
-                          ),
-                          tooltip: 'add action',
-                          onPressed: () {
-                            var newItem = onClickAdd.call();
+      return ListTile(
+          title: SizedBox(
+            height: 60,
+            child: Row(
+              children: [
+                anserFillWidget,
+                IconButton(
+                    onPressed: () async {
+                      var trueAnswers = anserFillWidget.controller.text.trim();
+                      setState(
+                        () {
+                          var truesAnswerLines =
+                              trueAnswers.split("\n").toList();
+                          lstTrueAnswers = truesAnswerLines
+                              .map((e) => int.parse(e.split(':')[1]))
+                              .toList();
+                          print("answers:$lstTrueAnswers");
 
-                            setState(
-                              () {
-                                lstQuestion.add(newItem);
-                              },
-                            );
-                          },
-                        ),
+                          // for (var source in listResult.items) {
+                          //   print("prefix::${source.fullPath}");
+                          //   print("prefix::${source.name}");
+                          //   lstImageSource.add(
+                          //       FileSource(source.name, source.fullPath));
+                          // }
+                        },
+                      );
+                    },
+                    icon: Icon(Icons.checklist_rtl_sharp))
+              ],
+            ),
+          ),
+          subtitle: ListView.builder(
+              itemCount: lstQuestion.length,
+              // shrinkWrap: true,
+              // physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                    padding: EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      // borderRadius: BorderRadius.circular(5),
+                      border: Border.all(
+                        color: Colors.black,
+                        width: 1,
                       ),
-                    ],
-                  ),
-                  subtitle: Row(children: [
-                    Expanded(
-                        flex: 5,
-                        child: ListTile(
-                            contentPadding: const EdgeInsets.all(0),
-                            title: const Padding(
-                              padding: EdgeInsets.only(bottom: 8.0),
-                              child: Text(
-                                "Асуулт",
-                                style: TextStyle(fontSize: 12),
+                    ),
+                    child: ListTile(
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Visibility(
+                            visible: lstQuestion.length != 1 && isRemovable,
+                            child: IconButton(
+                              icon: const Icon(
+                                Icons.indeterminate_check_box,
+                                color: Colors.green,
+                                size: 30,
                               ),
+                              tooltip: 'remove action',
+                              onPressed: () {
+                                setState(
+                                  () {
+                                    lstQuestion.remove(lstQuestion[index]);
+                                    // onItemRemoved!.call(rowItem);
+                                  },
+                                );
+                              },
                             ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                lstQuestion[index].questionWidget,
-                                Row(
-                                  children: [
-                                    answerGenerateWidget,
-                                    IconButton(
-                                        onPressed: () {
-                                          setState(
-                                            () {
-                                              var lstAnswers =
-                                                  answerGenerateWidget
-                                                      .controller.text
-                                                      .split("\n");
+                          ),
+                          const SizedBox(
+                            width: 10,
+                            height: 50,
+                          ),
+                          Visibility(
+                            visible: isCreatable,
+                            child: IconButton(
+                              icon: const Icon(
+                                Icons.add_box,
+                                color: Colors.green,
+                                size: 30,
+                              ),
+                              tooltip: 'add action',
+                              onPressed: () {
+                                var newItem = onClickAdd.call();
 
-                                              lstQuestion[index].answerWidget =
-                                                  AnswerOptionList(
-                                                      onClickAdd: () {
-                                                        return AsnwerOptionFieldItem(
-                                                            AfenTextField(
-                                                                "Хариултууд"),
-                                                            AfenCheckbox(false),
-                                                            Key("1"));
-                                                      },
-                                                      lstAnswer: [
-                                                    ...lstAnswers.map((e) {
-                                                      var answerWidget =
-                                                          AfenTextField(
-                                                              "Хариулт");
-                                                      answerWidget
-                                                          .controller.text = e;
-                                                      return AsnwerOptionFieldItem(
-                                                          answerWidget,
-                                                          AfenCheckbox(false),
-                                                          Key("1"));
-                                                    })
-                                                  ]);
-                                              [];
-                                            },
-                                          );
-                                        },
-                                        icon: Icon(Icons.create_outlined))
-                                  ],
+                                setState(
+                                  () {
+                                    lstQuestion.add(newItem);
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      subtitle: Row(children: [
+                        Expanded(
+                            flex: 5,
+                            child: ListTile(
+                                contentPadding: const EdgeInsets.all(0),
+                                title: const Padding(
+                                  padding: EdgeInsets.only(bottom: 8.0),
+                                  child: Text(
+                                    "Асуулт",
+                                    style: TextStyle(fontSize: 12),
+                                  ),
                                 ),
-                                SizedBox(
-                                  height: 300,
-                                  width: 500,
-                                  child: lstQuestion[index].answerWidget,
-                                )
-                              ],
-                            ))),
-                  ]),
-                )
-                // Row(children: [
-                //   Visibility(
-                //     visible: title.isNotEmpty,
-                //     child: Text(title),
-                //   ),
-                //   Expanded(
-                //       flex: 5,
-                //       child: _buildRowItem(
-                //         setState,
-                //         lstQuestion[index],
-                //       )),
-                // ]),
-                );
-          });
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    lstQuestion[index].questionWidget,
+                                    Row(
+                                      children: [
+                                        answerGenerateWidget,
+                                        IconButton(
+                                            onPressed: () {
+                                              setState(
+                                                () {
+                                                  var trueAnswerIndex =
+                                                      lstTrueAnswers[index] - 1;
+                                                  var lstAnswers =
+                                                      answerGenerateWidget
+                                                          .controller.text
+                                                          .split("\n");
+                                                  print(
+                                                      "trueAnswerIndex$trueAnswerIndex");
+
+                                                  lstQuestion[index]
+                                                          .answerWidget =
+                                                      AnswerOptionList(
+                                                          onClickAdd: () {
+                                                            return AsnwerOptionFieldItem(
+                                                                AfenTextField(
+                                                                    "Хариултууд"),
+                                                                AfenCheckbox(
+                                                                    false),
+                                                                Key("1"));
+                                                          },
+                                                          lstAnswer: [
+                                                        ...lstAnswers
+                                                            .asMap()
+                                                            .entries
+                                                            .map((answer) {
+                                                          int index =
+                                                              answer.key;
+                                                          dynamic answerVal =
+                                                              answer.value;
+
+                                                          var answerWidget =
+                                                              AfenTextField(
+                                                                  "Хариулт");
+                                                          answerWidget
+                                                              .controller
+                                                              .text = answerVal;
+                                                          return AsnwerOptionFieldItem(
+                                                              answerWidget,
+                                                              AfenCheckbox(
+                                                                  trueAnswerIndex ==
+                                                                      index),
+                                                              Key("1"));
+                                                        })
+                                                      ]);
+                                                  [];
+                                                },
+                                              );
+                                            },
+                                            icon: Icon(Icons.create_outlined))
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 300,
+                                      width: 500,
+                                      child: lstQuestion[index].answerWidget,
+                                    )
+                                  ],
+                                ))),
+                      ]),
+                    )
+                    // Row(children: [
+                    //   Visibility(
+                    //     visible: title.isNotEmpty,
+                    //     child: Text(title),
+                    //   ),
+                    //   Expanded(
+                    //       flex: 5,
+                    //       child: _buildRowItem(
+                    //         setState,
+                    //         lstQuestion[index],
+                    //       )),
+                    // ]),
+                    );
+              }));
     });
   }
 

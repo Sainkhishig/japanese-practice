@@ -27,60 +27,88 @@ class ListeningQuestionAddList extends HookConsumerWidget {
   final bool isRemovable;
   final bool isCreatable;
   List<FileSource> lstAudioSource = [];
-  late List<FileSource> lstImageSource = [];
+  List<FileSource> lstImageSource = [];
+  List<int> lstTrueAnswers = [];
 
   /// 検索機能
 
   final ListeningQuestionItem Function() onClickAdd;
   late Function(ListeningQuestionItem removedItem)? onItemRemoved;
   AfenTextField sourceGenerateWidget = AfenTextField("файл бэлдэх");
+  AfenRichTextField anserFillWidget = AfenRichTextField("Хариулт бөглөх");
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return StatefulBuilder(builder: (context, setState) {
       return ListTile(
           title: SizedBox(
-            height: 63,
-            child: Row(
-              children: [
-                sourceGenerateWidget,
-                IconButton(
-                    onPressed: () async {
-                      var sourcePath =
-                          sourceGenerateWidget.controller.text.trim();
-                      final storageRef =
-                          FirebaseStorage.instance.ref().child(sourcePath);
-                      final listResult = await storageRef.listAll();
-                      setState(
-                        () {
-                          lstImageSource = [];
-                          lstAudioSource = [];
-
-                          // lstAudioSource.add(FileSource(
-                          //     "audio1", "https://listening/audio1.mp3"));
-                          // lstImageSource.add(FileSource(
-                          //     "image1", "https://listening/image1.mp3"));
-
-                          print("listResult:${listResult.items.length}");
-                          for (var source in listResult.items) {
-                            print("prefix::${source.fullPath}");
-                            print("prefix::${source.name}");
-                            lstAudioSource
-                                .add(FileSource(source.name, source.fullPath));
-                            // The items under storageRef.
-                          }
-                          for (var source in listResult.items) {
-                            print("prefix::${source.fullPath}");
-                            print("prefix::${source.name}");
-                            lstImageSource
-                                .add(FileSource(source.name, source.fullPath));
-                          }
+              height: 130,
+              child: ListView(children: [
+                Row(
+                  children: [
+                    sourceGenerateWidget,
+                    IconButton(
+                        onPressed: () async {
+                          var sourcePath =
+                              sourceGenerateWidget.controller.text.trim();
+                          final storageRef =
+                              FirebaseStorage.instance.ref().child(sourcePath);
+                          final listResult = await storageRef.listAll();
+                          setState(
+                            () {
+                              lstImageSource = [];
+                              lstAudioSource = [];
+                              print("listResult:${listResult.items.length}");
+                              for (var source in listResult.items) {
+                                print("prefix::${source.fullPath}");
+                                print("prefix::${source.name}");
+                                lstAudioSource.add(
+                                    FileSource(source.name, source.fullPath));
+                                // The items under storageRef.
+                              }
+                              for (var source in listResult.items) {
+                                print("prefix::${source.fullPath}");
+                                print("prefix::${source.name}");
+                                lstImageSource.add(
+                                    FileSource(source.name, source.fullPath));
+                              }
+                            },
+                          );
                         },
-                      );
-                    },
-                    icon: Icon(Icons.file_download))
-              ],
-            ),
-          ),
+                        icon: Icon(Icons.file_download))
+                  ],
+                ),
+                SizedBox(
+                  height: 63,
+                  child: Row(
+                    children: [
+                      anserFillWidget,
+                      IconButton(
+                          onPressed: () async {
+                            var trueAnswers =
+                                anserFillWidget.controller.text.trim();
+                            setState(
+                              () {
+                                var truesAnswerLines =
+                                    trueAnswers.split("\n").toList();
+                                lstTrueAnswers = truesAnswerLines
+                                    .map((e) => int.parse(e.split(':')[1]))
+                                    .toList();
+                                print("answers:$lstTrueAnswers");
+
+                                // for (var source in listResult.items) {
+                                //   print("prefix::${source.fullPath}");
+                                //   print("prefix::${source.name}");
+                                //   lstImageSource.add(
+                                //       FileSource(source.name, source.fullPath));
+                                // }
+                              },
+                            );
+                          },
+                          icon: Icon(Icons.checklist_rtl_sharp))
+                    ],
+                  ),
+                ),
+              ])),
           subtitle: ListView.builder(
               itemCount: lstQuestion.length,
               // shrinkWrap: true,
@@ -209,7 +237,10 @@ class ListeningQuestionAddList extends HookConsumerWidget {
                                                           .controller
                                                           .text
                                                           .split("\n");
-
+                                                  var trueAnswerIndex =
+                                                      lstTrueAnswers[index] - 1;
+                                                  print(
+                                                      "trueAnswerIndex:$trueAnswerIndex");
                                                   lstQuestion[index]
                                                           .answerWidget =
                                                       AnswerOptionList(
@@ -222,17 +253,26 @@ class ListeningQuestionAddList extends HookConsumerWidget {
                                                                 Key("1"));
                                                           },
                                                           lstAnswer: [
-                                                        ...lstAnswers.map((e) {
+                                                        ...lstAnswers
+                                                            .asMap()
+                                                            .entries
+                                                            .map((answer) {
+                                                          int index =
+                                                              answer.key;
+                                                          dynamic answerVal =
+                                                              answer.value;
+
                                                           var answerWidget =
                                                               AfenTextField(
                                                                   "Хариулт");
                                                           answerWidget
                                                               .controller
-                                                              .text = e;
+                                                              .text = answerVal;
                                                           return AsnwerOptionFieldItem(
                                                               answerWidget,
                                                               AfenCheckbox(
-                                                                  false),
+                                                                  trueAnswerIndex ==
+                                                                      index),
                                                               Key("1"));
                                                         })
                                                       ]);
