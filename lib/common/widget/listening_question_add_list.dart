@@ -53,6 +53,16 @@ class ListeningQuestionAddList extends HookConsumerWidget {
                           final storageRef =
                               FirebaseStorage.instance.ref().child(sourcePath);
                           final listResult = await storageRef.listAll();
+                          // print("object;;${listResult.items[0].name}");
+                          // final pathReference =
+                          //     storageRef.child(listResult.items[0].name);
+                          // var urllnk = await pathReference.getDownloadURL();
+                          // print("lnk:$urllnk");
+                          // final storageRef2 = FirebaseStorage.instance
+                          //     .ref()
+                          //     .child(listResult.items[0].fullPath);
+                          // var urllnk2 = await storageRef2.getDownloadURL();
+                          // print("urllnk2:$urllnk2");
                           setState(
                             () {
                               lstImageSource = [];
