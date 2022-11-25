@@ -205,13 +205,13 @@ class ListeningQuestionAddList extends HookConsumerWidget {
                                           child: DropdownButtonFormField(
                                         dropdownColor: Colors.white,
                                         hint: Text(
-                                            "${lstQuestion[index].audioUrl}"),
+                                            "${lstQuestion[index].audioPath}"),
                                         isDense: true,
                                         items: getDropItems(lstAudioSource),
-                                        value: lstQuestion[index].audioUrl,
+                                        // value: lstQuestion[index].audioPath,
                                         onChanged: (value) {
                                           var selectedLevel = "$value";
-                                          lstQuestion[index].audioUrl =
+                                          lstQuestion[index].audioPath =
                                               selectedLevel;
                                         },
                                       )),
@@ -223,13 +223,13 @@ class ListeningQuestionAddList extends HookConsumerWidget {
                                           child: DropdownButtonFormField(
                                         dropdownColor: Colors.white,
                                         hint: Text(
-                                            "${lstQuestion[index].imageUrl}"),
+                                            "${lstQuestion[index].imagePath}"),
                                         isDense: true,
                                         items: getDropItems(lstImageSource),
-                                        value: lstQuestion[index].imageUrl,
+                                        // value: lstQuestion[index].imagePath,
                                         onChanged: (value) {
                                           var selectedLevel = "$value";
-                                          lstQuestion[index].imageUrl =
+                                          lstQuestion[index].imagePath =
                                               selectedLevel;
                                         },
                                       )),
@@ -408,7 +408,9 @@ class ListeningQuestionAddList extends HookConsumerWidget {
 }
 
 class ListeningQuestionItem {
-  ListeningQuestionItem(this.key, this.audioUrl, this.imageUrl);
+  ListeningQuestionItem(this.key, this.audioPath, this.imagePath);
+  String? audioPath;
+  String? imagePath;
   String? audioUrl;
   String? imageUrl;
   AfenRichTextField answerGenerateWidget = AfenRichTextField("Хариулт үүсгэх");
@@ -428,7 +430,7 @@ class ListeningQuestionItem {
   final Key key;
 
   ListeningQuestionItem.clone(ListeningQuestionItem randomObject)
-      : this(randomObject.key, randomObject.audioUrl, randomObject.imageUrl);
+      : this(randomObject.key, randomObject.audioPath, randomObject.imagePath);
 }
 
 class FileSource {

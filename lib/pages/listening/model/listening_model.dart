@@ -27,16 +27,19 @@ class ListeningExercise {
 
 class ListeningQuestion {
   late String question;
+  late String audioPath;
+  late String imagePath;
   late String audioUrl;
   late String imageUrl;
   late List<ListeningAnswerOption> answers;
 
-  ListeningQuestion(this.question, this.audioUrl, this.imageUrl, this.answers);
+  ListeningQuestion(
+      this.question, this.audioPath, this.imagePath, this.answers);
   factory ListeningQuestion.fromRTDB(Map<String, dynamic> data) {
     return ListeningQuestion(
       data['question'],
-      data['audioUrl'] ?? "",
-      data['imageUrl'] ?? "",
+      data['audioPath'] ?? "",
+      data['imagePath'] ?? "",
       (data['answers'] as List)
           .map((e) => ListeningAnswerOption.fromRTDB(e))
           .toList(),

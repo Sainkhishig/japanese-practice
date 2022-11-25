@@ -31,11 +31,11 @@ class ListeningDetail extends HookConsumerWidget {
 
       for (var question in selectedExerciseData!.exercises) {
         var questItem = ListeningQuestionItem(
-            Key("2"), question.audioUrl, question.imageUrl);
+            Key("2"), question.audioPath, question.imagePath);
         // answerWidget.audioUrl = selectedExerciseData
         questItem.questionWidget.controller.text = question.question;
-        print("${question.audioUrl}");
-        print("${question.imageUrl}");
+        print("${question.audioPath}");
+        print("${question.imagePath}");
         questItem.answerWidget.lstAnswer = [
           ...question.answers.map((e) {
             var answerWidget = AfenTextField("Хариулт");

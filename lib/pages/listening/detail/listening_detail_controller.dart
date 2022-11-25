@@ -47,12 +47,12 @@ class ListeningDetailController extends StateNotifier<GrammarState> {
     final storageRef = FirebaseStorage.instance.ref();
 
     for (var item in lstExercises) {
-      if (item.audioUrl != null && item.audioUrl!.isNotEmpty) {
-        String audioUrlPath = item.audioUrl ?? "";
+      if (item.audioPath != null && item.audioPath!.isNotEmpty) {
+        String audioUrlPath = item.audioPath ?? "";
         item.audioUrl = await storageRef.child(audioUrlPath).getDownloadURL();
       }
-      if (item.audioUrl != null && item.audioUrl!.isNotEmpty) {
-        String imgUrlPath = item.audioUrl ?? "";
+      if (item.imagePath != null && item.imagePath!.isNotEmpty) {
+        String imgUrlPath = item.imagePath ?? "";
         item.imageUrl = await storageRef.child(imgUrlPath).getDownloadURL();
       }
     }
@@ -63,7 +63,9 @@ class ListeningDetailController extends StateNotifier<GrammarState> {
       'exercises': lstExercises.map((quest) => {
             'question': quest.questionWidget.controller.text,
             'audioUrl': quest.audioUrl ?? "",
+            'audioPath': quest.audioPath ?? "",
             'imageUrl': quest.imageUrl ?? "",
+            'imagePath': quest.imagePath ?? "",
             'answers': quest.answerWidget.lstAnswer.map((quest) => {
                   'answer': quest.field.controller.text,
                   'isTrue': quest.checkField.isChecked,
