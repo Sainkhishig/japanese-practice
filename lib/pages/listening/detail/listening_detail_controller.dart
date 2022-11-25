@@ -1,3 +1,4 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:japanese_practise_n5/common/widget/listening_question_add_list.dart';
@@ -43,6 +44,18 @@ class ListeningDetailController extends StateNotifier<GrammarState> {
       String storagePath) async {
     List<Map<String, dynamic>> lstSendItem = [];
 
+    final storageRef = FirebaseStorage.instance.ref();
+
+    for (var item in lstExercises) {
+      if (item.audioUrl != null && item.audioUrl!.isNotEmpty) {
+        String audioUrlPath = item.audioUrl ?? "";
+        item.audioUrl = await storageRef.child(audioUrlPath).getDownloadURL();
+      }
+      if (item.audioUrl != null && item.audioUrl!.isNotEmpty) {
+        String imgUrlPath = item.audioUrl ?? "";
+        item.imageUrl = await storageRef.child(imgUrlPath).getDownloadURL();
+      }
+    }
     final newData = <String, dynamic>{
       'jlptLevel': jlptLevel,
       'name': exerciseName,
