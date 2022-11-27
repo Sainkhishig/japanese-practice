@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:japanese_practise_n5/common/widget/question_add_list.dart';
 import 'package:japanese_practise_n5/common_providers/shared_preferences_provider.dart';
 import 'package:japanese_practise_n5/pages/kanji/list/kanji_state.dart';
+import 'package:japanese_practise_n5/pages/kanji/model/kanji_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final kanjiDetailController =
@@ -45,11 +46,12 @@ class KanjiDetailController extends StateNotifier<KanjiState> {
 
   //#endregion ---------- facility ----------
   //#region ---------- save ----------
-  Future<void> writeNew(String key, String exerciseName,
-      List<QuestionItem> lstExercises, List<String> vocabularies) async {
+  Future<void> writeNew(
+      KanjiExercise? saveData, List<QuestionItem> lstExercises) async {
     final newData = <String, dynamic>{
       'jlptLevel': jlptLevel,
-      'name': exerciseName,
+      'name': saveData!.name,
+      'reference': saveData.reference,
       'exercises': lstExercises.map((quest) => {
             'question': quest.questionWidget.controller.text,
             'answers': quest.answerWidget.lstAnswer.map((quest) => {
@@ -57,10 +59,10 @@ class KanjiDetailController extends StateNotifier<KanjiState> {
                   'isTrue': quest.checkField.isChecked,
                 }),
           }),
-      'vocabularies': vocabularies,
+      'vocabularies': saveData.vocabularies,
       'time': DateTime.now().microsecondsSinceEpoch
     };
-    if (key.isEmpty) {
+    if (saveData.key.isEmpty) {
       await _database
           .child('KanjiTest')
           .push()
@@ -71,7 +73,10 @@ class KanjiDetailController extends StateNotifier<KanjiState> {
       });
     } else {
       var _todoQuery = _database.child("/KanjiTest");
-      await _todoQuery.child("/$key").set(newData).catchError((onError) {
+      await _todoQuery
+          .child("/${saveData.key}")
+          .set(newData)
+          .catchError((onError) {
         print('could not update data');
         throw ("aldaa garlaa");
       });

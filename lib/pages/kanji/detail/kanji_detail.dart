@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:japanese_practise_n5/classes/import_model.dart';
 import 'package:japanese_practise_n5/common/common_widget.dart';
 import 'package:japanese_practise_n5/common/widget/afen_checkbox.dart';
 import 'package:japanese_practise_n5/common/widget/afen_rich_text_field.dart';
@@ -19,6 +20,7 @@ class KanjiDetail extends HookConsumerWidget {
   List<WidgetGroupItem> listReadingWidget = [];
   AfenTextField txtExerciseName = AfenTextField("Дасгалын дугаар");
   AfenRichTextField txtVocabularies = AfenRichTextField("Шинэ үг");
+  AfenRichTextField txtReference = AfenRichTextField("Тодруулга");
   late QuestionAddList listKanjiExercise;
 
   @override
@@ -56,11 +58,13 @@ class KanjiDetail extends HookConsumerWidget {
       txtExerciseName.controller.text = selectedExerciseData!.name;
       txtVocabularies.controller.text =
           selectedExerciseData!.vocabularies.join("\n");
+      txtReference.controller.text = selectedExerciseData!.reference;
     }
 
     return Scaffold(
         body: ListView(children: [
       txtExerciseName,
+      txtReference,
       txtVocabularies,
       SizedBox(height: 600, width: 500, child: listKanjiExercise),
       SaveButton(
@@ -78,11 +82,18 @@ class KanjiDetail extends HookConsumerWidget {
 
   save(KanjiDetailController controller) {
     var vocabularies = txtVocabularies.controller.text.split("\n");
-    controller.writeNew(
-        selectedExerciseData == null ? "" : selectedExerciseData!.key,
-        txtExerciseName.controller.text.trim(),
-        listKanjiExercise.lstQuestion,
-        vocabularies);
+
+    if (selectedExerciseData != null) {
+      selectedExerciseData!.key = selectedExerciseData!.key;
+    } else {
+      selectedExerciseData = KanjiExercise.empty();
+      selectedExerciseData!.key = "";
+    }
+    selectedExerciseData!.name = txtExerciseName.controller.text.trim();
+    selectedExerciseData!.reference = txtReference.controller.text.trim();
+    selectedExerciseData!.vocabularies = vocabularies;
+
+    controller.writeNew(selectedExerciseData, listKanjiExercise.lstQuestion);
   }
 }
 
