@@ -2,6 +2,7 @@ import 'package:excel/excel.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:japanese_practise_n5/classes/test_excel_model.dart';
 import 'package:japanese_practise_n5/common/widget/question_add_list.dart';
 import 'package:japanese_practise_n5/common_providers/shared_preferences_provider.dart';
 import 'package:japanese_practise_n5/pages/vocabulary/list/vocabulary_state.dart';
@@ -11,16 +12,6 @@ final vocabularyDetailController =
     StateNotifierProvider<VocabularyDetailController, VocabularyState>(
         (ref) => VocabularyDetailController(ref: ref));
 final _database = FirebaseDatabase.instance.reference();
-
-class XlTestExerciseModel {
-  late String question;
-  late List<XlTestAnswersModel> answers;
-}
-
-class XlTestAnswersModel {
-  late String answer;
-  late bool isTrue;
-}
 
 class VocabularyDetailController extends StateNotifier<VocabularyState> {
   //#region ==================== local variable ====================
@@ -148,10 +139,10 @@ class VocabularyDetailController extends StateNotifier<VocabularyState> {
   //#endregion ==================== method ====================
 }
 
-getCellValue(Data? row) {
-  return row == null
-      ? ""
-      : row.value == null
-          ? ""
-          : "${row.value}";
-}
+// getCellValue(Data? row) {
+//   return row == null
+//       ? ""
+//       : row.value == null
+//           ? ""
+//           : "${row.value}";
+// }

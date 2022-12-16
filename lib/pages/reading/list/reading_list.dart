@@ -49,14 +49,14 @@ class ReadingList extends HookConsumerWidget {
             Expanded(child: txtExerciseName),
             RegisterButton(
               onClick: () async {
-                try {
-                  // await ref
-                  //     .read(vocabularyDetailController.notifier)
-                  //     .readXlVocabularyTest(txtExerciseName.controller.text);
-                  showSuccessToastMessage(context, "Амжилттай хадгаллаа");
-                } catch (ex) {
-                  showErrorToastMessage(context, "Алдаа гарлаа");
-                }
+                // try {
+                //   await ref
+                //       .read(grammarDetailController.notifier)
+                //       .readXlGrammarTest(txtExerciseName.controller.text);
+                //   showSuccessToastMessage(context, "Амжилттай хадгаллаа");
+                // } catch (ex) {
+                //   showErrorToastMessage(context, "Алдаа гарлаа");
+                // }
               },
             ),
           ]),
