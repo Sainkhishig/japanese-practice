@@ -1,3 +1,5 @@
+import 'package:excel/excel.dart';
+import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:japanese_practise_n5/common/widget/question_add_list.dart';
@@ -9,6 +11,16 @@ final vocabularyDetailController =
     StateNotifierProvider<VocabularyDetailController, VocabularyState>(
         (ref) => VocabularyDetailController(ref: ref));
 final _database = FirebaseDatabase.instance.reference();
+
+class XlTestExerciseModel {
+  late String question;
+  late List<XlTestAnswersModel> answers;
+}
+
+class XlTestAnswersModel {
+  late String answer;
+  late bool isTrue;
+}
 
 class VocabularyDetailController extends StateNotifier<VocabularyState> {
   //#region ==================== local variable ====================
@@ -44,11 +56,65 @@ class VocabularyDetailController extends StateNotifier<VocabularyState> {
     return state;
   }
 
+  Future readXlVocabularyTest(xlName) async {
+    print("xlName:$xlName");
+    List<XlTestExerciseModel> lstTestData = [];
+    List<String> vocabularies = ["ШИНЭ ҮГ"];
+    ByteData data = await rootBundle.load("test/$xlName.xlsx");
+    var bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+    var excel = Excel.decodeBytes(bytes);
+
+    for (var i = 1; i < excel.tables["Sheet1"]!.rows.length; i++) {
+      var row = excel.tables["Sheet1"]!.rows[i];
+
+      int trueAnswerIndex = int.parse(getCellValue(row[5]));
+
+      List<XlTestAnswersModel> lstAnswers = [];
+      for (var i = 1; i < 5; i++) {
+        print(i);
+        var answer = XlTestAnswersModel()
+          ..answer = getCellValue(row[i])
+          ..isTrue = trueAnswerIndex == i;
+        lstAnswers.add(answer);
+      }
+      var vocabulary = XlTestExerciseModel()
+        ..question = getCellValue(row[0])
+        ..answers = lstAnswers;
+
+      lstTestData.add(vocabulary);
+    }
+
+    final newData = <String, dynamic>{
+      'jlptLevel': jlptLevel,
+      'name': xlName,
+      'reference': "",
+      'exercises': lstTestData.map((test) => {
+            'question': test.question,
+            'answers': test.answers.map((quest) => {
+                  'answer': quest.answer,
+                  'isTrue': quest.isTrue,
+                }),
+          }),
+      'vocabularies': vocabularies,
+      'time': DateTime.now().microsecondsSinceEpoch
+    };
+
+    await _database
+        .child('VocabularyTest')
+        .push()
+        .set(newData)
+        .catchError((onError) {
+      print('could not saved data');
+      throw ("aldaa garlaa");
+    });
+  }
+
   //#endregion ---------- facility ----------
   //#region ---------- save ----------
   Future<void> writeNew(String key, String exerciseName,
       List<QuestionItem> lstExercises, List<String> vocabularies) async {
     final newData = <String, dynamic>{
+      'jlptLevel': jlptLevel,
       'name': exerciseName,
       'exercises': lstExercises.map((quest) => {
             'question': quest.questionWidget.controller.text,
@@ -58,7 +124,6 @@ class VocabularyDetailController extends StateNotifier<VocabularyState> {
                 }),
           }),
       'vocabularies': vocabularies,
-      'jlptLevel': jlptLevel,
       'time': DateTime.now().microsecondsSinceEpoch
     };
     if (key.isEmpty) {
@@ -81,4 +146,12 @@ class VocabularyDetailController extends StateNotifier<VocabularyState> {
 
   //#endregion ---------- save ----------
   //#endregion ==================== method ====================
+}
+
+getCellValue(Data? row) {
+  return row == null
+      ? ""
+      : row.value == null
+          ? ""
+          : "${row.value}";
 }
