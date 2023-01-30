@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:japanese_practise_n5/hive_db/provider/n5_box_provider.dart';
+import 'package:japanese_practise_n5/pages/excel_import/jlpt_word/jlpt_word_page.dart';
 import 'package:japanese_practise_n5/pages/grammar/grammar.dart';
 import 'package:japanese_practise_n5/pages/kanji/kanji.dart';
 import 'package:japanese_practise_n5/pages/listening/lisyening_page.dart';
@@ -165,4 +166,6 @@ late final lstMenu = <Menu>[
   Menu("Уншлага", "verbForm", Icons.menu_book, ReadingN5(), ReadingN5()),
   Menu("Ханз", "verbForm", CupertinoIcons.pencil_outline, KanjiPage(),
       KanjiPage()),
+  Menu("Excel", "excel", CupertinoIcons.pencil_outline, const JlptWordPage(),
+      const JlptWordPage())
 ];

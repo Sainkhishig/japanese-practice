@@ -7,6 +7,8 @@ import 'package:japanese_practise_n5/common/widget/register_button.dart';
 import 'package:japanese_practise_n5/pages/grammar/detail/grammar_detail_controller.dart';
 import 'package:japanese_practise_n5/pages/grammar/list/grammar_list_controller.dart';
 import 'package:japanese_practise_n5/pages/grammar/model/grammar_model.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:excel/excel.dart';
 
 // pyfm060 : キャンセル規定一覧 GrammarList
 class GrammarList extends HookConsumerWidget {
@@ -47,6 +49,7 @@ class GrammarList extends HookConsumerWidget {
                   await ref
                       .read(grammarDetailController.notifier)
                       .readXlGrammarTest(txtExerciseName.controller.text);
+
                   showSuccessToastMessage(context, "Амжилттай хадгаллаа");
                 } catch (ex) {
                   showErrorToastMessage(context, "Алдаа гарлаа");
@@ -103,4 +106,21 @@ class GrammarList extends HookConsumerWidget {
       ),
     );
   }
+
+  // Future<void> pickExcel(BuildContext context) async {
+  //   FilePickerResult? result = await FilePicker.platform.pickFiles();
+  //   print("resultAri");
+  //   if (result != null) {
+  //     print("result has");
+
+  //     PlatformFile file = result.files.first;
+  //     var excel = Excel.decodeBytes(file.bytes!);
+  //     await readExcel(excel)
+  //         .then((value) => {showSuccessToastMessage(context, "amjilltai")})
+  //         .onError((error, stackTrace) =>
+  //             {showErrorToastMessage(context, "aldaa garlaa")});
+  //   } else {
+  //     // User canceled the picker
+  //   }
+  // }
 }

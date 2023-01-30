@@ -34,7 +34,10 @@ class ListeningQuestionAddList extends HookConsumerWidget {
 
   final ListeningQuestionItem Function() onClickAdd;
   late Function(ListeningQuestionItem removedItem)? onItemRemoved;
-  AfenTextField sourceGenerateWidget = AfenTextField("файл бэлдэх");
+  AfenTextField sourceGenerateWidget = AfenTextField(
+    "файл бэлдэх",
+    hintText: "/listening-test/n5/test-1",
+  );
   AfenRichTextField anserFillWidget = AfenRichTextField("Хариулт бөглөх");
   @override
   Widget build(BuildContext context, WidgetRef ref) {

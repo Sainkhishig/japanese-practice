@@ -5,12 +5,14 @@ class AfenTextField extends HookConsumerWidget {
   AfenTextField(
     this.lablel, {
     Key? key,
+    this.hintText = "",
     this.onValueChanged,
   }) : super(key: key);
 
   /// 検索機能
   final VoidCallback? onValueChanged;
   final String lablel;
+  String hintText = "";
 
   TextEditingController controller = TextEditingController();
   @override
@@ -29,7 +31,9 @@ class AfenTextField extends HookConsumerWidget {
                     child: TextFormField(
                       controller: controller,
                       autofocus: true,
+
                       decoration: InputDecoration(
+                        hintText: hintText,
                         border: OutlineInputBorder(),
                         isDense: true,
                         labelText: lablel,
