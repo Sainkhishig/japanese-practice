@@ -119,10 +119,11 @@ class JlptWordList extends HookConsumerWidget {
       print("result has");
 
       PlatformFile file = result.files.first;
-
+      print("file:${file.name}");
       var excel = Excel.decodeBytes(file.bytes!);
-      await readJlptWordExcelByFixedColumn(file.name.replaceAll(".xlxs", ""),
-              excel, txtColumns.controller.text.split(";"))
+
+      await readJlptWordExcelByFixedColumn(file.name.split(".")[0], excel,
+              txtColumns.controller.text.split(";"))
           .then((value) => {showSuccessToastMessage(context, "amjilltai")})
           .onError((error, stackTrace) =>
               {showErrorToastMessage(context, "aldaa garlaa")});
@@ -133,6 +134,8 @@ class JlptWordList extends HookConsumerWidget {
 
   readJlptWordExcelByFixedColumn(
       String dbName, Excel excel, List<String> columns) async {
+    print("dbName");
+    print(dbName);
     for (var file in excel.sheets.values) {
       // var sheetName = file.sheetName.split("-")[1];
 
@@ -165,11 +168,7 @@ class JlptWordList extends HookConsumerWidget {
         //   'time': DateTime.now().microsecondsSinceEpoch
         // };
         print("2");
-        await _database
-            .child("JlptWord")
-            .push()
-            .set(newData)
-            .catchError((onError) {
+        await _database.child(dbName).push().set(newData).catchError((onError) {
           print('could not saved data');
           throw ("aldaa garlaa");
         });
