@@ -149,6 +149,7 @@ class JlptWordList extends HookConsumerWidget {
         for (var i = 0; i < columns.length; i++) {
           // newData["level"] = file.sheetName;
           newData[columns[i]] = getCellValue(row[i]);
+          newData["order"] = i;
           newData["time"] = DateTime.now().microsecondsSinceEpoch;
         }
         // final newData = <String, dynamic>{
@@ -168,7 +169,18 @@ class JlptWordList extends HookConsumerWidget {
         //   'time': DateTime.now().microsecondsSinceEpoch
         // };
         print("2");
-        await _database.child(dbName).push().set(newData).catchError((onError) {
+        // await _database
+        //     .child(dbName.split("-")[0])
+        //     .push()
+        //     .set(newData)
+        //     .catchError((onError) {
+        //   print('could not saved data');
+        //   throw ("aldaa garlaa");
+        // });
+        await _database
+            .child("${dbName.split("-")[0]}/${getCellValue(row[1])}")
+            .set(newData)
+            .catchError((onError) {
           print('could not saved data');
           throw ("aldaa garlaa");
         });
