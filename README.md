@@ -14,3 +14,11 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+
+
+ExcelColumn def
+
+JlptWord : level;word;kana;pos;meaningMn;meaningEn;example;exampleMn;exampleEn
+JlptKanji : level;kanji;onReading;kunReading;meaningMn;meaningEn;example;exampleMn;exampleEn
+JlptGrammar : level;grammar;formMn;formEn;meaningMn;meaningEn;example;exampleMn;exampleEn;example2;example2Mn;example2En
