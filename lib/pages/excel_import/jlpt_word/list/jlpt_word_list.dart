@@ -146,8 +146,8 @@ class JlptWordList extends HookConsumerWidget {
 
         final newData = <String, dynamic>{};
         print("1");
-        for (var i = 0; i < columns.length; i++) {
-          // newData["level"] = file.sheetName;
+        for (var i = 1; i < columns.length; i++) {
+          newData["level"] = int.parse(getCellValue(row[0]));
           newData[columns[i]] = getCellValue(row[i]);
           newData["order"] = i;
           newData["time"] = DateTime.now().microsecondsSinceEpoch;
