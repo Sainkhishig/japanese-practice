@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:japanese_practise_n5/classes/test_excel_model.dart';
 import 'package:japanese_practise_n5/common/common_widget.dart';
 import 'package:japanese_practise_n5/common/widget/afen_text_field.dart';
 import 'package:japanese_practise_n5/common/widget/register_button.dart';
@@ -122,16 +123,175 @@ class JlptWordList extends HookConsumerWidget {
       print("file:${file.name}");
       var excel = Excel.decodeBytes(file.bytes!);
 
-      await readJlptWordExcelByFixedColumn(file.name.split(".")[0], excel,
-              txtColumns.controller.text.split(";"))
+      await readJlptTestExcelByFixedColumn(txtColumns.controller.text, excel)
           .then((value) => {showSuccessToastMessage(context, "amjilltai")})
           .onError((error, stackTrace) =>
               {showErrorToastMessage(context, "aldaa garlaa")});
+//voc, kanji, grammar
+      // await readJlptWordExcelByFixedColumn(file.name.split(".")[0], excel,
+      //         txtColumns.controller.text.split(";"))
+      //     .then((value) => {showSuccessToastMessage(context, "amjilltai")})
+      //     .onError((error, stackTrace) =>
+      //         {showErrorToastMessage(context, "aldaa garlaa")});
     } else {
       // User canceled the picker
     }
   }
 
+// col: question answers
+
+  // Future readXlKanjiTest(xlName) async {
+  //   List<XlTestExerciseModel> lstTestData = [];
+  //   List<String> vocabularies = ["ШИНЭ ҮГ"];
+  //   ByteData data = await rootBundle.load("test/$xlName.xlsx");
+  //   var bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+  //   var excel = Excel.decodeBytes(bytes);
+
+  //   for (var i = 1; i < excel.tables["Sheet1"]!.rows.length; i++) {
+  //     var row = excel.tables["Sheet1"]!.rows[i];
+
+  //     int trueAnswerIndex = int.parse(getCellValue(row[5]));
+
+  //     List<XlTestAnswersModel> lstAnswers = [];
+  //     for (var i = 1; i < 5; i++) {
+  //       var answer = XlTestAnswersModel()
+  //         ..answer = getCellValue(row[i])
+  //         ..isTrue = trueAnswerIndex == i;
+  //       lstAnswers.add(answer);
+  //     }
+  //     var vocabulary = XlTestExerciseModel()
+  //       ..question = getCellValue(row[0])
+  //       ..answers = lstAnswers;
+
+  //     lstTestData.add(vocabulary);
+  //   }
+
+  //   final newData = <String, dynamic>{
+  //     'jlptLevel': jlptLevel,
+  //     'name': xlName,
+  //     'reference': "",
+  //     'exercises': lstTestData.map((test) => {
+  //           'question': test.question,
+  //           'answers': test.answers.map((quest) => {
+  //                 'answer': quest.answer,
+  //                 'isTrue': quest.isTrue,
+  //               }),
+  //         }),
+  //     'vocabularies': vocabularies,
+  //     'time': DateTime.now().microsecondsSinceEpoch
+  //   };
+
+  //   await _database
+  //       .child('KanjiTest')
+  //       .push()
+  //       .set(newData)
+  //       .catchError((onError) {
+  //     print('could not saved data');
+  //     throw ("aldaa garlaa");
+  //   });
+  // }
+
+  readJlptTestExcelByFixedColumn(String dbName, Excel excel) async {
+    print("dbName");
+    print(dbName);
+    List<String> vocabularies = [""];
+    for (var file in excel.sheets.values) {
+      // var sheetName = file.sheetName.split("-")[1];
+
+      // var sectionName = file.sheetName.split("-")[2];
+
+      print("Start");
+      print("name${file.sheetName}");
+      if (file.sheetName.contains("formula")) continue;
+      print("name2${file.sheetName}");
+      List<XlTestExerciseModel> lstTestData = [];
+      for (var i = 2; i < excel.tables[file.sheetName]!.rows.length; i++) {
+        var row = excel.tables[file.sheetName]!.rows[i];
+
+        // final newData = <String, dynamic>{};
+        int trueAnswerIndex = int.parse(getCellValue(row[5]));
+
+        List<XlTestAnswersModel> lstAnswers = [];
+        for (var i = 1; i < 5; i++) {
+          var answer = XlTestAnswersModel()
+            ..answer = getCellValue(row[i])
+            ..isTrue = trueAnswerIndex == i;
+          lstAnswers.add(answer);
+        }
+        var vocabulary = XlTestExerciseModel()
+          ..question = getCellValue(row[0])
+          ..answers = lstAnswers;
+
+        lstTestData.add(vocabulary);
+
+        final newData = <String, dynamic>{
+          'jlptLevel': 5,
+          'name': getCellValue(excel.tables[file.sheetName]!.rows[0][0]),
+          'reference': getCellValue(excel.tables[file.sheetName]!.rows[1][0]),
+          'exercises': lstTestData.map((test) => {
+                'question': test.question,
+                'answers': test.answers.map((quest) => {
+                      'answer': quest.answer,
+                      'isTrue': quest.isTrue,
+                    }),
+              }),
+          'vocabularies': vocabularies,
+          'time': DateTime.now().microsecondsSinceEpoch
+        };
+
+        print("newData$newData");
+        // for (var i = 1; i < columns.length; i++) {
+        //   newData["jlptLevel"] = 5; //int.parse(getCellValue(row[0]));
+        //   newData[columns[i]] = getCellValue(row[i]);
+        //   newData["order"] = i;
+        //   newData["time"] = DateTime.now().microsecondsSinceEpoch;
+        // }
+        // final newData = <String, dynamic>{
+        //   'bookName': file.sheetName,
+        //   'bookNumber': int.parse(bookNumber),
+        //   'section': sectionName,
+        //   'answerSheet': lstQUestion.map((question) => {
+        //         'section': question.section,
+        //         'isGroup': question.isGroup,
+        //         'questionNumber': question.questionNumber,
+        //         'groupQuestionEndNumber': question.groupQuestionEndNumber,
+        //         'answerType': question.answerType.name,
+        //         'questionContent': question.questionContent,
+        //         'answerChoice': question.answerChoice,
+        //         'answers': question.answers
+        //       }),
+        //   'time': DateTime.now().microsecondsSinceEpoch
+        // };
+        print("2");
+        // await _database
+        //     .child(dbName.split("-")[0])
+        //     .push()
+        //     .set(newData)
+        //     .catchError((onError) {
+        //   print('could not saved data');
+        //   throw ("aldaa garlaa");
+        // });
+        // await _database
+        //     .child("${dbName.split("-")[0]}/${getCellValue(row[1])}")
+        //     .set(newData)
+        //     .catchError((onError) {
+        //   print('could not saved data');
+        //   throw ("aldaa garlaa");
+        // });
+
+        await _database
+            .child('KanjiTest')
+            .push()
+            .set(newData)
+            .catchError((onError) {
+          print('could not saved data');
+          throw ("aldaa garlaa");
+        });
+      }
+    }
+  }
+
+// read grammar kanji vocabulary
   readJlptWordExcelByFixedColumn(
       String dbName, Excel excel, List<String> columns) async {
     print("dbName");
