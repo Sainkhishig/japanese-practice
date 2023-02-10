@@ -192,23 +192,16 @@ class JlptWordList extends HookConsumerWidget {
   // }
 
   readJlptTestExcelByFixedColumn(String dbName, Excel excel) async {
-    print("dbName");
-    print(dbName);
+    print("dbName:dbName");
     List<String> vocabularies = [""];
     for (var file in excel.sheets.values) {
-      // var sheetName = file.sheetName.split("-")[1];
-
-      // var sectionName = file.sheetName.split("-")[2];
-
-      print("Start");
-      print("name${file.sheetName}");
       if (file.sheetName.contains("formula")) continue;
-      print("name2${file.sheetName}");
-      List<XlTestExerciseModel> lstTestData = [];
-      for (var i = 2; i < excel.tables[file.sheetName]!.rows.length; i++) {
-        var row = excel.tables[file.sheetName]!.rows[i];
-
-        // final newData = <String, dynamic>{};
+      print("Sheet:${file.sheetName}");
+      List<XlTestExerciseModel> lstExercise = [];
+      final newData = <String, dynamic>{};
+      for (var j = 2; j < excel.tables[file.sheetName]!.rows.length; j++) {
+        print("row:$j");
+        var row = excel.tables[file.sheetName]!.rows[j];
         int trueAnswerIndex = int.parse(getCellValue(row[5]));
 
         List<XlTestAnswersModel> lstAnswers = [];
@@ -218,76 +211,36 @@ class JlptWordList extends HookConsumerWidget {
             ..isTrue = trueAnswerIndex == i;
           lstAnswers.add(answer);
         }
-        var vocabulary = XlTestExerciseModel()
+        var exercise = XlTestExerciseModel()
           ..question = getCellValue(row[0])
           ..answers = lstAnswers;
 
-        lstTestData.add(vocabulary);
+        lstExercise.add(exercise);
 
-        final newData = <String, dynamic>{
-          'jlptLevel': 5,
-          'name': getCellValue(excel.tables[file.sheetName]!.rows[0][0]),
-          'reference': getCellValue(excel.tables[file.sheetName]!.rows[1][0]),
-          'exercises': lstTestData.map((test) => {
-                'question': test.question,
-                'answers': test.answers.map((quest) => {
-                      'answer': quest.answer,
-                      'isTrue': quest.isTrue,
-                    }),
-              }),
-          'vocabularies': vocabularies,
-          'time': DateTime.now().microsecondsSinceEpoch
-        };
-
-        print("newData$newData");
-        // for (var i = 1; i < columns.length; i++) {
-        //   newData["jlptLevel"] = 5; //int.parse(getCellValue(row[0]));
-        //   newData[columns[i]] = getCellValue(row[i]);
-        //   newData["order"] = i;
-        //   newData["time"] = DateTime.now().microsecondsSinceEpoch;
-        // }
-        // final newData = <String, dynamic>{
-        //   'bookName': file.sheetName,
-        //   'bookNumber': int.parse(bookNumber),
-        //   'section': sectionName,
-        //   'answerSheet': lstQUestion.map((question) => {
-        //         'section': question.section,
-        //         'isGroup': question.isGroup,
-        //         'questionNumber': question.questionNumber,
-        //         'groupQuestionEndNumber': question.groupQuestionEndNumber,
-        //         'answerType': question.answerType.name,
-        //         'questionContent': question.questionContent,
-        //         'answerChoice': question.answerChoice,
-        //         'answers': question.answers
-        //       }),
-        //   'time': DateTime.now().microsecondsSinceEpoch
-        // };
-        print("2");
-        // await _database
-        //     .child(dbName.split("-")[0])
-        //     .push()
-        //     .set(newData)
-        //     .catchError((onError) {
-        //   print('could not saved data');
-        //   throw ("aldaa garlaa");
-        // });
-        // await _database
-        //     .child("${dbName.split("-")[0]}/${getCellValue(row[1])}")
-        //     .set(newData)
-        //     .catchError((onError) {
-        //   print('could not saved data');
-        //   throw ("aldaa garlaa");
-        // });
-
-        await _database
-            .child('KanjiTest')
-            .push()
-            .set(newData)
-            .catchError((onError) {
-          print('could not saved data');
-          throw ("aldaa garlaa");
-        });
+        newData["jlptLevel"] = 5;
+        newData["name"] =
+            getCellValue(excel.tables[file.sheetName]!.rows[0][0]);
+        newData["reference"] =
+            getCellValue(excel.tables[file.sheetName]!.rows[1][0]);
+        newData["exercises"] = lstExercise.map((ex) => {
+              'question': ex.question,
+              'answers': ex.answers.map((quest) => {
+                    'answer': quest.answer,
+                    'isTrue': quest.isTrue,
+                  }),
+            });
+        newData["vocabularies"] = [];
+        newData["time"] = DateTime.now().microsecondsSinceEpoch;
       }
+      print("newData:$newData");
+      await _database
+          .child('KanjiTest')
+          .push()
+          .set(newData)
+          .catchError((onError) {
+        print('could not saved data');
+        throw ("aldaa garlaa");
+      });
     }
   }
 
