@@ -22,11 +22,12 @@ class ReadingExercise {
 }
 
 class Reading {
-  late String section;
-  late String content;
-  late List<Question> questions;
+  String section = "";
+  String content = "";
+  List<Question> questions = [];
 
   late DateTime writeDate;
+  Reading.empty();
   Reading(this.section, this.content, this.questions);
   factory Reading.fromRTDB(Map<String, dynamic> data) {
     return Reading(
@@ -38,9 +39,9 @@ class Reading {
 }
 
 class Question {
-  late String question;
-  late List<AnswerOption> answers;
-
+  String question = "";
+  List<AnswerOption> answers = [];
+  Question.empty();
   Question(this.question, this.answers);
   factory Question.fromRTDB(Map<String, dynamic> data) {
     return Question(
