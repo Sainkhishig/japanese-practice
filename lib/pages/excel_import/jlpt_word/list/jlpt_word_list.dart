@@ -10,6 +10,7 @@ import 'package:japanese_practise_n5/pages/excel_import/jlpt_word/list/jlpt_word
 import 'package:japanese_practise_n5/pages/excel_import/model/JlptWord.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:excel/excel.dart';
+import 'package:japanese_practise_n5/pages/reading/model/reading_model.dart';
 
 // pyfm060 : キャンセル規定一覧 BlogList
 class JlptWordList extends HookConsumerWidget {
@@ -122,11 +123,14 @@ class JlptWordList extends HookConsumerWidget {
       PlatformFile file = result.files.first;
       print("file:${file.name}");
       var excel = Excel.decodeBytes(file.bytes!);
-
-      await readJlptTestExcelByFixedColumn(txtColumns.controller.text, excel)
+      await readJlptReadingTestExcel(txtColumns.controller.text, excel)
           .then((value) => {showSuccessToastMessage(context, "amjilltai")})
           .onError((error, stackTrace) =>
               {showErrorToastMessage(context, "aldaa garlaa")});
+      // await readJlptTestExcelByFixedColumn(txtColumns.controller.text, excel)
+      //     .then((value) => {showSuccessToastMessage(context, "amjilltai")})
+      //     .onError((error, stackTrace) =>
+      //         {showErrorToastMessage(context, "aldaa garlaa")});
 //voc, kanji, grammar
       // await readJlptWordExcelByFixedColumn(file.name.split(".")[0], excel,
       //         txtColumns.controller.text.split(";"))
@@ -192,7 +196,7 @@ class JlptWordList extends HookConsumerWidget {
   // }
 
   readJlptTestExcelByFixedColumn(String dbName, Excel excel) async {
-    print("dbName:dbName");
+    print("dbName:$dbName");
     List<String> vocabularies = [""];
     for (var file in excel.sheets.values) {
       if (file.sheetName.contains("formula")) continue;
@@ -233,11 +237,7 @@ class JlptWordList extends HookConsumerWidget {
         newData["time"] = DateTime.now().microsecondsSinceEpoch;
       }
       print("newData:$newData");
-      await _database
-          .child('KanjiTest')
-          .push()
-          .set(newData)
-          .catchError((onError) {
+      await _database.child(dbName).push().set(newData).catchError((onError) {
         print('could not saved data');
         throw ("aldaa garlaa");
       });
@@ -297,6 +297,202 @@ class JlptWordList extends HookConsumerWidget {
           print('could not saved data');
           throw ("aldaa garlaa");
         });
+      }
+    }
+  }
+
+  // Future<void> writeNew(String key, String exerciseName,
+  //     List<ReadingDetailItem> lstExercises, List<String> vocabularies) async {
+  //   List<Reading> lstReadingExercises = [];
+  //   for (var readingEx in lstExercises) {
+  //     var section = readingEx.txtName.controller.text;
+  //     var content = readingEx.txtContent.controller.text;
+  //     var questions = readingEx.lstQuestionWidgets.lstQuestion
+  //         .map((question) => Question(
+  //               question.questionWidget.controller.text,
+  //               question.answerWidget.lstAnswer
+  //                   .map((e) => AnswerOption(
+  //                       e.field.controller.text, e.checkField.isChecked))
+  //                   .toList(),
+  //             ))
+  //         .toList();
+
+  //     Reading reading = Reading(section, content, questions);
+  //     lstReadingExercises.add(reading);
+  //   }
+
+  //   List<Map<String, dynamic>> lstSendItem = [];
+  //   lstReadingExercises.map((e) {
+  //     lstSendItem.add({
+  //       'section': e.section,
+  //       'content': e.content,
+  //       'questions': e.questions.map((quest) => {
+  //             'question': quest.question,
+  //             'answers': quest.answers.map((quest) => {
+  //                   'answer': quest.answer,
+  //                   'isTrue': quest.isTrue,
+  //                 }),
+  //           }),
+  //     });
+  //   }).toList();
+
+  //   final newData = <String, dynamic>{
+  //     'jlptLevel': jlptLevel,
+  //     'name': exerciseName,
+  //     'exercises': lstSendItem,
+  //     'vocabularies': vocabularies,
+  //     'time': DateTime.now().microsecondsSinceEpoch
+  //   };
+  //   if (key.isEmpty) {
+  //     await _database
+  //         .child('ReadingTest')
+  //         .push()
+  //         .set(newData)
+  //         .catchError((onError) {
+  //       print('could not saved data');
+  //       throw ("aldaa garlaa");
+  //     });
+  //   } else {
+  //     var _todoQuery = _database.child("/ReadingTest");
+  //     await _todoQuery.child("/$key").set(newData).catchError((onError) {
+  //       print('could not update data');
+  //       throw ("aldaa garlaa");
+  //     });
+  //   }
+  // }
+//reading TestExcel
+
+  readJlptReadingTestExcel(String dbName, Excel excel) async {
+    print("jlptLevel:$dbName");
+    ReadingSourceState sourceState = ReadingSourceState.title;
+    List<String> vocabularies = ["new word"];
+    List<Reading> lstReadingExercises = [];
+    Reading currentReading = Reading.empty();
+    Question currentQuestion = Question.empty();
+    List<Question> lstQuestion = [];
+    for (var file in excel.sheets.values) {
+      if (file.sheetName.contains("formula")) continue;
+      print("Sheet:${file.sheetName}");
+
+      // List<Question> lstQuestions = [];
+
+      String exerciseName = "";
+      for (var j = 1; j < excel.tables[file.sheetName]!.rows.length; j++) {
+        var row = excel.tables[file.sheetName]!.rows[j];
+
+        var rowFirstValue = getCellValue(row[0]);
+        if (rowFirstValue.startsWith("JLPT")) {
+          print("j*+$j");
+          if (j != 1) {
+            print("pass:$lstReadingExercises");
+
+            List<Map<String, dynamic>> lstSendItem = [];
+            lstReadingExercises.map((e) {
+              lstSendItem.add({
+                'section': e.section,
+                'content': e.content,
+                'questions': e.questions.map((quest) => {
+                      'question': quest.question,
+                      'answers': quest.answers.map((quest) => {
+                            'answer': quest.answer,
+                            'isTrue': quest.isTrue,
+                          }),
+                    }),
+              });
+            }).toList();
+
+            final newData = <String, dynamic>{
+              'jlptLevel': 5,
+              'name': exerciseName,
+              'exercises': lstSendItem,
+              'vocabularies': vocabularies,
+              'time': DateTime.now().microsecondsSinceEpoch
+            };
+            print("newData");
+            print(newData);
+            await _database
+                .child(dbName)
+                .push()
+                .set(newData)
+                .catchError((onError) {
+              print('could not saved data');
+              throw ("aldaa garlaa");
+            });
+          }
+
+          lstReadingExercises = [];
+
+          exerciseName = rowFirstValue;
+          continue;
+        }
+        if (rowFirstValue.startsWith("Reading")) {
+          if (sourceState == ReadingSourceState.answers) {
+            // var lst = [...lstQuestion];
+            print("q::${lstQuestion.length}");
+            currentReading.questions = lstQuestion.toList();
+
+            lstReadingExercises.add(currentReading);
+          }
+          print("currentReading:$currentReading");
+          currentReading = Reading.empty();
+          currentReading.section = rowFirstValue;
+          currentReading.questions = [];
+          sourceState = ReadingSourceState.section;
+          continue;
+          // questions = XlTestExerciseModel();
+        }
+        if (rowFirstValue.startsWith("Question")) {
+          if (sourceState == ReadingSourceState.answers) {
+            print("questionAdd");
+            lstQuestion.add(
+                Question(currentQuestion.question, currentQuestion.answers));
+          }
+          currentQuestion = Question.empty();
+          currentQuestion.question = rowFirstValue;
+          sourceState = ReadingSourceState.question;
+          continue;
+        }
+        if (rowFirstValue.startsWith("Answers")) {
+          sourceState = ReadingSourceState.answers;
+          continue;
+        }
+        if (rowFirstValue.contains("Key")) {
+          if (sourceState == ReadingSourceState.answers) {
+            print("questionAdd2");
+            lstQuestion.add(
+                Question(currentQuestion.question, currentQuestion.answers));
+            lstReadingExercises.add(currentReading);
+          }
+          sourceState = ReadingSourceState.trueAnswer;
+          continue;
+        }
+
+        switch (sourceState) {
+          case ReadingSourceState.section:
+            print("content:$rowFirstValue");
+            currentReading.content += "\n" + rowFirstValue;
+            break;
+          case ReadingSourceState.answers:
+            currentQuestion.answers.add(AnswerOption(rowFirstValue, false));
+            break;
+          case ReadingSourceState.trueAnswer:
+            var questionIndex =
+                int.parse(rowFirstValue.split(":")[0].trim()) - 1;
+            var trueAnswerIndex =
+                int.parse(rowFirstValue.split(":")[1].trim()) - 1;
+            // currentQuestion.answers[trueAnswerIndex].isTrue = true;
+            // if (questionIndex == currentReading.questions.length) {
+            // print("questonLength${currentReading.questions.length}");
+            // print("questionIndex${questionIndex}");
+            // print(
+            //     "answers${currentReading.questions[questionIndex].answers.length}");
+            // print("trueAnswerIndex$trueAnswerIndex");
+            // currentReading.questions[questionIndex].answers[trueAnswerIndex]
+            //     .isTrue = true;
+            // }
+            break;
+          default:
+        }
       }
     }
   }
@@ -372,3 +568,5 @@ class JlptWordList extends HookConsumerWidget {
             : "${row.value}";
   }
 }
+
+enum ReadingSourceState { title, section, question, answers, trueAnswer }
