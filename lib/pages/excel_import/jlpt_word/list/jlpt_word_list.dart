@@ -123,7 +123,7 @@ class JlptWordList extends HookConsumerWidget {
       PlatformFile file = result.files.first;
       print("file:${file.name}");
       var excel = Excel.decodeBytes(file.bytes!);
-      await readJlptReadingTestExcel(txtColumns.controller.text, excel)
+      await readJlptReadingTest(txtColumns.controller.text, excel)
           .then((value) => {showSuccessToastMessage(context, "amjilltai")})
           .onError((error, stackTrace) =>
               {showErrorToastMessage(context, "aldaa garlaa")});
@@ -362,136 +362,237 @@ class JlptWordList extends HookConsumerWidget {
   // }
 //reading TestExcel
 
-  readJlptReadingTestExcel(String dbName, Excel excel) async {
-    print("jlptLevel:$dbName");
+  // readJlptReadingTestExcel(String dbName, Excel excel) async {
+  //   print("jlptLevel:$dbName");
+  //   ReadingSourceState sourceState = ReadingSourceState.title;
+  //   List<String> vocabularies = ["new word"];
+  //   List<Reading> lstReadingExercises = [];
+  //   Reading currentReading = Reading.empty();
+  //   Question currentQuestion = Question.empty();
+  //   List<Question> lstQuestion = [];
+  //   for (var file in excel.sheets.values) {
+  //     if (file.sheetName.contains("formula")) continue;
+  //     print("Sheet:${file.sheetName}");
+
+  //     // List<Question> lstQuestions = [];
+
+  //     String exerciseName = "";
+  //     for (var j = 1; j < excel.tables[file.sheetName]!.rows.length; j++) {
+  //       var row = excel.tables[file.sheetName]!.rows[j];
+
+  //       var rowFirstValue = getCellValue(row[0]);
+  //       if (rowFirstValue.startsWith("JLPT")) {
+  //         print("j*+$j");
+  //         if (j != 1) {
+  //           print("pass:$lstReadingExercises");
+
+  //           List<Map<String, dynamic>> lstSendItem = [];
+  //           lstReadingExercises.map((e) {
+  //             lstSendItem.add({
+  //               'section': e.section,
+  //               'content': e.content,
+  //               'questions': e.questions.map((quest) => {
+  //                     'question': quest.question,
+  //                     'answers': quest.answers.map((quest) => {
+  //                           'answer': quest.answer,
+  //                           'isTrue': quest.isTrue,
+  //                         }),
+  //                   }),
+  //             });
+  //           }).toList();
+
+  //           final newData = <String, dynamic>{
+  //             'jlptLevel': 5,
+  //             'name': exerciseName,
+  //             'exercises': lstSendItem,
+  //             'vocabularies': vocabularies,
+  //             'time': DateTime.now().microsecondsSinceEpoch
+  //           };
+  //           print("newData");
+  //           print(newData);
+  //           await _database
+  //               .child(dbName)
+  //               .push()
+  //               .set(newData)
+  //               .catchError((onError) {
+  //             print('could not saved data');
+  //             throw ("aldaa garlaa");
+  //           });
+  //         }
+
+  //         lstReadingExercises = [];
+
+  //         exerciseName = rowFirstValue;
+  //         continue;
+  //       }
+  //       if (rowFirstValue.startsWith("Reading")) {
+  //         if (sourceState == ReadingSourceState.answers) {
+  //           // var lst = [...lstQuestion];
+  //           print("q::${lstQuestion.length}");
+  //           currentReading.questions = lstQuestion.toList();
+
+  //           lstReadingExercises.add(currentReading);
+  //         }
+  //         print("currentReading:$currentReading");
+  //         currentReading = Reading.empty();
+  //         currentReading.section = rowFirstValue;
+  //         currentReading.questions = [];
+  //         sourceState = ReadingSourceState.section;
+  //         continue;
+  //         // questions = XlTestExerciseModel();
+  //       }
+  //       if (rowFirstValue.startsWith("Question")) {
+  //         if (sourceState == ReadingSourceState.answers) {
+  //           print("questionAdd");
+  //           lstQuestion.add(
+  //               Question(currentQuestion.question, currentQuestion.answers));
+  //         }
+  //         currentQuestion = Question.empty();
+  //         currentQuestion.question = rowFirstValue;
+  //         sourceState = ReadingSourceState.question;
+  //         continue;
+  //       }
+  //       if (rowFirstValue.startsWith("Answers")) {
+  //         sourceState = ReadingSourceState.answers;
+  //         continue;
+  //       }
+  //       if (rowFirstValue.contains("Key")) {
+  //         if (sourceState == ReadingSourceState.answers) {
+  //           print("questionAdd2");
+  //           lstQuestion.add(
+  //               Question(currentQuestion.question, currentQuestion.answers));
+  //           lstReadingExercises.add(currentReading);
+  //         }
+  //         sourceState = ReadingSourceState.trueAnswer;
+  //         continue;
+  //       }
+
+  //       switch (sourceState) {
+  //         case ReadingSourceState.section:
+  //           print("content:$rowFirstValue");
+  //           currentReading.content += "\n" + rowFirstValue;
+  //           break;
+  //         case ReadingSourceState.answers:
+  //           currentQuestion.answers.add(AnswerOption(rowFirstValue, false));
+  //           break;
+  //         case ReadingSourceState.trueAnswer:
+  //           var questionIndex =
+  //               int.parse(rowFirstValue.split(":")[0].trim()) - 1;
+  //           var trueAnswerIndex =
+  //               int.parse(rowFirstValue.split(":")[1].trim()) - 1;
+  //           // currentQuestion.answers[trueAnswerIndex].isTrue = true;
+  //           // if (questionIndex == currentReading.questions.length) {
+  //           // print("questonLength${currentReading.questions.length}");
+  //           // print("questionIndex${questionIndex}");
+  //           // print(
+  //           //     "answers${currentReading.questions[questionIndex].answers.length}");
+  //           // print("trueAnswerIndex$trueAnswerIndex");
+  //           // currentReading.questions[questionIndex].answers[trueAnswerIndex]
+  //           //     .isTrue = true;
+  //           // }
+  //           break;
+  //         default:
+  //       }
+  //     }
+  //   }
+  // }
+
+  saveReadingTest(dbName, exerciseName, lstReadingExercises) async {
+    List<Map<String, dynamic>> lstSendItem = [];
+    lstReadingExercises.map((e) {
+      lstSendItem.add({
+        'section': e.section,
+        'content': e.content,
+        'questions': e.questions.map((quest) => {
+              'question': quest.question,
+              'answers': quest.answers.map((quest) => {
+                    'answer': quest.answer,
+                    'isTrue': quest.isTrue,
+                  }),
+            }),
+      });
+    }).toList();
+
+    final newData = <String, dynamic>{
+      'jlptLevel': 5,
+      'name': exerciseName,
+      'exercises': lstSendItem,
+      'vocabularies': ["vocabularies"],
+      'time': DateTime.now().microsecondsSinceEpoch
+    };
+    print("newData");
+    print(newData);
+    await _database.child(dbName).push().set(newData).catchError((onError) {
+      print('could not saved data');
+      throw ("aldaa garlaa");
+    });
+  }
+
+  readJlptReadingTest(String dbName, Excel excel) async {
     ReadingSourceState sourceState = ReadingSourceState.title;
     List<String> vocabularies = ["new word"];
     List<Reading> lstReadingExercises = [];
     Reading currentReading = Reading.empty();
+
     Question currentQuestion = Question.empty();
-    List<Question> lstQuestion = [];
     for (var file in excel.sheets.values) {
       if (file.sheetName.contains("formula")) continue;
       print("Sheet:${file.sheetName}");
 
-      // List<Question> lstQuestions = [];
-
       String exerciseName = "";
       for (var j = 1; j < excel.tables[file.sheetName]!.rows.length; j++) {
         var row = excel.tables[file.sheetName]!.rows[j];
-
         var rowFirstValue = getCellValue(row[0]);
         if (rowFirstValue.startsWith("JLPT")) {
-          print("j*+$j");
-          if (j != 1) {
-            print("pass:$lstReadingExercises");
-
-            List<Map<String, dynamic>> lstSendItem = [];
-            lstReadingExercises.map((e) {
-              lstSendItem.add({
-                'section': e.section,
-                'content': e.content,
-                'questions': e.questions.map((quest) => {
-                      'question': quest.question,
-                      'answers': quest.answers.map((quest) => {
-                            'answer': quest.answer,
-                            'isTrue': quest.isTrue,
-                          }),
-                    }),
-              });
-            }).toList();
-
-            final newData = <String, dynamic>{
-              'jlptLevel': 5,
-              'name': exerciseName,
-              'exercises': lstSendItem,
-              'vocabularies': vocabularies,
-              'time': DateTime.now().microsecondsSinceEpoch
-            };
-            print("newData");
-            print(newData);
-            await _database
-                .child(dbName)
-                .push()
-                .set(newData)
-                .catchError((onError) {
-              print('could not saved data');
-              throw ("aldaa garlaa");
-            });
-          }
-
-          lstReadingExercises = [];
-
           exerciseName = rowFirstValue;
-          continue;
-        }
-        if (rowFirstValue.startsWith("Reading")) {
-          if (sourceState == ReadingSourceState.answers) {
-            // var lst = [...lstQuestion];
-            print("q::${lstQuestion.length}");
-            currentReading.questions = lstQuestion.toList();
-
-            lstReadingExercises.add(currentReading);
-          }
-          print("currentReading:$currentReading");
+        } else if (rowFirstValue.startsWith("endJLPT")) {
+          await saveReadingTest(dbName, exerciseName, lstReadingExercises);
+        } else if (rowFirstValue.startsWith("Reading")) {
           currentReading = Reading.empty();
           currentReading.section = rowFirstValue;
-          currentReading.questions = [];
           sourceState = ReadingSourceState.section;
           continue;
-          // questions = XlTestExerciseModel();
-        }
-        if (rowFirstValue.startsWith("Question")) {
-          if (sourceState == ReadingSourceState.answers) {
-            print("questionAdd");
-            lstQuestion.add(
-                Question(currentQuestion.question, currentQuestion.answers));
-          }
+        } else if (rowFirstValue.startsWith("end passage")) {
+          lstReadingExercises.add(currentReading);
+        } else if (rowFirstValue.startsWith("Question")) {
           currentQuestion = Question.empty();
           currentQuestion.question = rowFirstValue;
           sourceState = ReadingSourceState.question;
           continue;
-        }
-        if (rowFirstValue.startsWith("Answers")) {
-          sourceState = ReadingSourceState.answers;
-          continue;
-        }
-        if (rowFirstValue.contains("Key")) {
-          if (sourceState == ReadingSourceState.answers) {
-            print("questionAdd2");
-            lstQuestion.add(
-                Question(currentQuestion.question, currentQuestion.answers));
-            lstReadingExercises.add(currentReading);
-          }
-          sourceState = ReadingSourceState.trueAnswer;
-          continue;
-        }
+        } else if (rowFirstValue.startsWith("end question")) {
+          currentReading.questions
+              .add(Question(currentQuestion.question, currentQuestion.answers));
 
-        switch (sourceState) {
-          case ReadingSourceState.section:
-            print("content:$rowFirstValue");
-            currentReading.content += "\n" + rowFirstValue;
-            break;
-          case ReadingSourceState.answers:
-            currentQuestion.answers.add(AnswerOption(rowFirstValue, false));
-            break;
-          case ReadingSourceState.trueAnswer:
-            var questionIndex =
-                int.parse(rowFirstValue.split(":")[0].trim()) - 1;
-            var trueAnswerIndex =
-                int.parse(rowFirstValue.split(":")[1].trim()) - 1;
-            // currentQuestion.answers[trueAnswerIndex].isTrue = true;
-            // if (questionIndex == currentReading.questions.length) {
-            // print("questonLength${currentReading.questions.length}");
-            // print("questionIndex${questionIndex}");
-            // print(
-            //     "answers${currentReading.questions[questionIndex].answers.length}");
-            // print("trueAnswerIndex$trueAnswerIndex");
-            // currentReading.questions[questionIndex].answers[trueAnswerIndex]
-            //     .isTrue = true;
-            // }
-            break;
-          default:
+          continue;
+        } else if (rowFirstValue.startsWith("Answer Key")) {
+          sourceState = ReadingSourceState.answerKey;
+          continue;
+        } else {
+          switch (sourceState) {
+            case ReadingSourceState.section:
+              currentReading.content += "\n" + rowFirstValue;
+              break;
+            case ReadingSourceState.question:
+              currentQuestion.answers.add(AnswerOption(rowFirstValue, false));
+              break;
+            case ReadingSourceState.answerKey:
+              var questionIndex =
+                  int.parse(rowFirstValue.split(":")[0].trim()) - 1;
+              var trueAnswerIndex =
+                  int.parse(rowFirstValue.split(":")[1].trim()) - 1;
+              // currentQuestion.answers[trueAnswerIndex].isTrue = true;
+              // if (questionIndex == currentReading.questions.length) {
+              // print("questonLength${currentReading.questions.length}");
+              // print("questionIndex${questionIndex}");
+              // print(
+              //     "answers${currentReading.questions[questionIndex].answers.length}");
+              // print("trueAnswerIndex$trueAnswerIndex");
+              // currentReading.questions[questionIndex].answers[trueAnswerIndex]
+              //     .isTrue = true;
+              // }
+              break;
+            default:
+          }
         }
       }
     }
@@ -569,4 +670,4 @@ class JlptWordList extends HookConsumerWidget {
   }
 }
 
-enum ReadingSourceState { title, section, question, answers, trueAnswer }
+enum ReadingSourceState { title, section, question, answerKey }
