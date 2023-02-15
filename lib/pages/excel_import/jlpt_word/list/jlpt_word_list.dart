@@ -530,30 +530,26 @@ class JlptWordList extends HookConsumerWidget {
 
   readJlptReadingTest(String dbName, Excel excel) async {
     ReadingSourceState sourceState = ReadingSourceState.title;
-    List<String> vocabularies = ["new word"];
     List<Reading> lstReadingExercises = [];
     Reading currentReading = Reading.empty();
 
     Question currentQuestion = Question.empty();
     for (var file in excel.sheets.values) {
       if (file.sheetName.contains("formula")) continue;
-      print("Sheet:${file.sheetName}");
 
       String exerciseName = "";
       for (var j = 1; j < excel.tables[file.sheetName]!.rows.length; j++) {
         var row = excel.tables[file.sheetName]!.rows[j];
         var rowFirstValue = getCellValue(row[0]);
         if (rowFirstValue.startsWith("JLPT")) {
+          lstReadingExercises = [];
           exerciseName = rowFirstValue;
-        } else if (rowFirstValue.startsWith("endJLPT")) {
-          await saveReadingTest(dbName, exerciseName, lstReadingExercises);
+          continue;
         } else if (rowFirstValue.startsWith("Reading")) {
           currentReading = Reading.empty();
           currentReading.section = rowFirstValue;
           sourceState = ReadingSourceState.section;
           continue;
-        } else if (rowFirstValue.startsWith("end passage")) {
-          lstReadingExercises.add(currentReading);
         } else if (rowFirstValue.startsWith("Question")) {
           currentQuestion = Question.empty();
           currentQuestion.question = rowFirstValue;
@@ -562,11 +558,14 @@ class JlptWordList extends HookConsumerWidget {
         } else if (rowFirstValue.startsWith("end question")) {
           currentReading.questions
               .add(Question(currentQuestion.question, currentQuestion.answers));
-
           continue;
+        } else if (rowFirstValue.startsWith("end passage")) {
+          lstReadingExercises.add(currentReading);
         } else if (rowFirstValue.startsWith("Answer Key")) {
           sourceState = ReadingSourceState.answerKey;
           continue;
+        } else if (rowFirstValue.startsWith("endJLPT")) {
+          await saveReadingTest(dbName, exerciseName, lstReadingExercises);
         } else {
           switch (sourceState) {
             case ReadingSourceState.section:
