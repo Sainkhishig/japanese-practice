@@ -82,10 +82,24 @@ class JlptWordList extends HookConsumerWidget {
               padding: const EdgeInsets.all(8.0),
               width: 200,
               child: ElevatedButton(
+                child: const Text("Тест: сонсгол"),
+                onPressed: () async {
+                  try {
+                    pickExcel(context, ImportType.listeningTest);
+                    // showSuccessToastMessage(context, "Амжилттай хадгаллаа");
+                  } catch (ex) {
+                    showErrorToastMessage(context, "Алдаа гарлаа");
+                  }
+                },
+              )),
+          Container(
+              padding: const EdgeInsets.all(8.0),
+              width: 200,
+              child: ElevatedButton(
                 child: const Text("Тест: Дүрэм, шинэ үг"),
                 onPressed: () async {
                   try {
-                    pickExcel(context, ImportType.vocabularyGrammarTest);
+                    pickExcel(context, ImportType.vocabularyGrammarKanjiTest);
                     // showSuccessToastMessage(context, "Амжилттай хадгаллаа");
                   } catch (ex) {
                     showErrorToastMessage(context, "Алдаа гарлаа");
@@ -163,14 +177,22 @@ class JlptWordList extends HookConsumerWidget {
               .onError((error, stackTrace) =>
                   {showErrorToastMessage(context, "aldaa garlaa")});
           break;
-        case ImportType.vocabularyGrammarTest:
+        case ImportType.dynamicCol:
           await readJlptWordExcelByFixedColumn(file.name.split(".")[0], excel,
                   txtColumns.controller.text.split(";"))
               .then((value) => {showSuccessToastMessage(context, "amjilltai")})
               .onError((error, stackTrace) =>
                   {showErrorToastMessage(context, "aldaa garlaa")});
           break;
-        case ImportType.dynamicCol:
+        case ImportType.listeningTest:
+          await readJlptTestListeningWithFixedColumn(
+                  txtColumns.controller.text, excel)
+              .then((value) => {showSuccessToastMessage(context, "amjilltai")})
+              .onError((error, stackTrace) =>
+                  {showErrorToastMessage(context, "aldaa garlaa")});
+          break;
+
+        case ImportType.vocabularyGrammarKanjiTest:
           await readJlptTestExcelByFixedColumn(
                   txtColumns.controller.text, excel)
               .then((value) => {showSuccessToastMessage(context, "amjilltai")})
@@ -290,32 +312,88 @@ class JlptWordList extends HookConsumerWidget {
   }
 
 //listening Test
-  readJlptListeningTestWithSpecCol(
-      String dbName, Excel excel, List<String> columns) async {
-    print("dbName");
-    print(dbName);
-    for (var file in excel.sheets.values) {
-      print("Start");
-      for (var i = 0; i < excel.tables[file.sheetName]!.rows.length; i++) {
-        var row = excel.tables[file.sheetName]!.rows[i];
 
-        final newData = <String, dynamic>{};
-        print("1");
-        for (var i = 1; i < columns.length; i++) {
-          newData["level"] = int.parse(getCellValue(row[0]));
-          newData[columns[i]] = getCellValue(row[i]);
-          newData["order"] = i;
-          newData["time"] = DateTime.now().microsecondsSinceEpoch;
+  readJlptTestListeningWithFixedColumn(String dbName, Excel excel) async {
+    print("dbName:$dbName");
+    List<String> vocabularies = [""];
+    for (var file in excel.sheets.values) {
+      if (file.sheetName.contains("formula")) continue;
+      print("Sheet:${file.sheetName}");
+      List<XlTestExerciseModel> lstExercise = [];
+      final newData = <String, dynamic>{};
+      for (var j = 2; j < excel.tables[file.sheetName]!.rows.length; j++) {
+        print("row:$j");
+        var row = excel.tables[file.sheetName]!.rows[j];
+        int trueAnswerIndex = int.parse(getCellValue(row[9]));
+
+        List<XlTestAnswersModel> lstAnswers = [];
+        // 5-9
+        for (var i = 1; i < 5; i++) {
+          var answer = XlTestAnswersModel()
+            ..answer = getCellValue(row[i + 4])
+            ..isTrue = trueAnswerIndex == i;
+          lstAnswers.add(answer);
         }
-        await _database
-            .child("${dbName.split("-")[0]}/${getCellValue(row[1])}")
-            .set(newData)
-            .catchError((onError) {
-          print('could not saved data');
-          throw ("aldaa garlaa");
-        });
+        var exercise = XlTestExerciseModel()
+          ..question = getCellValue(row[2])
+          ..answers = lstAnswers;
+
+        lstExercise.add(exercise);
+
+        newData["jlptLevel"] = getCellValue(row[0]);
+        newData["name"] =
+            getCellValue(excel.tables[file.sheetName]!.rows[0][0]);
+        newData["storagePath"] = getCellValue(row[1]);
+        newData["exercises"] = lstExercise.map((ex) => {
+              'question': ex.question,
+              'audioUrl': getCellValue(row[4]),
+              'audioPath': "",
+              'imageUrl': getCellValue(row[3]),
+              'imagePath': "",
+              'answers': ex.answers.map((quest) => {
+                    'answer': quest.answer,
+                    'isTrue': quest.isTrue,
+                  }),
+            });
+        newData["vocabularies"] = [];
+        newData["time"] = DateTime.now().microsecondsSinceEpoch;
       }
+      print("newData:$newData");
+      await _database.child(dbName).push().set(newData).catchError((onError) {
+        print('could not saved data');
+        throw ("aldaa garlaa");
+      });
     }
+  }
+
+  saveListeningTest(int jlptLevel, String exName, StringstoragePath,
+      ListeningExercise listeningTest) async {
+    final newData = <String, dynamic>{
+      'jlptLevel': listeningTest.jlptLevel,
+      'name': listeningTest.name,
+      'storagePath': listeningTest.storagePath,
+      'exercises': listeningTest.exercises.map((quest) => {
+            'question': quest.question,
+            'audioUrl': quest.audioUrl ?? "",
+            'audioPath': quest.audioPath ?? "",
+            'imageUrl': quest.imageUrl ?? "",
+            'imagePath': quest.imagePath ?? "",
+            'answers': quest.answers.map((answerChoise) => {
+                  'answer': answerChoise.answer,
+                  'isTrue': answerChoise.isTrue,
+                }),
+          }),
+      'vocabularies': ["vocabularies"],
+      'time': DateTime.now().microsecondsSinceEpoch
+    };
+    await _database
+        .child('ListeningTest')
+        .push()
+        .set(newData)
+        .catchError((onError) {
+      print('could not saved data');
+      throw ("aldaa garlaa");
+    });
   }
 
 // read grammar kanji vocabulary
@@ -590,36 +668,6 @@ class JlptWordList extends HookConsumerWidget {
     }
   }
 
-  saveListeningTest(int jlptLevel, String exName, StringstoragePath,
-      ListeningExercise listeningTest) async {
-    final newData = <String, dynamic>{
-      'jlptLevel': listeningTest.jlptLevel,
-      'name': listeningTest.name,
-      'storagePath': listeningTest.storagePath,
-      'exercises': listeningTest.exercises.map((quest) => {
-            'question': quest.question,
-            'audioUrl': quest.audioUrl ?? "",
-            'audioPath': quest.audioPath ?? "",
-            'imageUrl': quest.imageUrl ?? "",
-            'imagePath': quest.imagePath ?? "",
-            'answers': quest.answers.map((answerChoise) => {
-                  'answer': answerChoise.answer,
-                  'isTrue': answerChoise.isTrue,
-                }),
-          }),
-      'vocabularies': ["vocabularies"],
-      'time': DateTime.now().microsecondsSinceEpoch
-    };
-    await _database
-        .child('ListeningTest')
-        .push()
-        .set(newData)
-        .catchError((onError) {
-      print('could not saved data');
-      throw ("aldaa garlaa");
-    });
-  }
-
   readJlptReadingTest(String dbName, Excel excel) async {
     ReadingSourceState sourceState = ReadingSourceState.title;
     List<Reading> lstReadingExercises = [];
@@ -756,4 +804,9 @@ class JlptWordList extends HookConsumerWidget {
 }
 
 enum ReadingSourceState { title, section, question, answerKey }
-enum ImportType { readingTest, vocabularyGrammarTest, dynamicCol }
+enum ImportType {
+  readingTest,
+  vocabularyGrammarKanjiTest,
+  dynamicCol,
+  listeningTest
+}
