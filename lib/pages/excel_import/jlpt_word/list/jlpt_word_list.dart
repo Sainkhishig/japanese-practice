@@ -528,10 +528,23 @@ class JlptWordList extends HookConsumerWidget {
     });
   }
 
+  setAnswerKey(List<Reading> lstExercise, Map<int, int> mapAnswerKey) {
+    print("lstAnswers:$mapAnswerKey");
+    for (var readingPassage in lstExercise) {
+      readingPassage.questions.asMap().forEach((indexs, question) {
+        debugPrint('IndexVal:::$indexs : $question');
+        var questionIndex = question.question.split(".")[0];
+        var trueAnswerIndex = mapAnswerKey[questionIndex] ?? 0;
+        question.answers[trueAnswerIndex].isTrue = true;
+      });
+    }
+  }
+
   readJlptReadingTest(String dbName, Excel excel) async {
     ReadingSourceState sourceState = ReadingSourceState.title;
     List<Reading> lstReadingExercises = [];
     Reading currentReading = Reading.empty();
+    Map<int, int> mapAnswerKey = {};
 
     Question currentQuestion = Question.empty();
     for (var file in excel.sheets.values) {
@@ -543,6 +556,7 @@ class JlptWordList extends HookConsumerWidget {
         var rowFirstValue = getCellValue(row[0]);
         if (rowFirstValue.startsWith("JLPT")) {
           lstReadingExercises = [];
+          mapAnswerKey = {};
           exerciseName = rowFirstValue;
           continue;
         } else if (rowFirstValue.startsWith("Reading")) {
@@ -552,7 +566,8 @@ class JlptWordList extends HookConsumerWidget {
           continue;
         } else if (rowFirstValue.startsWith("Question")) {
           currentQuestion = Question.empty();
-          currentQuestion.question = rowFirstValue;
+          currentQuestion.question =
+              rowFirstValue.replaceAll("Question", "").trim();
           sourceState = ReadingSourceState.question;
           continue;
         } else if (rowFirstValue.startsWith("end question")) {
@@ -565,6 +580,7 @@ class JlptWordList extends HookConsumerWidget {
           sourceState = ReadingSourceState.answerKey;
           continue;
         } else if (rowFirstValue.startsWith("endJLPT")) {
+          setAnswerKey(lstReadingExercises, mapAnswerKey);
           await saveReadingTest(dbName, exerciseName, lstReadingExercises);
         } else {
           switch (sourceState) {
@@ -575,10 +591,29 @@ class JlptWordList extends HookConsumerWidget {
               currentQuestion.answers.add(AnswerOption(rowFirstValue, false));
               break;
             case ReadingSourceState.answerKey:
-              var questionIndex =
-                  int.parse(rowFirstValue.split(":")[0].trim()) - 1;
+              var questionIndex = int.parse(rowFirstValue.split(":")[0].trim());
               var trueAnswerIndex =
-                  int.parse(rowFirstValue.split(":")[1].trim()) - 1;
+                  int.parse(rowFirstValue.split(":")[1].trim());
+              mapAnswerKey[questionIndex] = trueAnswerIndex;
+
+              // print("answerIndexSection:$questionIndex:$trueAnswerIndex");
+              // var updateQUestion = lstReadingExercises.where((element) =>
+              //     element.questions.any((question) =>
+              //         question.question.trim().startsWith("$questionIndex")));
+              // if (updateQUestion.isNotEmpty) {
+              //   print("questionIndex:$questionIndex");
+              //   print("answerIndex:$trueAnswerIndex");
+              //   for (var question in updateQUestion.first.questions) {
+              //     if (question.question
+              //         .trim()
+              //         .startsWith("${questionIndex + 1}")) {
+              //       print("questionwithAnswer:$trueAnswerIndex");
+              //       print(question.question);
+              //       question.answers[trueAnswerIndex].isTrue = true;
+              //     }
+              //   }
+              // }
+
               // currentQuestion.answers[trueAnswerIndex].isTrue = true;
               // if (questionIndex == currentReading.questions.length) {
               // print("questonLength${currentReading.questions.length}");
