@@ -10,6 +10,7 @@ import 'package:japanese_practise_n5/pages/excel_import/jlpt_word/list/jlpt_word
 import 'package:japanese_practise_n5/pages/excel_import/model/JlptWord.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:excel/excel.dart';
+import 'package:japanese_practise_n5/pages/listening/model/listening_model.dart';
 import 'package:japanese_practise_n5/pages/reading/model/reading_model.dart';
 
 // pyfm060 : キャンセル規定一覧 BlogList
@@ -288,6 +289,35 @@ class JlptWordList extends HookConsumerWidget {
     }
   }
 
+//listening Test
+  readJlptListeningTestWithSpecCol(
+      String dbName, Excel excel, List<String> columns) async {
+    print("dbName");
+    print(dbName);
+    for (var file in excel.sheets.values) {
+      print("Start");
+      for (var i = 0; i < excel.tables[file.sheetName]!.rows.length; i++) {
+        var row = excel.tables[file.sheetName]!.rows[i];
+
+        final newData = <String, dynamic>{};
+        print("1");
+        for (var i = 1; i < columns.length; i++) {
+          newData["level"] = int.parse(getCellValue(row[0]));
+          newData[columns[i]] = getCellValue(row[i]);
+          newData["order"] = i;
+          newData["time"] = DateTime.now().microsecondsSinceEpoch;
+        }
+        await _database
+            .child("${dbName.split("-")[0]}/${getCellValue(row[1])}")
+            .set(newData)
+            .catchError((onError) {
+          print('could not saved data');
+          throw ("aldaa garlaa");
+        });
+      }
+    }
+  }
+
 // read grammar kanji vocabulary
   readJlptWordExcelByFixedColumn(
       String dbName, Excel excel, List<String> columns) async {
@@ -309,31 +339,6 @@ class JlptWordList extends HookConsumerWidget {
           newData["order"] = i;
           newData["time"] = DateTime.now().microsecondsSinceEpoch;
         }
-        // final newData = <String, dynamic>{
-        //   'bookName': file.sheetName,
-        //   'bookNumber': int.parse(bookNumber),
-        //   'section': sectionName,
-        //   'answerSheet': lstQUestion.map((question) => {
-        //         'section': question.section,
-        //         'isGroup': question.isGroup,
-        //         'questionNumber': question.questionNumber,
-        //         'groupQuestionEndNumber': question.groupQuestionEndNumber,
-        //         'answerType': question.answerType.name,
-        //         'questionContent': question.questionContent,
-        //         'answerChoice': question.answerChoice,
-        //         'answers': question.answers
-        //       }),
-        //   'time': DateTime.now().microsecondsSinceEpoch
-        // };
-        print("2");
-        // await _database
-        //     .child(dbName.split("-")[0])
-        //     .push()
-        //     .set(newData)
-        //     .catchError((onError) {
-        //   print('could not saved data');
-        //   throw ("aldaa garlaa");
-        // });
         await _database
             .child("${dbName.split("-")[0]}/${getCellValue(row[1])}")
             .set(newData)
@@ -585,6 +590,36 @@ class JlptWordList extends HookConsumerWidget {
     }
   }
 
+  saveListeningTest(int jlptLevel, String exName, StringstoragePath,
+      ListeningExercise listeningTest) async {
+    final newData = <String, dynamic>{
+      'jlptLevel': listeningTest.jlptLevel,
+      'name': listeningTest.name,
+      'storagePath': listeningTest.storagePath,
+      'exercises': listeningTest.exercises.map((quest) => {
+            'question': quest.question,
+            'audioUrl': quest.audioUrl ?? "",
+            'audioPath': quest.audioPath ?? "",
+            'imageUrl': quest.imageUrl ?? "",
+            'imagePath': quest.imagePath ?? "",
+            'answers': quest.answers.map((answerChoise) => {
+                  'answer': answerChoise.answer,
+                  'isTrue': answerChoise.isTrue,
+                }),
+          }),
+      'vocabularies': ["vocabularies"],
+      'time': DateTime.now().microsecondsSinceEpoch
+    };
+    await _database
+        .child('ListeningTest')
+        .push()
+        .set(newData)
+        .catchError((onError) {
+      print('could not saved data');
+      throw ("aldaa garlaa");
+    });
+  }
+
   readJlptReadingTest(String dbName, Excel excel) async {
     ReadingSourceState sourceState = ReadingSourceState.title;
     List<Reading> lstReadingExercises = [];
@@ -640,35 +675,6 @@ class JlptWordList extends HookConsumerWidget {
               var trueAnswerIndex =
                   int.parse(rowFirstValue.split(":")[1].trim());
               mapAnswerKey[questionIndex] = trueAnswerIndex;
-
-              // print("answerIndexSection:$questionIndex:$trueAnswerIndex");
-              // var updateQUestion = lstReadingExercises.where((element) =>
-              //     element.questions.any((question) =>
-              //         question.question.trim().startsWith("$questionIndex")));
-              // if (updateQUestion.isNotEmpty) {
-              //   print("questionIndex:$questionIndex");
-              //   print("answerIndex:$trueAnswerIndex");
-              //   for (var question in updateQUestion.first.questions) {
-              //     if (question.question
-              //         .trim()
-              //         .startsWith("${questionIndex + 1}")) {
-              //       print("questionwithAnswer:$trueAnswerIndex");
-              //       print(question.question);
-              //       question.answers[trueAnswerIndex].isTrue = true;
-              //     }
-              //   }
-              // }
-
-              // currentQuestion.answers[trueAnswerIndex].isTrue = true;
-              // if (questionIndex == currentReading.questions.length) {
-              // print("questonLength${currentReading.questions.length}");
-              // print("questionIndex${questionIndex}");
-              // print(
-              //     "answers${currentReading.questions[questionIndex].answers.length}");
-              // print("trueAnswerIndex$trueAnswerIndex");
-              // currentReading.questions[questionIndex].answers[trueAnswerIndex]
-              //     .isTrue = true;
-              // }
               break;
             default:
           }

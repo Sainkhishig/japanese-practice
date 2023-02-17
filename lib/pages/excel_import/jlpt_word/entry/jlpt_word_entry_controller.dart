@@ -62,7 +62,7 @@ class JlptWordEntryController extends StateNotifier<JlptWordState> {
         throw ("aldaa garlaa");
       });
     } else {
-      var _todoQuery = _database.child("/ListeningTest");
+      var _todoQuery = _database.child("/JlptWord");
       await _todoQuery.child("/$key").set(newData).catchError((onError) {
         print('could not update data');
         throw ("aldaa garlaa");
