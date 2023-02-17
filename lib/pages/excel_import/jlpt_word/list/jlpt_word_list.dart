@@ -48,17 +48,49 @@ class JlptWordList extends HookConsumerWidget {
         children: [
           Row(children: [
             Expanded(child: txtColumns),
-            SaveButton(
-              onSave: () async {
-                try {
-                  pickExcel(context);
-                  // showSuccessToastMessage(context, "Амжилттай хадгаллаа");
-                } catch (ex) {
-                  showErrorToastMessage(context, "Алдаа гарлаа");
-                }
-              },
-            ),
           ]),
+          Container(
+              padding: const EdgeInsets.all(8.0),
+              width: 200,
+              child: ElevatedButton(
+                child: const Text("Динамик багана"),
+                onPressed: () async {
+                  try {
+                    pickExcel(context, ImportType.dynamicCol);
+                    // showSuccessToastMessage(context, "Амжилттай хадгаллаа");
+                  } catch (ex) {
+                    showErrorToastMessage(context, "Алдаа гарлаа");
+                  }
+                },
+              )),
+          Container(
+              padding: const EdgeInsets.all(8.0),
+              width: 200,
+              child: ElevatedButton(
+                child: const Text("Тест: уншлага"),
+                onPressed: () async {
+                  try {
+                    pickExcel(context, ImportType.readingTest);
+                    // showSuccessToastMessage(context, "Амжилттай хадгаллаа");
+                  } catch (ex) {
+                    showErrorToastMessage(context, "Алдаа гарлаа");
+                  }
+                },
+              )),
+          Container(
+              padding: const EdgeInsets.all(8.0),
+              width: 200,
+              child: ElevatedButton(
+                child: const Text("Тест: Дүрэм, шинэ үг"),
+                onPressed: () async {
+                  try {
+                    pickExcel(context, ImportType.vocabularyGrammarTest);
+                    // showSuccessToastMessage(context, "Амжилттай хадгаллаа");
+                  } catch (ex) {
+                    showErrorToastMessage(context, "Алдаа гарлаа");
+                  }
+                },
+              )),
           StreamBuilder(
             stream: _database.child('AfenEduBlog').orderByKey().onValue,
             builder: (context, snapshot) {
@@ -114,7 +146,7 @@ class JlptWordList extends HookConsumerWidget {
     );
   }
 
-  Future<void> pickExcel(BuildContext context) async {
+  Future<void> pickExcel(BuildContext context, ImportType importType) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
     print("resultAri");
     if (result != null) {
@@ -123,20 +155,32 @@ class JlptWordList extends HookConsumerWidget {
       PlatformFile file = result.files.first;
       print("file:${file.name}");
       var excel = Excel.decodeBytes(file.bytes!);
-      await readJlptReadingTest(txtColumns.controller.text, excel)
-          .then((value) => {showSuccessToastMessage(context, "amjilltai")})
-          .onError((error, stackTrace) =>
-              {showErrorToastMessage(context, "aldaa garlaa")});
-      // await readJlptTestExcelByFixedColumn(txtColumns.controller.text, excel)
-      //     .then((value) => {showSuccessToastMessage(context, "amjilltai")})
-      //     .onError((error, stackTrace) =>
-      //         {showErrorToastMessage(context, "aldaa garlaa")});
+      switch (importType) {
+        case ImportType.readingTest:
+          await readJlptReadingTest(txtColumns.controller.text, excel)
+              .then((value) => {showSuccessToastMessage(context, "amjilltai")})
+              .onError((error, stackTrace) =>
+                  {showErrorToastMessage(context, "aldaa garlaa")});
+          break;
+        case ImportType.vocabularyGrammarTest:
+          await readJlptWordExcelByFixedColumn(file.name.split(".")[0], excel,
+                  txtColumns.controller.text.split(";"))
+              .then((value) => {showSuccessToastMessage(context, "amjilltai")})
+              .onError((error, stackTrace) =>
+                  {showErrorToastMessage(context, "aldaa garlaa")});
+          break;
+        case ImportType.dynamicCol:
+          await readJlptTestExcelByFixedColumn(
+                  txtColumns.controller.text, excel)
+              .then((value) => {showSuccessToastMessage(context, "amjilltai")})
+              .onError((error, stackTrace) =>
+                  {showErrorToastMessage(context, "aldaa garlaa")});
+          break;
+        default:
+      }
+
 //voc, kanji, grammar
-      // await readJlptWordExcelByFixedColumn(file.name.split(".")[0], excel,
-      //         txtColumns.controller.text.split(";"))
-      //     .then((value) => {showSuccessToastMessage(context, "amjilltai")})
-      //     .onError((error, stackTrace) =>
-      //         {showErrorToastMessage(context, "aldaa garlaa")});
+
     } else {
       // User canceled the picker
     }
@@ -532,10 +576,11 @@ class JlptWordList extends HookConsumerWidget {
     print("lstAnswers:$mapAnswerKey");
     for (var readingPassage in lstExercise) {
       readingPassage.questions.asMap().forEach((indexs, question) {
-        debugPrint('IndexVal:::$indexs : $question');
-        var questionIndex = question.question.split(".")[0];
+        var questionIndex = int.parse(question.question.split(".")[0].trim());
         var trueAnswerIndex = mapAnswerKey[questionIndex] ?? 0;
-        question.answers[trueAnswerIndex].isTrue = true;
+        debugPrint(
+            'IndexVal:::$indexs : question:$questionIndex:answer:$trueAnswerIndex');
+        question.answers[trueAnswerIndex - 1].isTrue = true;
       });
     }
   }
@@ -705,3 +750,4 @@ class JlptWordList extends HookConsumerWidget {
 }
 
 enum ReadingSourceState { title, section, question, answerKey }
+enum ImportType { readingTest, vocabularyGrammarTest, dynamicCol }
