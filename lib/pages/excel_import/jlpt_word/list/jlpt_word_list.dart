@@ -321,7 +321,7 @@ class JlptWordList extends HookConsumerWidget {
       print("Sheet:${file.sheetName}");
       List<XlTestExerciseModel> lstExercise = [];
       final newData = <String, dynamic>{};
-      for (var j = 2; j < excel.tables[file.sheetName]!.rows.length; j++) {
+      for (var j = 1; j < excel.tables[file.sheetName]!.rows.length; j++) {
         print("row:$j");
         var row = excel.tables[file.sheetName]!.rows[j];
         int trueAnswerIndex = int.parse(getCellValue(row[9]));
