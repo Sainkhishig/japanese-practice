@@ -336,6 +336,8 @@ class JlptWordList extends HookConsumerWidget {
         }
         var exercise = XlTestExerciseModel()
           ..question = getCellValue(row[2])
+          ..audioUrl = getCellValue(row[10])
+          ..imageUrl = getCellValue(row[3])
           ..answers = lstAnswers;
 
         lstExercise.add(exercise);
@@ -347,9 +349,9 @@ class JlptWordList extends HookConsumerWidget {
         newData["storagePath"] = getCellValue(row[1]);
         newData["exercises"] = lstExercise.map((ex) => {
               'question': ex.question,
-              'audioUrl': getCellValue(row[10]),
+              'audioUrl': ex.audioUrl,
               'audioPath': "",
-              'imageUrl': getCellValue(row[3]),
+              'imageUrl': ex.imageUrl,
               'imagePath': "",
               'answers': ex.answers.map((quest) => {
                     'answer': quest.answer,

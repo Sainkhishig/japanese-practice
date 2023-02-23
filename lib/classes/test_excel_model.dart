@@ -2,6 +2,8 @@ import 'package:excel/excel.dart';
 
 class XlTestExerciseModel {
   late String question;
+  late String imageUrl;
+  late String audioUrl;
   late List<XlTestAnswersModel> answers;
 }
 
