@@ -340,13 +340,14 @@ class JlptWordList extends HookConsumerWidget {
 
         lstExercise.add(exercise);
 
-        newData["jlptLevel"] = getCellValue(row[0]);
+        newData["jlptLevel"] = 5;
+        getCellValue(row[0]);
         newData["name"] =
             getCellValue(excel.tables[file.sheetName]!.rows[0][0]);
         newData["storagePath"] = getCellValue(row[1]);
         newData["exercises"] = lstExercise.map((ex) => {
               'question': ex.question,
-              'audioUrl': getCellValue(row[4]),
+              'audioUrl': getCellValue(row[10]),
               'audioPath': "",
               'imageUrl': getCellValue(row[3]),
               'imagePath': "",
