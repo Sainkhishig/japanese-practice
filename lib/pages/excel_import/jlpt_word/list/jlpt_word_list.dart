@@ -734,6 +734,68 @@ class JlptWordList extends HookConsumerWidget {
     }
   }
 
+  readIeltsTest(String dbName, Excel excel) async {
+    ReadingSourceState sourceState = ReadingSourceState.title;
+    List<Reading> lstReadingExercises = [];
+    Reading currentReading = Reading.empty();
+    Map<int, int> mapAnswerKey = {};
+
+    Question currentQuestion = Question.empty();
+    for (var file in excel.sheets.values) {
+      if (file.sheetName.contains("formula")) continue;
+
+      String exerciseName = "";
+      for (var j = 1; j < excel.tables[file.sheetName]!.rows.length; j++) {
+        var row = excel.tables[file.sheetName]!.rows[j];
+        var rowFirstValue = getCellValue(row[0]);
+        if (rowFirstValue.startsWith("JLPT")) {
+          lstReadingExercises = [];
+          mapAnswerKey = {};
+          exerciseName = rowFirstValue;
+          continue;
+        } else if (rowFirstValue.startsWith("Reading")) {
+          currentReading = Reading.empty();
+          currentReading.section = rowFirstValue;
+          sourceState = ReadingSourceState.section;
+          continue;
+        } else if (rowFirstValue.startsWith("Question")) {
+          currentQuestion = Question.empty();
+          currentQuestion.question =
+              rowFirstValue.replaceAll("Question", "").trim();
+          sourceState = ReadingSourceState.question;
+          continue;
+        } else if (rowFirstValue.startsWith("end question")) {
+          currentReading.questions
+              .add(Question(currentQuestion.question, currentQuestion.answers));
+          continue;
+        } else if (rowFirstValue.startsWith("end passage")) {
+          lstReadingExercises.add(currentReading);
+        } else if (rowFirstValue.startsWith("Answer Key")) {
+          sourceState = ReadingSourceState.answerKey;
+          continue;
+        } else if (rowFirstValue.startsWith("endJLPT")) {
+          setAnswerKey(lstReadingExercises, mapAnswerKey);
+          await saveReadingTest(dbName, exerciseName, lstReadingExercises);
+        } else {
+          switch (sourceState) {
+            case ReadingSourceState.section:
+              currentReading.content += "\n" + rowFirstValue;
+              break;
+            case ReadingSourceState.question:
+              currentQuestion.answers.add(AnswerOption(rowFirstValue, false));
+              break;
+            case ReadingSourceState.answerKey:
+              var questionIndex = int.parse(rowFirstValue.split(":")[0].trim());
+              var trueAnswerIndex =
+                  int.parse(rowFirstValue.split(":")[1].trim());
+              mapAnswerKey[questionIndex] = trueAnswerIndex;
+              break;
+            default:
+          }
+        }
+      }
+    }
+  }
   // Future readExcesl(Excel excel) async {
   //   final _database = FirebaseDatabase.instance.reference();
 
