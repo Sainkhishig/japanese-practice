@@ -13,11 +13,26 @@ import 'package:excel/excel.dart';
 import 'package:japanese_practise_n5/pages/listening/model/listening_model.dart';
 import 'package:japanese_practise_n5/pages/reading/model/reading_model.dart';
 
+List<DropdownMenuItem<int>> getDropItems() {
+  List<DropdownMenuItem<int>> lstDropItem = [];
+  for (var i = 0; i <= 5; i++) {
+    lstDropItem.add(DropdownMenuItem<int>(
+        alignment: AlignmentDirectional.center,
+        value: i,
+        child: Text(
+          i == 0 ? "Анхан шат" : "N$i түвшин",
+          textAlign: TextAlign.center,
+        )));
+  }
+  return lstDropItem;
+}
+
 // pyfm060 : キャンセル規定一覧 BlogList
 class JlptWordList extends HookConsumerWidget {
   JlptWordList({Key? key}) : super(key: key);
   AfenTextField txtColumns = AfenTextField("Эксел баганууд");
   final _database = FirebaseDatabase.instance.reference();
+  int level = 5;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     PageController pageController = PageController(
@@ -48,6 +63,27 @@ class JlptWordList extends HookConsumerWidget {
           Column(
         children: [
           Row(children: [
+            Container(
+              width: 250,
+              padding: const EdgeInsets.only(top: 20),
+              child: DropdownButtonHideUnderline(
+                  child: DropdownButtonFormField(
+                dropdownColor: Colors.white,
+                hint: const Text("сурах түвшингээ сонгоно уу"),
+                isDense: true,
+                items: getDropItems(),
+                // value: loginState.hiveInfo.jlptLevel,
+                onChanged: (value) async {
+                  level = int.parse(value.toString());
+                  print("changed value;;;$level");
+                  // selectedLevel = int.parse("$value");
+                  // print("setLevel");
+                  // print(selectedLevel);
+                  // await pref.setInt("jlptLevel", selectedLevel);
+                  // setState(() {});
+                },
+              )),
+            ),
             Expanded(child: txtColumns),
           ]),
           Container(
@@ -288,7 +324,7 @@ class JlptWordList extends HookConsumerWidget {
 
         lstExercise.add(exercise);
 
-        newData["jlptLevel"] = 5;
+        newData["jlptLevel"] = level;
         newData["name"] =
             getCellValue(excel.tables[file.sheetName]!.rows[0][0]);
         newData["reference"] =
@@ -342,7 +378,7 @@ class JlptWordList extends HookConsumerWidget {
 
         lstExercise.add(exercise);
 
-        newData["jlptLevel"] = 5;
+        newData["jlptLevel"] = level;
         getCellValue(row[0]);
         newData["name"] =
             getCellValue(excel.tables[file.sheetName]!.rows[0][0]);
@@ -415,7 +451,7 @@ class JlptWordList extends HookConsumerWidget {
         final newData = <String, dynamic>{};
         print("1");
         for (var i = 1; i < columns.length; i++) {
-          newData["level"] = int.parse(getCellValue(row[0]));
+          newData["level"] = level; //int.parse(getCellValue(row[0]));
           newData[columns[i]] = getCellValue(row[i]);
           newData["order"] = i;
           newData["time"] = DateTime.now().microsecondsSinceEpoch;
@@ -644,7 +680,7 @@ class JlptWordList extends HookConsumerWidget {
     }).toList();
 
     final newData = <String, dynamic>{
-      'jlptLevel': 5,
+      'jlptLevel': level,
       'name': exerciseName,
       'exercises': lstSendItem,
       'vocabularies': ["vocabularies"],
