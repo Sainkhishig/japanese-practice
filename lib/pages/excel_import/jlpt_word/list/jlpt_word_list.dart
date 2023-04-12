@@ -5,7 +5,6 @@ import 'package:japanese_practise_n5/classes/test_excel_model.dart';
 import 'package:japanese_practise_n5/common/common_widget.dart';
 import 'package:japanese_practise_n5/common/widget/afen_text_field.dart';
 import 'package:japanese_practise_n5/common/widget/register_button.dart';
-import 'package:japanese_practise_n5/common/widget/save_button.dart';
 import 'package:japanese_practise_n5/pages/excel_import/jlpt_word/list/jlpt_word_list_controller.dart';
 import 'package:japanese_practise_n5/pages/excel_import/model/JlptWord.dart';
 import 'package:file_picker/file_picker.dart';
@@ -31,8 +30,8 @@ List<DropdownMenuItem<int>> getDropItems() {
 class JlptWordList extends HookConsumerWidget {
   JlptWordList({Key? key}) : super(key: key);
   AfenTextField txtColumns = AfenTextField("Эксел баганууд");
-  final _database = FirebaseDatabase.instance.reference();
   int level = 5;
+  final _database = FirebaseDatabase.instance.reference();
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     PageController pageController = PageController(
@@ -69,7 +68,7 @@ class JlptWordList extends HookConsumerWidget {
               child: DropdownButtonHideUnderline(
                   child: DropdownButtonFormField(
                 dropdownColor: Colors.white,
-                hint: const Text("сурах түвшингээ сонгоно уу"),
+                hint: const Text("Түвшин"),
                 isDense: true,
                 items: getDropItems(),
                 // value: loginState.hiveInfo.jlptLevel,
@@ -100,11 +99,21 @@ class JlptWordList extends HookConsumerWidget {
                   }
                 },
               )),
+          const Text(
+            "JlptWord : level;word;kana;pos;meaningMn;meaningEn;example;exampleMn;exampleEn",
+            textAlign: TextAlign.left,
+          ),
+          const Text(
+              "JlptKanji : level;kanji;onReading;kunReading;meaningMn;meaningEn;example;exampleMn;exampleEn",
+              textAlign: TextAlign.left),
+          const Text(
+              "JlptGrammar : level;grammar;formMn;formEn;meaningMn;meaningEn;example;exampleMn;exampleEn;example2;example2Mn;example2En",
+              textAlign: TextAlign.left),
           Container(
               padding: const EdgeInsets.all(8.0),
               width: 200,
               child: ElevatedButton(
-                child: const Text("Тест: уншлага"),
+                child: const Text("Тест: уншлага[Db нэр]"),
                 onPressed: () async {
                   try {
                     pickExcel(context, ImportType.readingTest);
@@ -118,7 +127,7 @@ class JlptWordList extends HookConsumerWidget {
               padding: const EdgeInsets.all(8.0),
               width: 200,
               child: ElevatedButton(
-                child: const Text("Тест: сонсгол"),
+                child: const Text("Тест: сонсгол[DB нэр бич]"),
                 onPressed: () async {
                   try {
                     pickExcel(context, ImportType.listeningTest);
@@ -132,7 +141,7 @@ class JlptWordList extends HookConsumerWidget {
               padding: const EdgeInsets.all(8.0),
               width: 200,
               child: ElevatedButton(
-                child: const Text("Тест: Дүрэм, шинэ үг"),
+                child: const Text("Тест: Ханз, Дүрэм, шинэ үг[DB нэр бич]"),
                 onPressed: () async {
                   try {
                     pickExcel(context, ImportType.vocabularyGrammarKanjiTest);
@@ -340,7 +349,12 @@ class JlptWordList extends HookConsumerWidget {
         newData["time"] = DateTime.now().microsecondsSinceEpoch;
       }
       print("newData:$newData");
-      await _database.child(dbName).push().set(newData).catchError((onError) {
+      await _database
+          .child(dbName)
+          .child('N$level')
+          .push()
+          .set(newData)
+          .catchError((onError) {
         print('could not saved data');
         throw ("aldaa garlaa");
       });
@@ -398,7 +412,12 @@ class JlptWordList extends HookConsumerWidget {
         newData["time"] = DateTime.now().microsecondsSinceEpoch;
       }
       print("newData:$newData");
-      await _database.child(dbName).push().set(newData).catchError((onError) {
+      await _database
+          .child(dbName)
+          .child('N$level')
+          .push()
+          .set(newData)
+          .catchError((onError) {
         print('could not saved data');
         throw ("aldaa garlaa");
       });
@@ -413,10 +432,10 @@ class JlptWordList extends HookConsumerWidget {
       'storagePath': listeningTest.storagePath,
       'exercises': listeningTest.exercises.map((quest) => {
             'question': quest.question,
-            'audioUrl': quest.audioUrl ?? "",
-            'audioPath': quest.audioPath ?? "",
-            'imageUrl': quest.imageUrl ?? "",
-            'imagePath': quest.imagePath ?? "",
+            'audioUrl': quest.audioUrl,
+            'audioPath': quest.audioPath,
+            'imageUrl': quest.imageUrl,
+            'imagePath': quest.imagePath,
             'answers': quest.answers.map((answerChoise) => {
                   'answer': answerChoise.answer,
                   'isTrue': answerChoise.isTrue,
@@ -427,6 +446,7 @@ class JlptWordList extends HookConsumerWidget {
     };
     await _database
         .child('ListeningTest')
+        .child('N$level')
         .push()
         .set(newData)
         .catchError((onError) {
@@ -688,7 +708,12 @@ class JlptWordList extends HookConsumerWidget {
     };
     print("newData");
     print(newData);
-    await _database.child(dbName).push().set(newData).catchError((onError) {
+    await _database
+        .child(dbName)
+        .child('N$level')
+        .push()
+        .set(newData)
+        .catchError((onError) {
       print('could not saved data');
       throw ("aldaa garlaa");
     });
