@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:japanese_practise_n5/classes/test_excel_model.dart';
+import 'package:japanese_practise_n5/common/common_enum.dart';
 import 'package:japanese_practise_n5/common/common_widget.dart';
 import 'package:japanese_practise_n5/common/widget/afen_text_field.dart';
 import 'package:japanese_practise_n5/common/widget/register_button.dart';
@@ -31,6 +32,7 @@ class JlptWordList extends HookConsumerWidget {
   JlptWordList({Key? key}) : super(key: key);
   AfenTextField txtColumns = AfenTextField("Эксел баганууд");
   int level = 5;
+  String _testType = TestType.kanji.id;
   final _database = FirebaseDatabase.instance.reference();
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -85,20 +87,6 @@ class JlptWordList extends HookConsumerWidget {
             ),
             Expanded(child: txtColumns),
           ]),
-          Container(
-              padding: const EdgeInsets.all(8.0),
-              width: 200,
-              child: ElevatedButton(
-                child: const Text("Динамик багана"),
-                onPressed: () async {
-                  try {
-                    pickExcel(context, ImportType.dynamicCol);
-                    // showSuccessToastMessage(context, "Амжилттай хадгаллаа");
-                  } catch (ex) {
-                    showErrorToastMessage(context, "Алдаа гарлаа");
-                  }
-                },
-              )),
           const Text(
             "JlptWord : level;word;kana;pos;meaningMn;meaningEn;example;exampleMn;exampleEn",
             textAlign: TextAlign.left,
@@ -113,7 +101,41 @@ class JlptWordList extends HookConsumerWidget {
               padding: const EdgeInsets.all(8.0),
               width: 200,
               child: ElevatedButton(
-                child: const Text("Тест: уншлага[Db нэр]"),
+                child: const Text("Динамик багана"),
+                onPressed: () async {
+                  try {
+                    pickExcel(context, ImportType.dynamicCol);
+                    // showSuccessToastMessage(context, "Амжилттай хадгаллаа");
+                  } catch (ex) {
+                    showErrorToastMessage(context, "Алдаа гарлаа");
+                  }
+                },
+              )),
+          StatefulBuilder(builder: (context, setState) {
+            return ListView.builder(
+                itemCount: TestType.values.length,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (BuildContext context, int index) {
+                  TestType gender = TestType.values[index];
+                  return RadioListTile(
+                    title: Text(gender.label),
+                    value: gender.id,
+                    groupValue: _testType,
+                    onChanged: (value) {
+                      setState(() {
+                        _testType = value.toString();
+                        print("_testType:$value");
+                      });
+                    },
+                  );
+                });
+          }),
+          Container(
+              padding: const EdgeInsets.all(8.0),
+              width: 200,
+              child: ElevatedButton(
+                child: const Text("Тест: уншлага"),
                 onPressed: () async {
                   try {
                     pickExcel(context, ImportType.readingTest);
@@ -127,7 +149,7 @@ class JlptWordList extends HookConsumerWidget {
               padding: const EdgeInsets.all(8.0),
               width: 200,
               child: ElevatedButton(
-                child: const Text("Тест: сонсгол[DB нэр бич]"),
+                child: const Text("Тест: сонсгол"),
                 onPressed: () async {
                   try {
                     pickExcel(context, ImportType.listeningTest);
@@ -141,7 +163,7 @@ class JlptWordList extends HookConsumerWidget {
               padding: const EdgeInsets.all(8.0),
               width: 200,
               child: ElevatedButton(
-                child: const Text("Тест: Ханз, Дүрэм, шинэ үг[DB нэр бич]"),
+                child: const Text("Тест: Ханз, Дүрэм, шинэ үг"),
                 onPressed: () async {
                   try {
                     pickExcel(context, ImportType.vocabularyGrammarKanjiTest);
@@ -217,7 +239,7 @@ class JlptWordList extends HookConsumerWidget {
       var excel = Excel.decodeBytes(file.bytes!);
       switch (importType) {
         case ImportType.readingTest:
-          await readJlptReadingTest(txtColumns.controller.text, excel)
+          await readJlptReadingTest(excel)
               .then((value) => {showSuccessToastMessage(context, "amjilltai")})
               .onError((error, stackTrace) =>
                   {showErrorToastMessage(context, "aldaa garlaa")});
@@ -230,16 +252,14 @@ class JlptWordList extends HookConsumerWidget {
                   {showErrorToastMessage(context, "aldaa garlaa")});
           break;
         case ImportType.listeningTest:
-          await readJlptTestListeningWithFixedColumn(
-                  txtColumns.controller.text, excel)
+          await readJlptTestListeningWithFixedColumn(excel)
               .then((value) => {showSuccessToastMessage(context, "amjilltai")})
               .onError((error, stackTrace) =>
                   {showErrorToastMessage(context, "aldaa garlaa")});
           break;
 
         case ImportType.vocabularyGrammarKanjiTest:
-          await readJlptTestExcelByFixedColumn(
-                  txtColumns.controller.text, excel)
+          await readJlptTestExcelByFixedColumn(excel)
               .then((value) => {showSuccessToastMessage(context, "amjilltai")})
               .onError((error, stackTrace) =>
                   {showErrorToastMessage(context, "aldaa garlaa")});
@@ -307,8 +327,7 @@ class JlptWordList extends HookConsumerWidget {
   //   });
   // }
 
-  readJlptTestExcelByFixedColumn(String dbName, Excel excel) async {
-    print("dbName:$dbName");
+  readJlptTestExcelByFixedColumn(Excel excel) async {
     List<String> vocabularies = [""];
     for (var file in excel.sheets.values) {
       if (file.sheetName.contains("formula")) continue;
@@ -350,7 +369,7 @@ class JlptWordList extends HookConsumerWidget {
       }
       print("newData:$newData");
       await _database
-          .child(dbName)
+          .child(_testType)
           .child('N$level')
           .push()
           .set(newData)
@@ -363,8 +382,7 @@ class JlptWordList extends HookConsumerWidget {
 
 //listening Test
 
-  readJlptTestListeningWithFixedColumn(String dbName, Excel excel) async {
-    print("dbName:$dbName");
+  readJlptTestListeningWithFixedColumn(Excel excel) async {
     List<String> vocabularies = [""];
     for (var file in excel.sheets.values) {
       if (file.sheetName.contains("formula")) continue;
@@ -413,7 +431,7 @@ class JlptWordList extends HookConsumerWidget {
       }
       print("newData:$newData");
       await _database
-          .child(dbName)
+          .child(_testType)
           .child('N$level')
           .push()
           .set(newData)
@@ -683,7 +701,7 @@ class JlptWordList extends HookConsumerWidget {
   //   }
   // }
 
-  saveReadingTest(dbName, exerciseName, lstReadingExercises) async {
+  saveReadingTest(exerciseName, lstReadingExercises) async {
     List<Map<String, dynamic>> lstSendItem = [];
     lstReadingExercises.map((e) {
       lstSendItem.add({
@@ -709,7 +727,7 @@ class JlptWordList extends HookConsumerWidget {
     print("newData");
     print(newData);
     await _database
-        .child(dbName)
+        .child(_testType)
         .child('N$level')
         .push()
         .set(newData)
@@ -732,7 +750,7 @@ class JlptWordList extends HookConsumerWidget {
     }
   }
 
-  readJlptReadingTest(String dbName, Excel excel) async {
+  readJlptReadingTest(Excel excel) async {
     ReadingSourceState sourceState = ReadingSourceState.title;
     List<Reading> lstReadingExercises = [];
     Reading currentReading = Reading.empty();
@@ -773,7 +791,7 @@ class JlptWordList extends HookConsumerWidget {
           continue;
         } else if (rowFirstValue.startsWith("endJLPT")) {
           setAnswerKey(lstReadingExercises, mapAnswerKey);
-          await saveReadingTest(dbName, exerciseName, lstReadingExercises);
+          await saveReadingTest(exerciseName, lstReadingExercises);
         } else {
           switch (sourceState) {
             case ReadingSourceState.section:
@@ -836,7 +854,7 @@ class JlptWordList extends HookConsumerWidget {
           continue;
         } else if (rowFirstValue.startsWith("endJLPT")) {
           setAnswerKey(lstReadingExercises, mapAnswerKey);
-          await saveReadingTest(dbName, exerciseName, lstReadingExercises);
+          await saveReadingTest(exerciseName, lstReadingExercises);
         } else {
           switch (sourceState) {
             case ReadingSourceState.section:
