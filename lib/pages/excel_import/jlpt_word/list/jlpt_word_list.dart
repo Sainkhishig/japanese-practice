@@ -371,13 +371,33 @@ class JlptWordList extends HookConsumerWidget {
       await _database
           .child(_testType)
           .child('N$level')
-          .push()
+          .child(file.sheetName)
+          // .update(newData)
+          // .push()
           .set(newData)
           .catchError((onError) {
         print('could not saved data');
         throw ("aldaa garlaa");
       });
+
+      final sheetData = <String, dynamic>{};
+      sheetData["Test"] = "Test";
+      sheetData[file.sheetName] = DateTime.now().toString();
+      await _database
+          .child(_testType)
+          .child('N$level')
+          .child("totalCount")
+          // .update(newData)
+          // .push()
+          .update(sheetData)
+          .catchError((onError) {
+        print('could not saved data');
+        // throw ("aldaa garlaa");
+      });
     }
+    // List<String> allSheetName =
+    //     excel.sheets.values.map((e) => e.sheetName).toList();
+    // // print("newData:$newData");
   }
 
 //listening Test
@@ -433,45 +453,59 @@ class JlptWordList extends HookConsumerWidget {
       await _database
           .child(_testType)
           .child('N$level')
-          .push()
+          .child(file.sheetName)
           .set(newData)
           .catchError((onError) {
         print('could not saved data');
         throw ("aldaa garlaa");
       });
+      final sheetData = <String, dynamic>{};
+      sheetData["Test"] = "Test";
+      sheetData[file.sheetName] = DateTime.now().toString();
+      await _database
+          .child(_testType)
+          .child('N$level')
+          .child("totalCount")
+          // .update(newData)
+          // .push()
+          .update(sheetData)
+          .catchError((onError) {
+        print('could not saved data');
+        // throw ("aldaa garlaa");
+      });
     }
   }
 
-  saveListeningTest(int jlptLevel, String exName, StringstoragePath,
-      ListeningExercise listeningTest) async {
-    final newData = <String, dynamic>{
-      'jlptLevel': listeningTest.jlptLevel,
-      'name': listeningTest.name,
-      'storagePath': listeningTest.storagePath,
-      'exercises': listeningTest.exercises.map((quest) => {
-            'question': quest.question,
-            'audioUrl': quest.audioUrl,
-            'audioPath': quest.audioPath,
-            'imageUrl': quest.imageUrl,
-            'imagePath': quest.imagePath,
-            'answers': quest.answers.map((answerChoise) => {
-                  'answer': answerChoise.answer,
-                  'isTrue': answerChoise.isTrue,
-                }),
-          }),
-      'vocabularies': ["vocabularies"],
-      'time': DateTime.now().microsecondsSinceEpoch
-    };
-    await _database
-        .child('ListeningTest')
-        .child('N$level')
-        .push()
-        .set(newData)
-        .catchError((onError) {
-      print('could not saved data');
-      throw ("aldaa garlaa");
-    });
-  }
+  // saveListeningTest(int jlptLevel, String exName, StringstoragePath,
+  //     ListeningExercise listeningTest) async {
+  //   final newData = <String, dynamic>{
+  //     'jlptLevel': listeningTest.jlptLevel,
+  //     'name': listeningTest.name,
+  //     'storagePath': listeningTest.storagePath,
+  //     'exercises': listeningTest.exercises.map((quest) => {
+  //           'question': quest.question,
+  //           'audioUrl': quest.audioUrl,
+  //           'audioPath': quest.audioPath,
+  //           'imageUrl': quest.imageUrl,
+  //           'imagePath': quest.imagePath,
+  //           'answers': quest.answers.map((answerChoise) => {
+  //                 'answer': answerChoise.answer,
+  //                 'isTrue': answerChoise.isTrue,
+  //               }),
+  //         }),
+  //     'vocabularies': ["vocabularies"],
+  //     'time': DateTime.now().microsecondsSinceEpoch
+  //   };
+  //   await _database
+  //       .child('ListeningTest')
+  //       .child('N$level')
+  //       .child(sheetnam)
+  //       .set(newData)
+  //       .catchError((onError) {
+  //     print('could not saved data');
+  //     throw ("aldaa garlaa");
+  //   });
+  // }
 
 // read grammar kanji vocabulary
   readJlptWordExcelByFixedColumn(
@@ -701,7 +735,7 @@ class JlptWordList extends HookConsumerWidget {
   //   }
   // }
 
-  saveReadingTest(exerciseName, lstReadingExercises) async {
+  saveReadingTest(exerciseName, lstReadingExercises, String sheetName) async {
     List<Map<String, dynamic>> lstSendItem = [];
     lstReadingExercises.map((e) {
       lstSendItem.add({
@@ -729,11 +763,26 @@ class JlptWordList extends HookConsumerWidget {
     await _database
         .child(_testType)
         .child('N$level')
-        .push()
+        .child(sheetName)
         .set(newData)
         .catchError((onError) {
       print('could not saved data');
       throw ("aldaa garlaa");
+    });
+    final sheetData = <String, dynamic>{};
+    sheetData["Test"] = "Test";
+    sheetData[sheetName] = DateTime.now().toString();
+
+    await _database
+        .child(_testType)
+        .child('N$level')
+        .child("totalCount")
+        // .update(newData)
+        // .push()
+        .update(sheetData)
+        .catchError((onError) {
+      print('could not saved data');
+      // throw ("aldaa garlaa");
     });
   }
 
@@ -791,7 +840,8 @@ class JlptWordList extends HookConsumerWidget {
           continue;
         } else if (rowFirstValue.startsWith("endJLPT")) {
           setAnswerKey(lstReadingExercises, mapAnswerKey);
-          await saveReadingTest(exerciseName, lstReadingExercises);
+          await saveReadingTest(
+              exerciseName, lstReadingExercises, file.sheetName);
         } else {
           switch (sourceState) {
             case ReadingSourceState.section:
@@ -854,7 +904,8 @@ class JlptWordList extends HookConsumerWidget {
           continue;
         } else if (rowFirstValue.startsWith("endJLPT")) {
           setAnswerKey(lstReadingExercises, mapAnswerKey);
-          await saveReadingTest(exerciseName, lstReadingExercises);
+          await saveReadingTest(
+              exerciseName, lstReadingExercises, file.sheetName);
         } else {
           switch (sourceState) {
             case ReadingSourceState.section:
