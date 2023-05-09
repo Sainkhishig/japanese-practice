@@ -773,7 +773,7 @@ class JlptWordList extends HookConsumerWidget {
     });
     final sheetData = <String, dynamic>{};
     sheetData["Test"] = "Test";
-    sheetData[sheetName] = DateTime.now().toString();
+    sheetData[exNumber.toString()] = DateTime.now().toString();
 
     await _database
         .child(_testType)
@@ -822,7 +822,7 @@ class JlptWordList extends HookConsumerWidget {
           mapAnswerKey = {};
           exerciseName = rowFirstValue;
           continue;
-        } else if (rowFirstValue.startsWith("Reading passage")) {
+        } else if (rowFirstValue.startsWith("Reading ")) {
           currentReading = Reading.empty();
           currentReading.section = rowFirstValue;
           sourceState = ReadingSourceState.section;
