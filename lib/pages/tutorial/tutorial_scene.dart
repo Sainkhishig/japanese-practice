@@ -15,7 +15,7 @@ class TutorialScene extends HookConsumerWidget {
       print("keydropDownTitle:${value["tutorial"]["title"]}");
       lstDropItem.add(DropdownMenuItem<String>(
           alignment: AlignmentDirectional.center,
-          value: "${value["tutorial"]["title"]}",
+          value: "$key",
           child: Text(
             "${value["tutorial"]["title"]}",
             textAlign: TextAlign.center,
@@ -65,10 +65,10 @@ class TutorialScene extends HookConsumerWidget {
             hint: const Text("Заах хичээл"),
             isDense: true,
             items: getDropItems(controller.state.lstAllTutorial),
-            value: "上で", //controller.jlptLevel,
+            value: "-NYVza4wdDK9hBS2X9vI", //controller.jlptLevel,
             onChanged: (value) {
               // var selectedLevel = int.parse("$value");
-              // controller.setJlptLevel(selectedLevel);
+              controller.setTutorKey(value.toString());
             },
           )),
         ),
@@ -141,6 +141,10 @@ class TutorialScene extends HookConsumerWidget {
     bool showDescription = false;
     bool showAttention = false;
     bool showFormula = false;
+    if (controller.state.selectedTutorialKey.isEmpty) return Text("data");
+    var mainInfo =
+        controller.state.lstAllTutorial[controller.state.selectedTutorialKey];
+    var phaseInfo = mainInfo["tutorial"];
     return StatefulBuilder(builder: (context, setState) {
       // var selectedValues = values ?? [];
       return Center(
@@ -151,7 +155,7 @@ class TutorialScene extends HookConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           TextButton(
-            child: const Text("title", style: TextStyle(fontSize: 60)),
+            child: Text(phaseInfo["title"], style: TextStyle(fontSize: 60)),
             onPressed: () {
               setState(
                 () {
@@ -161,14 +165,12 @@ class TutorialScene extends HookConsumerWidget {
             },
           ),
           AnimatedOpacity(
-            // If the widget is visible, animate to 0.0 (invisible).
-            // If the widget is hidden, animate to 1.0 (fully visible).
             opacity: showOverView ? 1.0 : 0.0,
             duration: const Duration(milliseconds: 500),
             // The green box must be a child of the AnimatedOpacity widget.
             child: TextButton(
-              child: const Text("overview",
-                  style: TextStyle(fontSize: 30, color: Colors.blue)),
+              child: Text(phaseInfo["overview"],
+                  style: const TextStyle(fontSize: 30, color: Colors.blue)),
               onPressed: () {
                 setState(
                   () {
@@ -179,32 +181,12 @@ class TutorialScene extends HookConsumerWidget {
             ),
           ),
           AnimatedOpacity(
-            // If the widget is visible, animate to 0.0 (invisible).
-            // If the widget is hidden, animate to 1.0 (fully visible).
             opacity: showFormula ? 1.0 : 0.0,
             duration: const Duration(milliseconds: 500),
             // The green box must be a child of the AnimatedOpacity widget.
             child: TextButton(
-              child: const Text("formula",
+              child: Text(phaseInfo["formula"] ?? "",
                   style: TextStyle(fontSize: 20, color: Colors.green)),
-              onPressed: () {
-                setState(
-                  () {
-                    showDescription = !showDescription;
-                  },
-                );
-              },
-            ),
-          ),
-          AnimatedOpacity(
-            // If the widget is visible, animate to 0.0 (invisible).
-            // If the widget is hidden, animate to 1.0 (fully visible).
-            opacity: showDescription ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 500),
-            // The green box must be a child of the AnimatedOpacity widget.
-            child: TextButton(
-              child: const Text("description",
-                  style: TextStyle(fontSize: 20, color: Colors.red)),
               onPressed: () {
                 setState(
                   () {
@@ -214,6 +196,24 @@ class TutorialScene extends HookConsumerWidget {
               },
             ),
           ),
+          // AnimatedOpacity(
+          //   // If the widget is visible, animate to 0.0 (invisible).
+          //   // If the widget is hidden, animate to 1.0 (fully visible).
+          //   opacity: showDescription ? 1.0 : 0.0,
+          //   duration: const Duration(milliseconds: 500),
+          //   // The green box must be a child of the AnimatedOpacity widget.
+          //   child: TextButton(
+          //     child: Text(phaseInfo["description"] ?? "",
+          //         style: const TextStyle(fontSize: 15, color: Colors.red)),
+          //     onPressed: () {
+          //       setState(
+          //         () {
+          //           showAttention = !showAttention;
+          //         },
+          //       );
+          //     },
+          //   ),
+          // ),
           AnimatedOpacity(
             // If the widget is visible, animate to 0.0 (invisible).
             // If the widget is hidden, animate to 1.0 (fully visible).
@@ -221,7 +221,8 @@ class TutorialScene extends HookConsumerWidget {
             duration: const Duration(milliseconds: 500),
             // The green box must be a child of the AnimatedOpacity widget.
             child: TextButton(
-              child: const Text("attention", style: TextStyle(fontSize: 60)),
+              child: Text(phaseInfo["attention"] ?? "",
+                  style: TextStyle(fontSize: 12, color: Colors.red)),
               onPressed: () {},
             ),
           ),
@@ -274,6 +275,7 @@ class TutorialScene extends HookConsumerWidget {
   }
 
   Widget phaseExercise(context, TutorialSceneController controller) {
+    if (controller.state.selectedTutorialKey.isEmpty) return Text("data");
     return Center(
         child: FlashCard(
             height: MediaQuery.of(context).size.height - 100,

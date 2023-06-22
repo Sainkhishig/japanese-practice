@@ -18,7 +18,11 @@ class TutorialSceneController extends StateNotifier<TutorialSceneState> {
   late SharedPreferences prefs;
   int get jlptLevel => prefs.getInt("jlptLevel") ?? 5;
   //#endregion ==================== local variable ====================
-  void setModelListenable(WidgetRef ref) {}
+
+  void setModelListenable(WidgetRef ref) {
+    ref.watch(tutorialSceneController);
+  }
+
   final _database = FirebaseDatabase.instance.reference();
   //#region ==================== constructor ====================
   TutorialSceneController({required this.ref})
@@ -36,6 +40,11 @@ class TutorialSceneController extends StateNotifier<TutorialSceneState> {
   clearState() => state = const TutorialSceneState();
   setSelectedIndex(int index) async {
     state = state.copyWith(selectedCardIndex: index + 1);
+  }
+
+  setTutorKey(String key) async {
+    print("tutKey:$key");
+    state = state.copyWith(selectedTutorialKey: key);
   }
 
   Future<void> getAllTutorial() async {
