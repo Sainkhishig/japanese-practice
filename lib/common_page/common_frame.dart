@@ -8,6 +8,7 @@ import 'package:japanese_practise_n5/pages/grammar/grammar.dart';
 import 'package:japanese_practise_n5/pages/kanji/kanji.dart';
 import 'package:japanese_practise_n5/pages/listening/lisyening_page.dart';
 import 'package:japanese_practise_n5/pages/reading/reading_n5.dart';
+import 'package:japanese_practise_n5/pages/tutorial/tutorial_scene.dart';
 import 'package:japanese_practise_n5/pages/vocabulary/vocabulary_page.dart';
 
 import 'common_page_controller.dart';
@@ -154,18 +155,14 @@ class Menu {
 late final lstMenu = <Menu>[
   Menu("Шинэ үг", "vocabulary", Icons.format_list_numbered, VocabularyPage(),
       VocabularyPage()),
-  Menu(
-    "Дүрэм",
-    "grammar",
-    Icons.rule,
-    GrammarPage(),
-    GrammarPage(),
-  ),
+  Menu("Дүрэм", "grammar", Icons.rule, GrammarPage(), GrammarPage()),
   Menu("Сонсгол", "verbForm", CupertinoIcons.ear, ListeningTestPage(),
       ListeningTestPage()),
   Menu("Уншлага", "verbForm", Icons.menu_book, ReadingN5(), ReadingN5()),
   Menu("Ханз", "verbForm", CupertinoIcons.pencil_outline, KanjiPage(),
       KanjiPage()),
   Menu("Excel", "excel", CupertinoIcons.pencil_outline, const JlptWordPage(),
-      const JlptWordPage())
+      const JlptWordPage()),
+  Menu("Хичээл", "tutorial", CupertinoIcons.pencil_outline, TutorialScene(),
+      TutorialScene())
 ];
