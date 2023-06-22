@@ -41,6 +41,7 @@ dependencies:
   assets_audio_player: ^3.0.5
   flutter_neumorphic: ^3.2.0
   file_picker: ^4.2.1
+  floating_bubbles: ^2.2.0
 
 dev_dependencies:
   flutter_test:

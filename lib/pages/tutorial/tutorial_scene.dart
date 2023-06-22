@@ -1,3 +1,4 @@
+import 'package:floating_bubbles/floating_bubbles.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flash_card/flash_card.dart';
@@ -55,33 +56,101 @@ class TutorialScene extends HookConsumerWidget {
     lsttableServings.add(phaseMain(context, controller));
     lsttableServings.add(phaseExercise(context, controller));
     return Scaffold(
-      body: ListTile(
-        title: Container(
-          width: 250,
-          padding: const EdgeInsets.only(top: 20),
-          child: DropdownButtonHideUnderline(
-              child: DropdownButtonFormField(
-            dropdownColor: Colors.white,
-            hint: const Text("Заах хичээл"),
-            isDense: true,
-            items: getDropItems(controller.state.lstAllTutorial),
-            value: "-NYVza4wdDK9hBS2X9vI", //controller.jlptLevel,
-            onChanged: (value) {
-              // var selectedLevel = int.parse("$value");
-              controller.setTutorKey(value.toString());
-            },
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Container(
+              // color: Colors.deepPurple,
+              decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.white,
+                  Colors.blue
+                  // Color.fromARGB(255, 5, 54, 101),
+                  // Color.fromARGB(255, 239, 96, 227)
+                ],
+              )),
+              child:
+                  // Center(
+                  //     child: Container(
+                  //   padding: EdgeInsets.all(10),
+                  //   height: 200,
+                  //   width: 300,
+                  //   color: Colors.white, //Color(0xc0ffffff),
+                  //   child: const Text('Hello',
+                  //       style: TextStyle(fontSize: 30, color: Colors.black)),
+                  // )),
+                  ListTile(
+                      title: Container(
+                        width: 250,
+                        padding: const EdgeInsets.only(top: 20),
+                        child: DropdownButtonHideUnderline(
+                            child: DropdownButtonFormField(
+                          dropdownColor: Colors.white,
+                          hint: const Text("Заах хичээл"),
+                          isDense: true,
+                          items: getDropItems(controller.state.lstAllTutorial),
+                          value: "-NYVza4wdDK9hBS2X9vI", //controller.jlptLevel,
+                          onChanged: (value) {
+                            // var selectedLevel = int.parse("$value");
+                            controller.setTutorKey(value.toString());
+                          },
+                        )),
+                      ),
+
+                      // : //Expanded(child: FlashCardListItem(flashcards: flashCard)),
+
+                      subtitle: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(25),
+                          // border: Border.all(
+                          //   color: Colors.black,
+                          //   width: 1,
+                          // ),
+                        ),
+                        padding: EdgeInsets.all(250),
+                        child: PageView(
+                          controller: pageController,
+                          children: lsttableServings,
+                          onPageChanged: (value) {
+                            // controller.setSelectedIndex(value);
+                          },
+                        ),
+                      )),
+            ),
+          ),
+          Positioned.fill(
+              child: FloatingBubbles.alwaysRepeating(
+            noOfBubbles: 10,
+            sizeFactor: 0.16,
+            // seconds, required if use without alwaysRepeating
+            // duration: 120,
+            opacity: 30,
+            paintingStyle: PaintingStyle.fill, //PaintingStyle.stroke
+            strokeWidth: 2, // works with stroke
+            shape: BubbleShape
+                .roundedRectangle, // circle is the default. No need to explicitly mention if its a circle.
+            // speed: BubbleSpeed.slow, //slow, normal, fast
+            colorsOfBubbles: [
+              Colors.yellow.withAlpha(30),
+              Colors.blue,
+            ],
           )),
-        ),
-
-        // : //Expanded(child: FlashCardListItem(flashcards: flashCard)),
-
-        subtitle: PageView(
-          controller: pageController,
-          children: lsttableServings,
-          onPageChanged: (value) {
-            // controller.setSelectedIndex(value);
-          },
-        ),
+          // Center(
+          //   child: Container(
+          //     padding: EdgeInsets.all(10),
+          //     height: 200,
+          //     width: 300,
+          //     color: Color(0xc0ffffff),
+          //     child: const Text('Hello',
+          //         style: TextStyle(fontSize: 30, color: Colors.black)
+          //     ),
+          //   )
+          // )
+        ],
       ),
       bottomNavigationBar: Container(
         height: 40,
