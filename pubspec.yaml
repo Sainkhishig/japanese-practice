@@ -84,6 +84,7 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^1.0.0
   firebase_storage: ^8.1.0
+  # flash_card: ^0.0.5
   # file_picker: ^4.6.1
   
 

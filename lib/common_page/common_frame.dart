@@ -153,6 +153,8 @@ class Menu {
 }
 
 late final lstMenu = <Menu>[
+  Menu("Хичээл", "tutorial", CupertinoIcons.pencil_outline, TutorialScene(),
+      TutorialScene()),
   Menu("Шинэ үг", "vocabulary", Icons.format_list_numbered, VocabularyPage(),
       VocabularyPage()),
   Menu("Дүрэм", "grammar", Icons.rule, GrammarPage(), GrammarPage()),
@@ -163,6 +165,4 @@ late final lstMenu = <Menu>[
       KanjiPage()),
   Menu("Excel", "excel", CupertinoIcons.pencil_outline, const JlptWordPage(),
       const JlptWordPage()),
-  Menu("Хичээл", "tutorial", CupertinoIcons.pencil_outline, TutorialScene(),
-      TutorialScene())
 ];

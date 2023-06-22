@@ -34,6 +34,9 @@ class TutorialSceneController extends StateNotifier<TutorialSceneState> {
 
   //#region ==================== method ====================
   clearState() => state = const TutorialSceneState();
+  setSelectedIndex(int index) async {
+    state = state.copyWith(selectedCardIndex: index + 1);
+  }
 
   Future<void> getAllTutorial() async {
     var ref = _database.child("/Tutorial");
