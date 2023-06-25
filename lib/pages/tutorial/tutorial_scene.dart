@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flash_card/flash_card.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:japanese_practise_n5/pages/tutorial/tutorial_scene_controller.dart';
+import 'package:super_rich_text/super_rich_text.dart';
 
 // pyfm061 : キャンセル規定編集
 class TutorialScene extends HookConsumerWidget {
@@ -54,8 +55,37 @@ class TutorialScene extends HookConsumerWidget {
 
     List<Widget> lsttableServings = [];
     lsttableServings.add(phaseMain(context, controller));
-    lsttableServings.add(phaseExercise(context, controller));
+
+    if (controller.state.selectedTutorialKey.isNotEmpty) {
+      var mainInfo =
+          controller.state.lstAllTutorial[controller.state.selectedTutorialKey];
+      List points = mainInfo["points"];
+      points.forEach((point) {
+        lsttableServings.add(phasePoints(context, point));
+      });
+      lsttableServings.add(phaseExample(context, controller));
+      lsttableServings.add(phaseExercise(context, controller));
+    }
+
     return Scaffold(
+      appBar: AppBar(
+        title: Container(
+          width: 250,
+          child: DropdownButtonHideUnderline(
+              child: DropdownButtonFormField(
+            dropdownColor: Colors.white,
+            hint: const Text("Заах хичээл"),
+            isDense: true,
+            items: getDropItems(controller.state.lstAllTutorial),
+            value: "-NYnbSudUhm7vvYB8Ghv", //controller.jlptLevel,
+            onChanged: (value) {
+              // var selectedLevel = int.parse("$value");
+              controller.setTutorKey(value.toString());
+            },
+          )),
+        ),
+        actions: [],
+      ),
       body: Stack(
         children: [
           Positioned.fill(
@@ -67,64 +97,27 @@ class TutorialScene extends HookConsumerWidget {
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.white,
-                  Colors.blue
+                  Colors.green
                   // Color.fromARGB(255, 5, 54, 101),
                   // Color.fromARGB(255, 239, 96, 227)
                 ],
               )),
-              child:
-                  // Center(
-                  //     child: Container(
-                  //   padding: EdgeInsets.all(10),
-                  //   height: 200,
-                  //   width: 300,
-                  //   color: Colors.white, //Color(0xc0ffffff),
-                  //   child: const Text('Hello',
-                  //       style: TextStyle(fontSize: 30, color: Colors.black)),
-                  // )),
-                  ListTile(
-                      title: Container(
-                        width: 250,
-                        padding: const EdgeInsets.only(top: 20),
-                        child: DropdownButtonHideUnderline(
-                            child: DropdownButtonFormField(
-                          dropdownColor: Colors.white,
-                          hint: const Text("Заах хичээл"),
-                          isDense: true,
-                          items: getDropItems(controller.state.lstAllTutorial),
-                          value: "-NYVza4wdDK9hBS2X9vI", //controller.jlptLevel,
-                          onChanged: (value) {
-                            // var selectedLevel = int.parse("$value");
-                            controller.setTutorKey(value.toString());
-                          },
-                        )),
-                      ),
-
-                      // : //Expanded(child: FlashCardListItem(flashcards: flashCard)),
-
-                      subtitle: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(25),
-                          // border: Border.all(
-                          //   color: Colors.black,
-                          //   width: 1,
-                          // ),
-                        ),
-                        padding: EdgeInsets.all(250),
-                        child: PageView(
-                          controller: pageController,
-                          children: lsttableServings,
-                          onPageChanged: (value) {
-                            // controller.setSelectedIndex(value);
-                          },
-                        ),
-                      )),
+              // padding: EdgeInsets.all(80),
+              // child:
+              // Center(
+              //     child: Container(
+              //   padding: EdgeInsets.all(10),
+              //   height: 200,
+              //   width: 300,
+              //   color: Colors.white, //Color(0xc0ffffff),
+              //   child: const Text('Hello',
+              //       style: TextStyle(fontSize: 30, color: Colors.black)),
+              // )),
             ),
           ),
           Positioned.fill(
               child: FloatingBubbles.alwaysRepeating(
-            noOfBubbles: 10,
+            noOfBubbles: 20,
             sizeFactor: 0.16,
             // seconds, required if use without alwaysRepeating
             // duration: 120,
@@ -134,22 +127,40 @@ class TutorialScene extends HookConsumerWidget {
             shape: BubbleShape
                 .roundedRectangle, // circle is the default. No need to explicitly mention if its a circle.
             // speed: BubbleSpeed.slow, //slow, normal, fast
-            colorsOfBubbles: [
-              Colors.yellow.withAlpha(30),
-              Colors.blue,
+            colorsOfBubbles: const [
+              Colors.yellow, //.withAlpha(30),
+              Colors.black,
+              Colors.white,
             ],
           )),
-          // Center(
-          //   child: Container(
-          //     padding: EdgeInsets.all(10),
-          //     height: 200,
-          //     width: 300,
-          //     color: Color(0xc0ffffff),
-          //     child: const Text('Hello',
-          //         style: TextStyle(fontSize: 30, color: Colors.black)
-          //     ),
-          //   )
-          // )
+          Center(
+              child: Container(
+            padding: EdgeInsets.fromLTRB(150, 50, 150, 50),
+            // height: 200,
+            // width: 300,
+            color: Color(0xc0ffffff),
+            child: ListTile(
+                title: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(25),
+                // border: Border.all(
+                //   color: Colors.black,
+                //   width: 1,
+                // ),
+              ),
+              // padding: EdgeInsets.all(250),
+              child: PageView(
+                controller: pageController,
+                children: lsttableServings,
+                onPageChanged: (value) {
+                  // controller.setSelectedIndex(value);
+                },
+              ),
+            )),
+            // const Text('Hello',
+            //     style: TextStyle(fontSize: 30, color: Colors.black)),
+          ))
         ],
       ),
       bottomNavigationBar: Container(
@@ -209,8 +220,13 @@ class TutorialScene extends HookConsumerWidget {
     bool showOverView = false;
     bool showDescription = false;
     bool showAttention = false;
-    bool showFormula = false;
-    if (controller.state.selectedTutorialKey.isEmpty) return Text("data");
+    if (controller.state.selectedTutorialKey.isEmpty) {
+      return const Center(
+          child: Text(
+        "Жаргалтай өдрийн мэнд",
+        style: TextStyle(fontSize: 30, color: Colors.lightBlue),
+      ));
+    }
     var mainInfo =
         controller.state.lstAllTutorial[controller.state.selectedTutorialKey];
     var phaseInfo = mainInfo["tutorial"];
@@ -233,38 +249,42 @@ class TutorialScene extends HookConsumerWidget {
               );
             },
           ),
-          AnimatedOpacity(
+          Visibility(
+              child: AnimatedOpacity(
             opacity: showOverView ? 1.0 : 0.0,
             duration: const Duration(milliseconds: 500),
             // The green box must be a child of the AnimatedOpacity widget.
             child: TextButton(
-              child: Text(phaseInfo["overview"],
-                  style: const TextStyle(fontSize: 30, color: Colors.blue)),
+              child: Container(
+                padding: EdgeInsets.only(left: 40, top: 50, right: 20),
+                child: SuperRichText(
+                  useGlobalMarkers: false,
+                  text: phaseInfo["overview"] ?? "s",
+                  othersMarkers: [
+                    MarkerText(
+                        marker: '*',
+                        style: const TextStyle(color: Colors.green)),
+                    MarkerText(
+                        marker: '"',
+                        style: const TextStyle(color: Colors.blue)),
+                    // MarkerText(
+                    //     marker: '*',
+                    //     style: const TextStyle(color: Colors.blue))
+                  ],
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18, color: Colors.black),
+                ),
+              ),
               onPressed: () {
-                setState(
-                  () {
-                    showFormula = !showFormula;
-                  },
-                );
+                // setState(
+                //   () {
+                //     showAttention = !showAttention;
+                //   },
+                // );
               },
             ),
-          ),
-          AnimatedOpacity(
-            opacity: showFormula ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 500),
-            // The green box must be a child of the AnimatedOpacity widget.
-            child: TextButton(
-              child: Text(phaseInfo["formula"] ?? "",
-                  style: TextStyle(fontSize: 20, color: Colors.green)),
-              onPressed: () {
-                setState(
-                  () {
-                    showAttention = !showAttention;
-                  },
-                );
-              },
-            ),
-          ),
+          )),
+
           // AnimatedOpacity(
           //   // If the widget is visible, animate to 0.0 (invisible).
           //   // If the widget is hidden, animate to 1.0 (fully visible).
@@ -283,18 +303,21 @@ class TutorialScene extends HookConsumerWidget {
           //     },
           //   ),
           // ),
-          AnimatedOpacity(
-            // If the widget is visible, animate to 0.0 (invisible).
-            // If the widget is hidden, animate to 1.0 (fully visible).
-            opacity: showAttention ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 500),
-            // The green box must be a child of the AnimatedOpacity widget.
-            child: TextButton(
-              child: Text(phaseInfo["attention"] ?? "",
-                  style: TextStyle(fontSize: 12, color: Colors.red)),
-              onPressed: () {},
-            ),
-          ),
+          // AnimatedOpacity(
+          //   // If the widget is visible, animate to 0.0 (invisible).
+          //   // If the widget is hidden, animate to 1.0 (fully visible).
+          //   opacity: showAttention ? 1.0 : 0.0,
+          //   duration: const Duration(milliseconds: 500),
+          //   // The green box must be a child of the AnimatedOpacity widget.
+          //   child: TextButton(
+          //     child: Container(
+          //         padding: EdgeInsets.only(left: 40, top: 50, right: 20),
+          //         child: Text(phaseInfo["attention"] ?? "",
+          //             textAlign: TextAlign.center,
+          //             style: TextStyle(fontSize: 12, color: Colors.red))),
+          //     onPressed: () {},
+          //   ),
+          // ),
         ],
       ));
       // Column(
@@ -331,58 +354,325 @@ class TutorialScene extends HookConsumerWidget {
     });
   }
 
-  Widget phaseExample(context, TutorialSceneController controller) {
-    return Center(
-        child: Column(
-      children: const [
-        Text("example"),
-        Text("exampleTR"),
-        Text("description"),
-        Text("attention"),
-      ],
-    ));
+  Widget phasePoints(context, Map point) {
+    bool showOverView = false;
+    bool showDescription = false;
+    bool showAttention = false;
+    bool showFormula = false;
+
+    return StatefulBuilder(builder: (context, setState) {
+      // var selectedValues = values ?? [];
+      return Center(
+          // height: 500,
+          // width: 500,
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          TextButton(
+            child: Text(point["points"], style: TextStyle(fontSize: 60)),
+            onPressed: () {
+              setState(
+                () {
+                  showOverView = !showOverView;
+                },
+              );
+            },
+          ),
+          Visibility(
+              visible: !showFormula,
+              child: AnimatedOpacity(
+                opacity: showOverView ? 1.0 : 0.0,
+                duration: const Duration(milliseconds: 500),
+                // The green box must be a child of the AnimatedOpacity widget.
+                child: TextButton(
+                  child: Container(
+                    padding: EdgeInsets.only(left: 40, top: 50, right: 20),
+                    child: SuperRichText(
+                      useGlobalMarkers: false,
+                      text: point["formula"] ?? "s",
+                      othersMarkers: [
+                        MarkerText(
+                            marker: '*',
+                            style: const TextStyle(color: Colors.green)),
+                        MarkerText(
+                            marker: '"',
+                            style: const TextStyle(color: Colors.blue)),
+                        // MarkerText(
+                        //     marker: '*',
+                        //     style: const TextStyle(color: Colors.blue))
+                      ],
+                      style: const TextStyle(fontSize: 25, color: Colors.black),
+                    ),
+                    // Text(point["description"],
+                    //     textAlign: TextAlign.center,
+                    //     style:
+                    //         const TextStyle(fontSize: 18, color: Colors.blue)),
+                  ),
+                  onPressed: () {
+                    setState(
+                      () {
+                        showFormula = !showFormula;
+                      },
+                    );
+                  },
+                ),
+              )),
+          AnimatedOpacity(
+            opacity: showFormula ? 1.0 : 0.0,
+            duration: const Duration(milliseconds: 500),
+            // The green box must be a child of the AnimatedOpacity widget.
+            child: TextButton(
+              child: Container(
+                  padding: EdgeInsets.only(left: 40, top: 50, right: 20),
+                  child: ListTile(
+                    title: SuperRichText(
+                      useGlobalMarkers: false,
+                      text: point["description"] ?? "s",
+                      othersMarkers: [
+                        MarkerText(
+                            marker: '*',
+                            style: const TextStyle(color: Colors.green)),
+                        MarkerText(
+                            marker: '"',
+                            style: const TextStyle(color: Colors.blue)),
+                        // MarkerText(
+                        //     marker: '*',
+                        //     style: const TextStyle(color: Colors.blue))
+                      ],
+                      style: TextStyle(fontSize: 18, color: Colors.black),
+                    ),
+                  )),
+              onPressed: () {
+                setState(
+                  () {
+                    showAttention = !showAttention;
+                  },
+                );
+              },
+            ),
+          ),
+          AnimatedOpacity(
+            // If the widget is visible, animate to 0.0 (invisible).
+            // If the widget is hidden, animate to 1.0 (fully visible).
+            opacity: showAttention ? 1.0 : 0.0,
+            duration: const Duration(milliseconds: 500),
+            // The green box must be a child of the AnimatedOpacity widget.
+            child: TextButton(
+              child: Container(
+                  padding: EdgeInsets.only(left: 40, top: 50, right: 20),
+                  child: Text("Анхаар: ${point["note"] ?? ""}",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 16, color: Colors.red))),
+              onPressed: () {},
+            ),
+          ),
+        ],
+      ));
+    });
   }
 
-  Widget phaseExercise(context, TutorialSceneController controller) {
+  Widget phaseExample(context, TutorialSceneController controller) {
     if (controller.state.selectedTutorialKey.isEmpty) return Text("data");
+
+    var mainInfo =
+        controller.state.lstAllTutorial[controller.state.selectedTutorialKey];
+    List examples = mainInfo["examples"];
+    Map tutorial = mainInfo["tutorial"];
+
     return Center(
         child: FlashCard(
             height: MediaQuery.of(context).size.height - 100,
             width: MediaQuery.of(context).size.width - 100,
-            frontWidget: Column(
+            backWidget: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text("currentWord.translate"),
+                const Text(
+                  "Жишээ",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(
                   height: 10,
                 ),
-                ListView.builder(
-                    itemCount: 3, // currentWord.examples.length,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (BuildContext context, int index) {
-                      // ExampleHive example = currentWord.examples[index];
-                      return ListTile(
-                        title: Text("example.example"),
-                        subtitle: Text("example.translate"),
-                      );
-                    }),
+                Center(
+                    child: ListView.builder(
+                        itemCount:
+                            examples.length, // currentWord.examples.length,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (BuildContext context, int index) {
+                          var example = examples[index];
+                          return ListTile(
+                            title: SuperRichText(
+                              useGlobalMarkers: false,
+                              text: example["example"],
+                              othersMarkers: [
+                                MarkerText(
+                                    marker: '*',
+                                    style: const TextStyle(color: Colors.blue)),
+                                MarkerText(
+                                    marker: '"',
+                                    style: const TextStyle(color: Colors.blue))
+                              ],
+                            ),
+                            subtitle: Text("${example["exampleTr"]}"),
+                          );
+                        })),
               ],
             ),
-            backWidget: Center(
+            frontWidget: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Center(
+                    child: SuperRichText(
+                      useGlobalMarkers: false,
+                      text: tutorial["attention"],
+                      style: const TextStyle(fontSize: 18, color: Colors.black),
+                      othersMarkers: [
+                        MarkerText(
+                            marker: "'",
+                            style: const TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold)),
+                        MarkerText(
+                            marker: '*',
+                            style: const TextStyle(
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold)),
+                        MarkerText(
+                            marker: '"',
+                            style: const TextStyle(
+                                color: Colors.red, fontWeight: FontWeight.bold))
+                      ],
+                    ),
+                  ),
+                  // Center(
+                  //     child: ListView.builder(
+                  //         itemCount:
+                  //             exercises.length, // currentWord.examples.length,
+                  //         shrinkWrap: true,
+                  //         physics: const NeverScrollableScrollPhysics(),
+                  //         itemBuilder: (BuildContext context, int index) {
+                  //           var example = exercises[index];
+                  //           return ListTile(
+                  //             title: SuperRichText(
+                  //               useGlobalMarkers: false,
+                  //               text: example["Question"],
+                  //               othersMarkers: [
+                  //                 MarkerText(
+                  //                     marker: '*',
+                  //                     style:
+                  //                         const TextStyle(color: Colors.blue))
+                  //               ],
+                  //             ),
+                  //             subtitle: Text("${example["Answer"]}"),
+                  //           );
+                  //         })),
+                  // // Visibility(
+                  // //   visible: controller.isShowPreference ?? true,
+                  // //   child: IconButton(
+                  // //     onPressed: () {
+                  // //       // if (currentWord.word.isNotEmpty) {
+                  // //       //   speak(currentWord.word);
+                  // //       // } else {
+                  // //       //   speak(currentWord.word);
+                  // //       // }
+                  // //     },
+                  // //     iconSize: 50,
+                  // //     icon: const Icon(Icons.volume_up),
+                  // //   ),
+                  // // )
+                ],
+              ),
+            )));
+  }
+
+  Widget phaseExercise(context, TutorialSceneController controller) {
+    if (controller.state.selectedTutorialKey.isEmpty) return Text("data");
+
+    var mainInfo =
+        controller.state.lstAllTutorial[controller.state.selectedTutorialKey];
+
+    List exercises = mainInfo["exercises"];
+
+    return Center(
+        child: FlashCard(
+            height: MediaQuery.of(context).size.height - 100,
+            width: MediaQuery.of(context).size.width - 100,
+            backWidget: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text(
+                  "Асуулт",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Center(
+                    child: ListView.builder(
+                        itemCount:
+                            exercises.length, // currentWord.examples.length,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (BuildContext context, int index) {
+                          var exercise = exercises[index];
+                          return ListTile(
+                            title: SuperRichText(
+                              useGlobalMarkers: false,
+                              text: exercise["Question"],
+                              othersMarkers: [
+                                MarkerText(
+                                    marker: '*',
+                                    style: const TextStyle(color: Colors.blue))
+                              ],
+                            ),
+                            // subtitle: Text("${exercise["exampleTr"]}"),
+                          );
+                        })),
+              ],
+            ),
+            frontWidget: Center(
                 child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Center(
                     child: Text(
-                  "hello exercise",
+                  "Хариу",
                   // currentWord.word.isNotEmpty
                   //     ? currentWord.word
                   //     : currentWord.translate,
                   style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                 )),
+                SizedBox(
+                  height: 20,
+                ),
+                Center(
+                    child: ListView.builder(
+                        itemCount:
+                            exercises.length, // currentWord.examples.length,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (BuildContext context, int index) {
+                          var example = exercises[index];
+                          return ListTile(
+                            title: SuperRichText(
+                              useGlobalMarkers: false,
+                              text: example["Answer"],
+                              othersMarkers: [
+                                MarkerText(
+                                    marker: '*',
+                                    style: const TextStyle(color: Colors.blue))
+                              ],
+                            ),
+                            // subtitle: Text("${example["Answer"]}"),
+                          );
+                        })),
                 // Visibility(
                 //   visible: controller.isShowPreference ?? true,
                 //   child: IconButton(
