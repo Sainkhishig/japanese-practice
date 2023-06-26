@@ -380,10 +380,18 @@ class TutorialScene extends HookConsumerWidget {
             // The green box must be a child of the AnimatedOpacity widget.
             child: TextButton(
               child: Container(
-                  padding: const EdgeInsets.only(left: 40, top: 50, right: 20),
-                  child: Text("Анхаар: ${point["note"] ?? ""}",
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 16, color: Colors.red))),
+                padding: const EdgeInsets.only(left: 40, top: 50, right: 20),
+                child: TextButton.icon(
+                    onPressed: () {
+                      speak(point["note"].replaceAll("*", ""),
+                          language: language);
+                    },
+                    icon: const Icon(Icons.warning_outlined, color: Colors.red),
+                    label: Text("Анхаар: ${point["note"] ?? ""}",
+                        textAlign: TextAlign.center,
+                        style:
+                            const TextStyle(fontSize: 17, color: Colors.red))),
+              ),
               onPressed: () {},
             ),
           ),
@@ -433,6 +441,7 @@ class TutorialScene extends HookConsumerWidget {
                               label: SuperRichText(
                                 useGlobalMarkers: false,
                                 text: example["example"],
+                                style: const TextStyle(color: Colors.blue),
                                 othersMarkers: [
                                   MarkerText(
                                       marker: '*',
@@ -456,26 +465,36 @@ class TutorialScene extends HookConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Center(
-                    child: SuperRichText(
-                      useGlobalMarkers: false,
-                      text: tutorial["attention"],
-                      style: const TextStyle(fontSize: 18, color: Colors.black),
-                      othersMarkers: [
-                        MarkerText(
-                            marker: "'",
-                            style: const TextStyle(
-                                color: Colors.blue,
-                                fontWeight: FontWeight.bold)),
-                        MarkerText(
-                            marker: '*',
-                            style: const TextStyle(
-                                color: Colors.green,
-                                fontWeight: FontWeight.bold)),
-                        MarkerText(
-                            marker: '"',
-                            style: const TextStyle(
-                                color: Colors.red, fontWeight: FontWeight.bold))
-                      ],
+                    child: TextButton.icon(
+                      onPressed: () {
+                        speak(tutorial["attention"].replaceAll("*", ""),
+                            language: language);
+                      },
+                      icon:
+                          const Icon(Icons.warning_outlined, color: Colors.red),
+                      label: SuperRichText(
+                        useGlobalMarkers: false,
+                        text: tutorial["attention"],
+                        style:
+                            const TextStyle(fontSize: 18, color: Colors.black),
+                        othersMarkers: [
+                          MarkerText(
+                              marker: "'",
+                              style: const TextStyle(
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold)),
+                          MarkerText(
+                              marker: '*',
+                              style: const TextStyle(
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold)),
+                          MarkerText(
+                              marker: '"',
+                              style: const TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold))
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -502,7 +521,10 @@ class TutorialScene extends HookConsumerWidget {
         controller.state.lstAllTutorial[controller.state.selectedTutorialKey];
 
     List exercises = mainInfo["exercises"];
+    // String sss = "abc______ss";
+    // var bb = sss.replaceFirst("_", "XX").replaceAll("_", "");
 
+    // print("bb:$bb");
     return Center(
         child: FlashCard(
             height: MediaQuery.of(context).size.height - 100,
@@ -527,9 +549,30 @@ class TutorialScene extends HookConsumerWidget {
                         itemBuilder: (BuildContext context, int index) {
                           var exercise = exercises[index];
                           return ListTile(
-                            title: SuperRichText(
+                            title: TextButton.icon(
+                              onPressed: () {
+                                speak(exercise["Question"].replaceAll("*", ""),
+                                    language: language);
+                              },
+                              icon: const Icon(Icons.quiz_sharp,
+                                  color: Colors.blue),
+                              label: SuperRichText(
+                                useGlobalMarkers: false,
+                                text: exercise["Question"],
+                                textAlign: TextAlign.left,
+                                style: const TextStyle(color: Colors.blue),
+                                othersMarkers: [
+                                  MarkerText(
+                                      marker: '*',
+                                      style:
+                                          const TextStyle(color: Colors.blue))
+                                ],
+                              ),
+                            ),
+
+                            subtitle: SuperRichText(
                               useGlobalMarkers: false,
-                              text: exercise["Question"],
+                              text: exercise["Choice"],
                               othersMarkers: [
                                 MarkerText(
                                     marker: '*',
@@ -561,15 +604,46 @@ class TutorialScene extends HookConsumerWidget {
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemBuilder: (BuildContext context, int index) {
-                          var example = exercises[index];
+                          var test = exercises[index];
+                          String answerCleared =
+                              test["Answer"].split('.')[1].trim();
+                          var fillerQUestion = test["Question"]
+                              .replaceFirst("__", "*$answerCleared*")
+                              .replaceAll("_", "");
+                          var choiceSelected = test["Choice"].replaceAll(
+                              test["Answer"], "*${test["Answer"]}*");
+
                           return ListTile(
-                            title: SuperRichText(
+                            title: TextButton.icon(
+                              onPressed: () {
+                                speak(fillerQUestion.replaceAll("*", ""),
+                                    language: language);
+                              },
+                              icon: const Icon(
+                                Icons.quiz_sharp,
+                                color: Colors.grey,
+                              ),
+                              label: SuperRichText(
+                                useGlobalMarkers: false,
+                                text: fillerQUestion,
+                                style: const TextStyle(color: Colors.black),
+                                textAlign: TextAlign.left,
+                                othersMarkers: [
+                                  MarkerText(
+                                      marker: '*',
+                                      style:
+                                          const TextStyle(color: Colors.blue))
+                                ],
+                              ),
+                            ),
+                            subtitle: SuperRichText(
                               useGlobalMarkers: false,
-                              text: example["Answer"],
+                              text: choiceSelected,
+                              style: const TextStyle(color: Colors.black),
                               othersMarkers: [
                                 MarkerText(
                                     marker: '*',
-                                    style: const TextStyle(color: Colors.blue))
+                                    style: const TextStyle(color: Colors.green))
                               ],
                             ),
                           );
