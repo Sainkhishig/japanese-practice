@@ -416,9 +416,12 @@ class TutorialScene extends HookConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text(
-                  "Жишээ",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                Visibility(
+                  visible: examples.isNotEmpty,
+                  child: const Text(
+                    "Жишээ",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
                 ),
                 const SizedBox(
                   height: 10,
@@ -465,37 +468,39 @@ class TutorialScene extends HookConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Center(
-                    child: TextButton.icon(
-                      onPressed: () {
-                        speak(tutorial["attention"].replaceAll("*", ""),
-                            language: language);
-                      },
-                      icon:
-                          const Icon(Icons.warning_outlined, color: Colors.red),
-                      label: SuperRichText(
-                        useGlobalMarkers: false,
-                        text: tutorial["attention"],
-                        style:
-                            const TextStyle(fontSize: 18, color: Colors.black),
-                        othersMarkers: [
-                          MarkerText(
-                              marker: "'",
-                              style: const TextStyle(
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.bold)),
-                          MarkerText(
-                              marker: '*',
-                              style: const TextStyle(
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.bold)),
-                          MarkerText(
-                              marker: '"',
-                              style: const TextStyle(
-                                  color: Colors.red,
-                                  fontWeight: FontWeight.bold))
-                        ],
-                      ),
-                    ),
+                    child: Visibility(
+                        visible: (tutorial["attention"] ?? "").isNotEmpty,
+                        child: TextButton.icon(
+                          onPressed: () {
+                            speak(tutorial["attention"].replaceAll("*", ""),
+                                language: language);
+                          },
+                          icon: const Icon(Icons.warning_outlined,
+                              color: Colors.red),
+                          label: SuperRichText(
+                            useGlobalMarkers: false,
+                            text: tutorial["attention"],
+                            style: const TextStyle(
+                                fontSize: 18, color: Colors.black),
+                            othersMarkers: [
+                              MarkerText(
+                                  marker: "'",
+                                  style: const TextStyle(
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.bold)),
+                              MarkerText(
+                                  marker: '*',
+                                  style: const TextStyle(
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.bold)),
+                              MarkerText(
+                                  marker: '"',
+                                  style: const TextStyle(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold))
+                            ],
+                          ),
+                        )),
                   ),
                 ],
               ),
