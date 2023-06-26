@@ -383,7 +383,7 @@ class TutorialScene extends HookConsumerWidget {
                 padding: const EdgeInsets.only(left: 40, top: 50, right: 20),
                 child: TextButton.icon(
                     onPressed: () {
-                      speak(point["note"].replaceAll("*", ""),
+                      speak((point["note"] ?? "").replaceAll("*", ""),
                           language: language);
                     },
                     icon: const Icon(Icons.warning_outlined, color: Colors.red),
@@ -405,7 +405,7 @@ class TutorialScene extends HookConsumerWidget {
 
     var mainInfo =
         controller.state.lstAllTutorial[controller.state.selectedTutorialKey];
-    List examples = mainInfo["examples"];
+    List examples = mainInfo["examples"] ?? [];
     Map tutorial = mainInfo["tutorial"];
 
     return Center(
@@ -572,7 +572,7 @@ class TutorialScene extends HookConsumerWidget {
 
                             subtitle: SuperRichText(
                               useGlobalMarkers: false,
-                              text: exercise["Choice"],
+                              text: exercise["Choice"] ?? "",
                               othersMarkers: [
                                 MarkerText(
                                     marker: '*',
@@ -610,8 +610,9 @@ class TutorialScene extends HookConsumerWidget {
                           var fillerQUestion = test["Question"]
                               .replaceFirst("__", "*$answerCleared*")
                               .replaceAll("_", "");
-                          var choiceSelected = test["Choice"].replaceAll(
-                              test["Answer"], "*${test["Answer"]}*");
+                          var choiceSelected = (test["Choice"] ?? "")
+                              .replaceAll(
+                                  test["Answer"], "*${test["Answer"]}*");
 
                           return ListTile(
                             title: TextButton.icon(
