@@ -548,39 +548,77 @@ class TutorialScene extends HookConsumerWidget {
                         physics: const NeverScrollableScrollPhysics(),
                         itemBuilder: (BuildContext context, int index) {
                           var exercise = exercises[index];
-                          return ListTile(
-                            title: TextButton.icon(
-                              onPressed: () {
-                                speak(exercise["Question"].replaceAll("*", ""),
-                                    language: language);
-                              },
-                              icon: const Icon(Icons.quiz_sharp,
-                                  color: Colors.blue),
-                              label: SuperRichText(
-                                useGlobalMarkers: false,
-                                text: exercise["Question"],
-                                // textAlign: TextAlign.left,
-                                style: const TextStyle(color: Colors.blue),
-                                othersMarkers: [
-                                  MarkerText(
-                                      marker: '*',
+                          bool isReplace = false;
+                          if ((exercise["Question"] ?? "").contains("_")) {
+                            isReplace = true;
+                          }
+                          return isReplace
+                              ? ListTile(
+                                  title: TextButton.icon(
+                                    onPressed: () {
+                                      speak(
+                                          exercise["Question"]
+                                              .replaceAll("*", ""),
+                                          language: language);
+                                    },
+                                    icon: const Icon(Icons.quiz_sharp,
+                                        color: Colors.blue),
+                                    label: SuperRichText(
+                                      useGlobalMarkers: false,
+                                      text: exercise["Question"],
+                                      // textAlign: TextAlign.left,
                                       style:
-                                          const TextStyle(color: Colors.blue))
-                                ],
-                              ),
-                            ),
+                                          const TextStyle(color: Colors.blue),
+                                      othersMarkers: [
+                                        MarkerText(
+                                            marker: '*',
+                                            style: const TextStyle(
+                                                color: Colors.blue))
+                                      ],
+                                    ),
+                                  ),
 
-                            subtitle: SuperRichText(
-                              useGlobalMarkers: false,
-                              text: exercise["Choice"] ?? "",
-                              othersMarkers: [
-                                MarkerText(
-                                    marker: '*',
-                                    style: const TextStyle(color: Colors.blue))
-                              ],
-                            ),
-                            // subtitle: Text("${exercise["exampleTr"]}"),
-                          );
+                                  subtitle: SuperRichText(
+                                    useGlobalMarkers: false,
+                                    text: exercise["Choice"] ?? "",
+                                    textAlign: TextAlign.center,
+                                    othersMarkers: [
+                                      MarkerText(
+                                          marker: '*',
+                                          style: const TextStyle(
+                                              color: Colors.blue))
+                                    ],
+                                  ),
+                                  // subtitle: Text("${exercise["exampleTr"]}"),
+                                )
+                              : ListTile(
+                                  title: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: TextButton.icon(
+                                    onPressed: () {
+                                      speak(exercise["Question"],
+                                          language: language);
+                                    },
+                                    icon: const Icon(Icons.quiz_sharp,
+                                        color: Colors.blue),
+                                    label: SuperRichText(
+                                      useGlobalMarkers: false,
+                                      text: exercise["Question"],
+                                      // textAlign: TextAlign.left,
+                                      style:
+                                          const TextStyle(color: Colors.blue),
+                                      othersMarkers: [
+                                        MarkerText(
+                                            marker: '*',
+                                            style: const TextStyle(
+                                                color: Colors.blue))
+                                      ],
+                                    ),
+                                  ),
+                                )
+
+                                  // subtitle: Text("${exercise["exampleTr"]}"),
+                                  );
                         })),
               ],
             ),
@@ -605,50 +643,114 @@ class TutorialScene extends HookConsumerWidget {
                         physics: const NeverScrollableScrollPhysics(),
                         itemBuilder: (BuildContext context, int index) {
                           var test = exercises[index];
-                          String answerCleared =
-                              test["Answer"].split('.')[1].trim();
-                          var fillerQUestion = test["Question"]
-                              .replaceFirst("__", "*$answerCleared*")
-                              .replaceAll("_", "");
-                          var choiceSelected = (test["Choice"] ?? "")
-                              .replaceAll(
-                                  test["Answer"], "*${test["Answer"]}*");
+                          String answerCleared = "";
+                          var fillerQUestion = "";
+                          var choiceSelected = "";
 
-                          return ListTile(
-                            title: TextButton.icon(
-                              onPressed: () {
-                                speak(fillerQUestion.replaceAll("*", ""),
-                                    language: language);
-                              },
-                              icon: const Icon(
-                                Icons.quiz_sharp,
-                                color: Colors.grey,
-                              ),
-                              label: SuperRichText(
-                                useGlobalMarkers: false,
-                                text: fillerQUestion,
-                                style: const TextStyle(color: Colors.black),
-                                // textAlign: TextAlign.left,
-                                othersMarkers: [
-                                  MarkerText(
-                                      marker: '*',
-                                      style:
-                                          const TextStyle(color: Colors.blue))
-                                ],
-                              ),
-                            ),
-                            subtitle: SuperRichText(
-                              useGlobalMarkers: false,
-                              text: choiceSelected,
-                              style: const TextStyle(color: Colors.black),
-                              othersMarkers: [
-                                MarkerText(
-                                    marker: '*',
-                                    style: const TextStyle(color: Colors.green))
-                              ],
-                            ),
-                          );
-                        })),
+                          bool isReplace = false;
+                          if ((test["Question"] ?? "").contains("_")) {
+                            isReplace = true;
+                          } else {
+                            answerCleared = test["Answer"].split('.')[1].trim();
+                            fillerQUestion = test["Question"]
+                                .replaceFirst("__", "*$answerCleared*")
+                                .replaceAll("_", "");
+                            choiceSelected = (test["Choice"] ?? "").replaceAll(
+                                test["Answer"], "*${test["Answer"]}*");
+                          }
+                          return Padding(
+                              padding: EdgeInsets.only(bottom: 15),
+                              child: isReplace
+                                  ? ListTile(
+                                      title: TextButton.icon(
+                                        onPressed: () {
+                                          speak(
+                                              fillerQUestion.replaceAll(
+                                                  "*", ""),
+                                              language: language);
+                                        },
+                                        icon: const Icon(
+                                          Icons.quiz_sharp,
+                                          color: Colors.grey,
+                                        ),
+                                        label: SuperRichText(
+                                          useGlobalMarkers: false,
+                                          text: fillerQUestion,
+                                          style: const TextStyle(
+                                              color: Colors.black),
+                                          // textAlign: TextAlign.left,
+                                          othersMarkers: [
+                                            MarkerText(
+                                                marker: '*',
+                                                style: const TextStyle(
+                                                    color: Colors.blue))
+                                          ],
+                                        ),
+                                      ),
+                                      subtitle: SuperRichText(
+                                        useGlobalMarkers: false,
+                                        text: choiceSelected,
+                                        style: const TextStyle(
+                                            color: Colors.black),
+                                        othersMarkers: [
+                                          MarkerText(
+                                              marker: '*',
+                                              style: const TextStyle(
+                                                  color: Colors.green))
+                                        ],
+                                      ),
+                                    )
+                                  : ListTile(
+                                      title: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: TextButton.icon(
+                                          onPressed: () {
+                                            speak(test["Question"],
+                                                language: language);
+                                          },
+                                          icon: const Icon(Icons.quiz_sharp,
+                                              color: Colors.blue),
+                                          label: SuperRichText(
+                                            useGlobalMarkers: false,
+                                            text: test["Question"],
+                                            // textAlign: TextAlign.left,
+                                            style: const TextStyle(
+                                                color: Colors.blue),
+                                            othersMarkers: [
+                                              MarkerText(
+                                                  marker: '*',
+                                                  style: const TextStyle(
+                                                      color: Colors.blue))
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      subtitle: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: TextButton.icon(
+                                            onPressed: () {
+                                              speak(test["Answer"],
+                                                  language: language);
+                                            },
+                                            icon: const Icon(Icons.star,
+                                                color: Colors.green),
+                                            label: SuperRichText(
+                                              useGlobalMarkers: false,
+                                              text: test["Answer"] ?? "",
+                                              style: TextStyle(
+                                                  color: Colors.green),
+                                              othersMarkers: [
+                                                MarkerText(
+                                                    marker: '*',
+                                                    style: const TextStyle(
+                                                        color: Colors.blue))
+                                              ],
+                                            ),
+                                          ))
+
+                                      // subtitle: Text("${exercise["exampleTr"]}"),
+                                      ));
+                        }))
               ],
             ))));
   }
