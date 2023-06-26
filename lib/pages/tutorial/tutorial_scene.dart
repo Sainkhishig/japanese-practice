@@ -559,7 +559,7 @@ class TutorialScene extends HookConsumerWidget {
                               label: SuperRichText(
                                 useGlobalMarkers: false,
                                 text: exercise["Question"],
-                                textAlign: TextAlign.left,
+                                // textAlign: TextAlign.left,
                                 style: const TextStyle(color: Colors.blue),
                                 othersMarkers: [
                                   MarkerText(
@@ -627,7 +627,7 @@ class TutorialScene extends HookConsumerWidget {
                                 useGlobalMarkers: false,
                                 text: fillerQUestion,
                                 style: const TextStyle(color: Colors.black),
-                                textAlign: TextAlign.left,
+                                // textAlign: TextAlign.left,
                                 othersMarkers: [
                                   MarkerText(
                                       marker: '*',
