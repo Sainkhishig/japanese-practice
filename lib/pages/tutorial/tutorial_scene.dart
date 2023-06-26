@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flash_card/flash_card.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:japanese_practise_n5/common/common_function.dart';
 import 'package:japanese_practise_n5/pages/tutorial/tutorial_scene_controller.dart';
 import 'package:super_rich_text/super_rich_text.dart';
 
 // pyfm061 : キャンセル規定編集
 class TutorialScene extends HookConsumerWidget {
   TutorialScene({Key? key}) : super(key: key);
-
+  String language = "english";
   List<DropdownMenuItem<String>> getDropItems(Map lstTutorial) {
     List<DropdownMenuItem<String>> lstDropItem = [];
     lstTutorial.forEach((key, value) {
@@ -23,16 +24,6 @@ class TutorialScene extends HookConsumerWidget {
             textAlign: TextAlign.center,
           )));
     });
-    // for (var item in ) {
-    //   lstDropItem.add(DropdownMenuItem<int>(
-    //       alignment: AlignmentDirectional.center,
-    //       value: item["title"],
-    //       child: Text(
-    //         "${item["title"]}",
-    //         textAlign: TextAlign.center,
-    //       )));
-    // }
-    // for (var i = 1; i <= 5; i++) {}
     return lstDropItem;
   }
 
@@ -66,7 +57,7 @@ class TutorialScene extends HookConsumerWidget {
       lsttableServings.add(phaseExample(context, controller));
       lsttableServings.add(phaseExercise(context, controller));
     }
-
+    String key = controller.state.lstAllTutorial.keys.first;
     return Scaffold(
       appBar: AppBar(
         title: Container(
@@ -77,14 +68,13 @@ class TutorialScene extends HookConsumerWidget {
             hint: const Text("Заах хичээл"),
             isDense: true,
             items: getDropItems(controller.state.lstAllTutorial),
-            value: "-NYnbSudUhm7vvYB8Ghv", //controller.jlptLevel,
+            value: key, //controller.jlptLevel,
             onChanged: (value) {
               // var selectedLevel = int.parse("$value");
               controller.setTutorKey(value.toString());
             },
           )),
         ),
-        actions: [],
       ),
       body: Stack(
         children: [
@@ -218,8 +208,6 @@ class TutorialScene extends HookConsumerWidget {
 
   Widget phaseMain(context, TutorialSceneController controller) {
     bool showOverView = false;
-    bool showDescription = false;
-    bool showAttention = false;
     if (controller.state.selectedTutorialKey.isEmpty) {
       return const Center(
           child: Text(
@@ -230,6 +218,7 @@ class TutorialScene extends HookConsumerWidget {
     var mainInfo =
         controller.state.lstAllTutorial[controller.state.selectedTutorialKey];
     var phaseInfo = mainInfo["tutorial"];
+    language = phaseInfo["type"];
     return StatefulBuilder(builder: (context, setState) {
       // var selectedValues = values ?? [];
       return Center(
@@ -272,7 +261,7 @@ class TutorialScene extends HookConsumerWidget {
                     //     style: const TextStyle(color: Colors.blue))
                   ],
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 18, color: Colors.black),
+                  style: const TextStyle(fontSize: 18, color: Colors.black),
                 ),
               ),
               onPressed: () {
@@ -284,93 +273,24 @@ class TutorialScene extends HookConsumerWidget {
               },
             ),
           )),
-
-          // AnimatedOpacity(
-          //   // If the widget is visible, animate to 0.0 (invisible).
-          //   // If the widget is hidden, animate to 1.0 (fully visible).
-          //   opacity: showDescription ? 1.0 : 0.0,
-          //   duration: const Duration(milliseconds: 500),
-          //   // The green box must be a child of the AnimatedOpacity widget.
-          //   child: TextButton(
-          //     child: Text(phaseInfo["description"] ?? "",
-          //         style: const TextStyle(fontSize: 15, color: Colors.red)),
-          //     onPressed: () {
-          //       setState(
-          //         () {
-          //           showAttention = !showAttention;
-          //         },
-          //       );
-          //     },
-          //   ),
-          // ),
-          // AnimatedOpacity(
-          //   // If the widget is visible, animate to 0.0 (invisible).
-          //   // If the widget is hidden, animate to 1.0 (fully visible).
-          //   opacity: showAttention ? 1.0 : 0.0,
-          //   duration: const Duration(milliseconds: 500),
-          //   // The green box must be a child of the AnimatedOpacity widget.
-          //   child: TextButton(
-          //     child: Container(
-          //         padding: EdgeInsets.only(left: 40, top: 50, right: 20),
-          //         child: Text(phaseInfo["attention"] ?? "",
-          //             textAlign: TextAlign.center,
-          //             style: TextStyle(fontSize: 12, color: Colors.red))),
-          //     onPressed: () {},
-          //   ),
-          // ),
         ],
       ));
-      // Column(
-      //     children: [
-      //       AnimatedOpacity(
-      //         // If the widget is visible, animate to 0.0 (invisible).
-      //         // If the widget is hidden, animate to 1.0 (fully visible).
-      //         opacity: visibleHello ? 1.0 : 0.0,
-      //         duration: const Duration(milliseconds: 500),
-      //         // The green box must be a child of the AnimatedOpacity widget.
-      //         child: Container(
-      //           width: 200.0,
-      //           height: 200.0,
-      //           child: Text("hello"),
-      //         ),
-      //       ),
-      //       IconButton(
-      //         icon: Icon(
-      //           Icons.add_box,
-      //           color: LightTheme.primary,
-      //           size: 30,
-      //         ),
-      //         tooltip: 'add action',
-      //         onPressed: () {
-      //           setState(
-      //             () {
-      //               visibleHello = !visibleHello;
-      //             },
-      //           );
-      //         },
-      //       ),
-      //     ],
-      //   );
     });
   }
 
   Widget phasePoints(context, Map point) {
     bool showOverView = false;
-    bool showDescription = false;
     bool showAttention = false;
     bool showFormula = false;
 
     return StatefulBuilder(builder: (context, setState) {
-      // var selectedValues = values ?? [];
       return Center(
-          // height: 500,
-          // width: 500,
           child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           TextButton(
-            child: Text(point["points"], style: TextStyle(fontSize: 60)),
+            child: Text(point["points"], style: const TextStyle(fontSize: 60)),
             onPressed: () {
               setState(
                 () {
@@ -384,10 +304,10 @@ class TutorialScene extends HookConsumerWidget {
               child: AnimatedOpacity(
                 opacity: showOverView ? 1.0 : 0.0,
                 duration: const Duration(milliseconds: 500),
-                // The green box must be a child of the AnimatedOpacity widget.
                 child: TextButton(
                   child: Container(
-                    padding: EdgeInsets.only(left: 40, top: 50, right: 20),
+                    padding:
+                        const EdgeInsets.only(left: 40, top: 50, right: 20),
                     child: SuperRichText(
                       useGlobalMarkers: false,
                       text: point["formula"] ?? "s",
@@ -424,7 +344,7 @@ class TutorialScene extends HookConsumerWidget {
             // The green box must be a child of the AnimatedOpacity widget.
             child: TextButton(
               child: Container(
-                  padding: EdgeInsets.only(left: 40, top: 50, right: 20),
+                  padding: const EdgeInsets.only(left: 40, top: 50, right: 20),
                   child: ListTile(
                     title: SuperRichText(
                       useGlobalMarkers: false,
@@ -440,7 +360,7 @@ class TutorialScene extends HookConsumerWidget {
                         //     marker: '*',
                         //     style: const TextStyle(color: Colors.blue))
                       ],
-                      style: TextStyle(fontSize: 18, color: Colors.black),
+                      style: const TextStyle(fontSize: 18, color: Colors.black),
                     ),
                   )),
               onPressed: () {
@@ -460,10 +380,10 @@ class TutorialScene extends HookConsumerWidget {
             // The green box must be a child of the AnimatedOpacity widget.
             child: TextButton(
               child: Container(
-                  padding: EdgeInsets.only(left: 40, top: 50, right: 20),
+                  padding: const EdgeInsets.only(left: 40, top: 50, right: 20),
                   child: Text("Анхаар: ${point["note"] ?? ""}",
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 16, color: Colors.red))),
+                      style: const TextStyle(fontSize: 16, color: Colors.red))),
               onPressed: () {},
             ),
           ),
@@ -473,7 +393,7 @@ class TutorialScene extends HookConsumerWidget {
   }
 
   Widget phaseExample(context, TutorialSceneController controller) {
-    if (controller.state.selectedTutorialKey.isEmpty) return Text("data");
+    if (controller.state.selectedTutorialKey.isEmpty) return Text("");
 
     var mainInfo =
         controller.state.lstAllTutorial[controller.state.selectedTutorialKey];
@@ -504,17 +424,26 @@ class TutorialScene extends HookConsumerWidget {
                         itemBuilder: (BuildContext context, int index) {
                           var example = examples[index];
                           return ListTile(
-                            title: SuperRichText(
-                              useGlobalMarkers: false,
-                              text: example["example"],
-                              othersMarkers: [
-                                MarkerText(
-                                    marker: '*',
-                                    style: const TextStyle(color: Colors.blue)),
-                                MarkerText(
-                                    marker: '"',
-                                    style: const TextStyle(color: Colors.blue))
-                              ],
+                            title: TextButton.icon(
+                              onPressed: () {
+                                speak(example["example"].replaceAll("*", ""),
+                                    language: language);
+                              },
+                              icon: const Icon(Icons.volume_up),
+                              label: SuperRichText(
+                                useGlobalMarkers: false,
+                                text: example["example"],
+                                othersMarkers: [
+                                  MarkerText(
+                                      marker: '*',
+                                      style:
+                                          const TextStyle(color: Colors.blue)),
+                                  MarkerText(
+                                      marker: '"',
+                                      style:
+                                          const TextStyle(color: Colors.blue))
+                                ],
+                              ),
                             ),
                             subtitle: Text("${example["exampleTr"]}"),
                           );
@@ -549,49 +478,25 @@ class TutorialScene extends HookConsumerWidget {
                       ],
                     ),
                   ),
-                  // Center(
-                  //     child: ListView.builder(
-                  //         itemCount:
-                  //             exercises.length, // currentWord.examples.length,
-                  //         shrinkWrap: true,
-                  //         physics: const NeverScrollableScrollPhysics(),
-                  //         itemBuilder: (BuildContext context, int index) {
-                  //           var example = exercises[index];
-                  //           return ListTile(
-                  //             title: SuperRichText(
-                  //               useGlobalMarkers: false,
-                  //               text: example["Question"],
-                  //               othersMarkers: [
-                  //                 MarkerText(
-                  //                     marker: '*',
-                  //                     style:
-                  //                         const TextStyle(color: Colors.blue))
-                  //               ],
-                  //             ),
-                  //             subtitle: Text("${example["Answer"]}"),
-                  //           );
-                  //         })),
-                  // // Visibility(
-                  // //   visible: controller.isShowPreference ?? true,
-                  // //   child: IconButton(
-                  // //     onPressed: () {
-                  // //       // if (currentWord.word.isNotEmpty) {
-                  // //       //   speak(currentWord.word);
-                  // //       // } else {
-                  // //       //   speak(currentWord.word);
-                  // //       // }
-                  // //     },
-                  // //     iconSize: 50,
-                  // //     icon: const Icon(Icons.volume_up),
-                  // //   ),
-                  // // )
                 ],
               ),
             )));
   }
 
+  // String detectLanguage({required String string}) {
+  //   String languageCodes = 'en';
+
+  //   final RegExp english = RegExp(r'^[a-zA-Z]+');
+
+  //   final RegExp japanese = RegExp(r'^[\u3040-\u30FF]+');
+  //   if (english.hasMatch(string)) languageCodes = 'en';
+  //   if (japanese.hasMatch(string)) languageCodes = 'ja';
+
+  //   return languageCode;
+  // }
+
   Widget phaseExercise(context, TutorialSceneController controller) {
-    if (controller.state.selectedTutorialKey.isEmpty) return Text("data");
+    if (controller.state.selectedTutorialKey.isEmpty) return const Text("data");
 
     var mainInfo =
         controller.state.lstAllTutorial[controller.state.selectedTutorialKey];
@@ -644,12 +549,9 @@ class TutorialScene extends HookConsumerWidget {
                 const Center(
                     child: Text(
                   "Хариу",
-                  // currentWord.word.isNotEmpty
-                  //     ? currentWord.word
-                  //     : currentWord.translate,
                   style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                 )),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 Center(
@@ -670,23 +572,8 @@ class TutorialScene extends HookConsumerWidget {
                                     style: const TextStyle(color: Colors.blue))
                               ],
                             ),
-                            // subtitle: Text("${example["Answer"]}"),
                           );
                         })),
-                // Visibility(
-                //   visible: controller.isShowPreference ?? true,
-                //   child: IconButton(
-                //     onPressed: () {
-                //       // if (currentWord.word.isNotEmpty) {
-                //       //   speak(currentWord.word);
-                //       // } else {
-                //       //   speak(currentWord.word);
-                //       // }
-                //     },
-                //     iconSize: 50,
-                //     icon: const Icon(Icons.volume_up),
-                //   ),
-                // )
               ],
             ))));
   }

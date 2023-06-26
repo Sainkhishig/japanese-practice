@@ -9,7 +9,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_strategy/url_strategy.dart';
 import 'common_page/common_frame.dart';
 import 'common_providers/shared_preferences_provider.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
+final flutterTts = FlutterTts();
 AudioPlayer? player;
 
 Future<void> main() async {
