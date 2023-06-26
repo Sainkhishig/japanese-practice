@@ -24,7 +24,7 @@ Future<void> main() async {
   // Hive.resetAdapters();
   Hive.registerAdapter(DictionaryAdapter());
   setPathUrlStrategy();
-
+  await flutterTts.setVoice({'name': 'Kyoko', 'locale': 'ja-JP'});
   // runApp(const ProviderScope(child: MyApp()));
   runApp(ProviderScope(
     overrides: [
