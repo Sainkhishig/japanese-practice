@@ -19,11 +19,11 @@ class ListeningTestPage extends HookConsumerWidget {
         Flexible(
           child: ListeningList(),
         ),
-        Flexible(
-          child: ListeningDetail(
-            selectedExerciseData: controller.state.selectedExerciseData,
-          ),
-        )
+        // Flexible(
+        //   child: ListeningDetail(
+        //     selectedExerciseData: controller.state.selectedExerciseData,
+        //   ),
+        // )
       ],
     );
   }

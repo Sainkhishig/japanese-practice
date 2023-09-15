@@ -4,6 +4,7 @@ class XlTestExerciseModel {
   late String question;
   late String imageUrl;
   late String audioUrl;
+  late String videoUrl;
   late List<XlTestAnswersModel> answers;
 }
 

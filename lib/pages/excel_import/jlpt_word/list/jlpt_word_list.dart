@@ -1,3 +1,4 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -401,8 +402,8 @@ class JlptWordList extends HookConsumerWidget {
   }
 
 //listening Test
-
   readJlptTestListeningWithFixedColumn(Excel excel) async {
+    final storageRef = FirebaseStorage.instance.ref();
     List<String> vocabularies = [""];
     for (var file in excel.sheets.values) {
       if (file.sheetName.contains("formula")) continue;
@@ -425,9 +426,21 @@ class JlptWordList extends HookConsumerWidget {
         var exercise = XlTestExerciseModel()
           ..question = getCellValue(row[2])
           ..audioUrl = getCellValue(row[10])
+          ..videoUrl = ""
           ..imageUrl = getCellValue(row[3])
           ..answers = lstAnswers;
 
+        print(
+          "execfile '' ${getCellValue(row[1])}/${exercise.audioUrl}",
+        );
+        exercise.videoUrl = await storageRef
+            .child(
+              "${getCellValue(row[1])}/${exercise.audioUrl}",
+            )
+            .getDownloadURL();
+        print("generatedVideoUrl:${exercise.videoUrl}");
+
+        // ..videoUrl = "rl"
         lstExercise.add(exercise);
 
         newData["jlptLevel"] = level;
@@ -435,17 +448,20 @@ class JlptWordList extends HookConsumerWidget {
         newData["name"] =
             getCellValue(excel.tables[file.sheetName]!.rows[0][0]);
         newData["storagePath"] = getCellValue(row[1]);
-        newData["exercises"] = lstExercise.map((ex) => {
-              'question': ex.question,
-              'audioUrl': ex.audioUrl,
-              'audioPath': "",
-              'imageUrl': ex.imageUrl,
-              'imagePath': "",
-              'answers': ex.answers.map((quest) => {
-                    'answer': quest.answer,
-                    'isTrue': quest.isTrue,
-                  }),
-            });
+        newData["exercises"] = lstExercise.map((ex) {
+          return {
+            'question': ex.question,
+            'videoUrl': ex.videoUrl,
+            'audioUrl': ex.audioUrl,
+            'audioPath': "",
+            'imageUrl': ex.imageUrl,
+            'imagePath': "",
+            'answers': ex.answers.map((quest) => {
+                  'answer': quest.answer,
+                  'isTrue': quest.isTrue,
+                }),
+          };
+        });
         newData["vocabularies"] = [];
         newData["time"] = DateTime.now().microsecondsSinceEpoch;
       }
@@ -459,6 +475,7 @@ class JlptWordList extends HookConsumerWidget {
         print('could not saved data');
         throw ("aldaa garlaa");
       });
+      print("totalCOuntsssssssssssss");
       final sheetData = <String, dynamic>{};
       sheetData["Test"] = "Test";
       sheetData[file.sheetName] = DateTime.now().toString();
