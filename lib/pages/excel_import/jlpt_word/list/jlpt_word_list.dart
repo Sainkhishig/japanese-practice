@@ -427,20 +427,18 @@ class JlptWordList extends HookConsumerWidget {
           ..question = getCellValue(row[2])
           ..audioUrl = getCellValue(row[10])
           ..videoUrl = ""
-          ..imageUrl = getCellValue(row[3])
+          ..imageUrl = getCellValue(row[1])
           ..answers = lstAnswers;
-
-        print(
-          "execfile '' ${getCellValue(row[1])}/${exercise.audioUrl}",
-        );
+        var urlPath = "listening-test/n$level/${file.sheetName}";
+        print("urlPath::$urlPath");
+        print("execfile:$urlPath/${exercise.audioUrl}");
         exercise.videoUrl = await storageRef
             .child(
-              "${getCellValue(row[1])}/${exercise.audioUrl}",
+              "$urlPath/${exercise.audioUrl}",
             )
             .getDownloadURL();
         print("generatedVideoUrl:${exercise.videoUrl}");
 
-        // ..videoUrl = "rl"
         lstExercise.add(exercise);
 
         newData["jlptLevel"] = level;
@@ -954,6 +952,7 @@ class JlptWordList extends HookConsumerWidget {
       }
     }
   }
+
   // Future readExcesl(Excel excel) async {
   //   final _database = FirebaseDatabase.instance.reference();
 
