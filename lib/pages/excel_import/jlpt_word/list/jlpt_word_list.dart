@@ -407,7 +407,8 @@ class JlptWordList extends HookConsumerWidget {
     List<String> vocabularies = [""];
     for (var file in excel.sheets.values) {
       if (file.sheetName.contains("formula")) continue;
-      print("Sheet:${file.sheetName}");
+      print(
+          "Sheet:${file.sheetName}-row:${excel.tables[file.sheetName]!.rows.length}");
       List<XlTestExerciseModel> lstExercise = [];
       final newData = <String, dynamic>{};
       for (var j = 1; j < excel.tables[file.sheetName]!.rows.length; j++) {
@@ -429,18 +430,16 @@ class JlptWordList extends HookConsumerWidget {
           ..videoUrl = ""
           ..imageUrl = getCellValue(row[1])
           ..answers = lstAnswers;
-        var urlPath = "listening-test/n$level/${file.sheetName}";
+        var urlPath =
+            "listening-test/${level == 1 ? "N" : "n"}$level/${file.sheetName}";
         print("urlPath::$urlPath");
         print("execfile:$urlPath/${exercise.audioUrl}");
         exercise.videoUrl = await storageRef
-            .child(
-              "$urlPath/${exercise.audioUrl}",
-            )
+            .child("$urlPath/${exercise.audioUrl}")
             .getDownloadURL();
         print("generatedVideoUrl:${exercise.videoUrl}");
 
         lstExercise.add(exercise);
-
         newData["jlptLevel"] = level;
         getCellValue(row[0]);
         newData["name"] =
@@ -543,6 +542,7 @@ class JlptWordList extends HookConsumerWidget {
           newData["order"] = i;
           newData["time"] = DateTime.now().microsecondsSinceEpoch;
         }
+
         await _database
             .child("${dbName.split("-")[0]}/${getCellValue(row[1])}")
             .set(newData)
