@@ -5,6 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:japanese_practise_n5/classes/test_excel_model.dart';
 import 'package:japanese_practise_n5/common/common_enum.dart';
 import 'package:japanese_practise_n5/common/common_widget.dart';
+import 'package:japanese_practise_n5/common/widget/afen_rich_text_field.dart';
 import 'package:japanese_practise_n5/common/widget/afen_text_field.dart';
 import 'package:japanese_practise_n5/common/widget/register_button.dart';
 import 'package:japanese_practise_n5/pages/excel_import/jlpt_word/list/jlpt_word_list_controller.dart';
@@ -13,7 +14,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:excel/excel.dart';
 import 'package:japanese_practise_n5/pages/listening/model/listening_model.dart';
 import 'package:japanese_practise_n5/pages/reading/model/reading_model.dart';
+import 'dart:convert';
 
+AfenRichTextField jsonControlle = AfenRichTextField("Json library");
 List<DropdownMenuItem<int>> getDropItems() {
   List<DropdownMenuItem<int>> lstDropItem = [];
   for (var i = 0; i <= 5; i++) {
@@ -98,6 +101,25 @@ class JlptWordList extends HookConsumerWidget {
           const Text(
               "JlptGrammar : level;grammar;formMn;formEn;meaningMn;meaningEn;example;exampleMn;exampleEn;example2;example2Mn;example2En",
               textAlign: TextAlign.left),
+          Row(
+            children: [
+              jsonControlle,
+              Container(
+                  padding: const EdgeInsets.all(8.0),
+                  width: 200,
+                  child: ElevatedButton(
+                    child: const Text("json import"),
+                    onPressed: () async {
+                      try {
+                        importJLPTWordJson(context, ImportType.dynamicCol);
+                        // showSuccessToastMessage(context, "Амжилттай хадгаллаа");
+                      } catch (ex) {
+                        showErrorToastMessage(context, "Алдаа гарлаа");
+                      }
+                    },
+                  )),
+            ],
+          ),
           Container(
               padding: const EdgeInsets.all(8.0),
               width: 200,
@@ -227,6 +249,36 @@ class JlptWordList extends HookConsumerWidget {
         ],
       ),
     );
+  }
+
+  Future<void> importJLPTWordJson(
+      BuildContext context, ImportType importType) async {
+    var jsonSource = json.decode(jsonControlle.controller.text);
+    print("jsonSource");
+// jsonSource.map((e) => e.)
+    var i = 1;
+    for (var item in jsonSource) {
+      // await insertChallengeDB(challengeDay, item);
+      // var row = excel.tables[file.sheetName]!.rows[i];
+
+      // final newData = <String, dynamic>{};
+      // print("1");
+      // for (var i = 1; i < columns.length; i++) {
+      //   newData["level"] = level; //int.parse(getCellValue(row[0]));
+      //   newData[columns[i]] = getCellValue(row[i]);
+      item["order"] = i;
+      item["time"] = DateTime.now().microsecondsSinceEpoch;
+      // }
+
+      await _database
+          .child("JlptWord/${item["word"]}")
+          .set(item)
+          .catchError((onError) {
+        print('could not saved data');
+        throw ("aldaa garlaa");
+      });
+      i++;
+    }
   }
 
   Future<void> pickExcel(BuildContext context, ImportType importType) async {
@@ -522,6 +574,38 @@ class JlptWordList extends HookConsumerWidget {
   // }
 
 // read grammar kanji vocabulary
+  readJlptWordJsonByFixedColumn(
+      String dbName, Excel excel, List<String> columns) async {
+    print("dbName");
+    print(dbName);
+    for (var file in excel.sheets.values) {
+      // var sheetName = file.sheetName.split("-")[1];
+
+      // var sectionName = file.sheetName.split("-")[2];
+      print("Start");
+      for (var i = 0; i < excel.tables[file.sheetName]!.rows.length; i++) {
+        var row = excel.tables[file.sheetName]!.rows[i];
+
+        final newData = <String, dynamic>{};
+        print("1");
+        for (var i = 1; i < columns.length; i++) {
+          newData["level"] = level; //int.parse(getCellValue(row[0]));
+          newData[columns[i]] = getCellValue(row[i]);
+          newData["order"] = i;
+          newData["time"] = DateTime.now().microsecondsSinceEpoch;
+        }
+
+        await _database
+            .child("${dbName.split("-")[0]}/${getCellValue(row[1])}")
+            .set(newData)
+            .catchError((onError) {
+          print('could not saved data');
+          throw ("aldaa garlaa");
+        });
+      }
+    }
+  }
+
   readJlptWordExcelByFixedColumn(
       String dbName, Excel excel, List<String> columns) async {
     print("dbName");
