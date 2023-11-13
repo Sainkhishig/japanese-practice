@@ -140,10 +140,10 @@ class JlptWordList extends HookConsumerWidget {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (BuildContext context, int index) {
-                  TestType gender = TestType.values[index];
+                  TestType importDataType = TestType.values[index];
                   return RadioListTile(
-                    title: Text(gender.label),
-                    value: gender.id,
+                    title: Text(importDataType.label),
+                    value: importDataType.id,
                     groupValue: _testType,
                     onChanged: (value) {
                       setState(() {
@@ -254,9 +254,31 @@ class JlptWordList extends HookConsumerWidget {
   Future<void> importJLPTWordJson(
       BuildContext context, ImportType importType) async {
     var jsonSource = json.decode(jsonControlle.controller.text);
-    print("jsonSource");
+
 // jsonSource.map((e) => e.)
     var i = 1;
+    String dbName = "";
+    String dbKey = "";
+
+// TestType.kanji: 'KanjiTest',
+//     TestType.vocabulary: 'VocabularyTest',
+//     TestType.grammar: 'GrammarTest',
+    switch (_testType) {
+      case "KanjiTest":
+        dbName = "JlptKanji";
+        dbKey = "kanji";
+        break;
+      case "VocabularyTest":
+        dbName = "JlptWord";
+        dbKey = "word";
+        break;
+      case "GrammarTest":
+        dbName = "JlptGrammar";
+        dbKey = "grammar";
+        break;
+      default:
+    }
+    print("jsonSource:$_testType:$dbName;$dbKey");
     for (var item in jsonSource) {
       // await insertChallengeDB(challengeDay, item);
       // var row = excel.tables[file.sheetName]!.rows[i];
@@ -266,12 +288,14 @@ class JlptWordList extends HookConsumerWidget {
       // for (var i = 1; i < columns.length; i++) {
       //   newData["level"] = level; //int.parse(getCellValue(row[0]));
       //   newData[columns[i]] = getCellValue(row[i]);
+      item["level"] = level;
       item["order"] = i;
       item["time"] = DateTime.now().microsecondsSinceEpoch;
       // }
 
+// var dbPath="item[dbKey]"
       await _database
-          .child("JlptWord/${item["word"]}")
+          .child("$dbName/${item[dbKey]}")
           .set(item)
           .catchError((onError) {
         print('could not saved data');
