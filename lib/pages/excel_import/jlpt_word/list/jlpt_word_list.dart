@@ -258,7 +258,6 @@ class JlptWordList extends HookConsumerWidget {
 // jsonSource.map((e) => e.)
     var i = 1;
     String dbName = "";
-    String dbKey = "";
 
 // TestType.kanji: 'KanjiTest',
 //     TestType.vocabulary: 'VocabularyTest',
@@ -266,20 +265,22 @@ class JlptWordList extends HookConsumerWidget {
     switch (_testType) {
       case "KanjiTest":
         dbName = "JlptKanji";
-        dbKey = "kanji";
+        // dbKey = "kanji";
         break;
       case "VocabularyTest":
         dbName = "JlptWord";
-        dbKey = "word";
+        // dbKey = "word";
         break;
       case "GrammarTest":
         dbName = "JlptGrammar";
-        dbKey = "grammar";
+        // dbKey = "grammar";
         break;
       default:
     }
-    print("jsonSource:$_testType:$dbName;$dbKey");
+    print("jsonSource:$_testType:$dbName;$level");
     for (var item in jsonSource) {
+      String dbKey = "N$level-${item["index"]}";
+      print("$dbKey");
       // await insertChallengeDB(challengeDay, item);
       // var row = excel.tables[file.sheetName]!.rows[i];
 
@@ -294,10 +295,7 @@ class JlptWordList extends HookConsumerWidget {
       // }
 
 // var dbPath="item[dbKey]"
-      await _database
-          .child("$dbName/${item[dbKey]}")
-          .set(item)
-          .catchError((onError) {
+      await _database.child("$dbName/$dbKey").set(item).catchError((onError) {
         print('could not saved data');
         throw ("aldaa garlaa");
       });
