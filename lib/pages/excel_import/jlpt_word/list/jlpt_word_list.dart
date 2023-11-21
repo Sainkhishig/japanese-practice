@@ -258,6 +258,45 @@ class JlptWordList extends HookConsumerWidget {
 // jsonSource.map((e) => e.)
     var i = 1;
     String dbName = "";
+    print("jsonSource:$_testType:$dbName;$level");
+
+    for (var item in jsonSource) {
+      String dbKey = "N$level-${item["index"]}";
+      print("$dbKey");
+      // await insertChallengeDB(challengeDay, item);
+      // var row = excel.tables[file.sheetName]!.rows[i];
+
+      // final newData = <String, dynamic>{};
+      // print("1");
+      // for (var i = 1; i < columns.length; i++) {
+      //   newData["level"] = level; //int.parse(getCellValue(row[0]));
+      //   newData[columns[i]] = getCellValue(row[i]);
+      item["level"] = level;
+      item["order"] = i;
+      item["time"] = DateTime.now().microsecondsSinceEpoch;
+      // }
+
+// var dbPath="item[dbKey]"
+
+// var dbPath="item[dbKey]"
+      await _database
+          .child("VocabularyChallenge/$level/${item["dayIndex"]}")
+          .set(item)
+          .catchError((onError) {
+        print('could not saved data');
+        throw ("aldaa garlaa");
+      });
+      i++;
+    }
+  }
+
+  Future<void> importJLPTWordJsonOld(
+      BuildContext context, ImportType importType) async {
+    var jsonSource = json.decode(jsonControlle.controller.text);
+
+// jsonSource.map((e) => e.)
+    var i = 1;
+    String dbName = "";
 
 // TestType.kanji: 'KanjiTest',
 //     TestType.vocabulary: 'VocabularyTest',
@@ -295,7 +334,7 @@ class JlptWordList extends HookConsumerWidget {
       // }
 
 // var dbPath="item[dbKey]"
-      await _database.child("$dbName/$dbKey").set(item).catchError((onError) {
+      await _database.child("$dbName/${dbKey}").set(item).catchError((onError) {
         print('could not saved data');
         throw ("aldaa garlaa");
       });
@@ -1138,3 +1177,26 @@ enum ImportType {
   dynamicCol,
   listeningTest
 }
+
+
+
+// [
+//   {
+//         "ytUrl": "UNCc1WXUizE",
+//         "instruction": "hello",
+//         "dayIndex": 1,
+//         "name": "Day 1",
+//         "startIndex": 1,
+//         "endIndex": 2,
+//         "level": 2
+//   },
+//   {
+//         "ytUrl": "UNCc1WXUizE",
+//         "instruction": "hello",
+//         "dayIndex": 2,
+//         "name": "Day 2",
+//         "startIndex": 1,
+//         "endIndex": 2,
+//         "level": 2
+//   }
+// ]
